@@ -1,4 +1,7 @@
-# CPLEX-Plugin for JetBrains IDEs
+# CPLEX-Plugin
+
+Profesjonalna wtyczka do obsługi języka IBM ILOG CPLEX OPL w środowisku IntelliJ IDEA. 
+Zapewnia kolorowanie składni, inteligentne podpowiedzi oraz integrację z silnikiem solvera.
 
 [🇬🇧 English](#english) | [🇵🇱 Polski](#polski)
 
