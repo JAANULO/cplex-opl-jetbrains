@@ -3,14 +3,13 @@
 Profesjonalna wtyczka do obsługi języka IBM ILOG CPLEX OPL w środowisku IntelliJ IDEA. 
 Zapewnia kolorowanie składni, inteligentne podpowiedzi oraz integrację z silnikiem solvera.
 
-[🇬🇧 English](#english) | [🇵🇱 Polski](#polski)
-
 <p>Provides native support for IBM ILOG CPLEX Optimization Programming Language (OPL) in JetBrains IDEs.</p>
 <ul>
   <li>Syntax highlighting for .mod and .dat files</li>
   <li>Run configuration for local oplrun solver</li>
   <li>Basic file type recognition and icons</li>
 </ul>
+[🇬🇧 English](#english) | [🇵🇱 Polski](#polski)
 ---
 
 <h2 id="english">🇬🇧 English</h2>
