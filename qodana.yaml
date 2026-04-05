@@ -3,4 +3,4 @@ version: "1.0"
 
 # Wykluczenie folderu src/main/gen, który zawiera kod wygenerowany automatycznie
 exclude:
-  - path: src/main/gen
+  - path: gen
