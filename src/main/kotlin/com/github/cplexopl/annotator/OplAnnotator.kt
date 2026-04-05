@@ -21,9 +21,12 @@ class OplAnnotator : Annotator {
 
         // Reguła 1: Identyfikatory nie powinny zaczynać się wielką literą
         // (konwencja OPL: zmienne małą literą, zbiory/parametry wielką)
-        // To tylko ostrzeżenie, nie błąd
-        if (text[0].isUpperCase() && text.length > 1 && text.none { it.isUpperCase() && it != text[0] }) {
-            // Nic nie robimy - wielka litera dla zbiorów jest ok
+        // Pomijamy sprawdzenie, jeśli tekst jest pisany samymi wielkimi literami (zbiory/stałe)
+        val isAllUpperCase = text.length > 1 && text.all { it.isUpperCase() || !it.isLetter() }
+        if (text[0].isUpperCase() && !isAllUpperCase) {
+            holder.newAnnotation(HighlightSeverity.WEAK_WARNING, "Variable name starts with an uppercase letter")
+                .range(element)
+                .create()
         }
 
         // Reguła 2: Zarezerwowane słowa IBM OPL których nie powinno się używać jako nazw

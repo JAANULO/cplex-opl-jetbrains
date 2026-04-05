@@ -15,28 +15,28 @@ class OplRunConfigurationEditor(private val project: Project) : SettingsEditor<O
     // Pola formularza - TextFieldWithBrowseButton = pole tekstowe z przyciskiem "..." do wyboru pliku
     private val modelFileField = TextFieldWithBrowseButton().apply {
         addBrowseFolderListener(
-            "Select OPL Model File",
-            "Select the .mod file to run",
             project,
             FileChooserDescriptorFactory.createSingleFileDescriptor("mod")
+                .withTitle("Select OPL Model File")
+                .withDescription("Select the .mod file to run")
         )
     }
 
     private val dataFileField = TextFieldWithBrowseButton().apply {
         addBrowseFolderListener(
-            "Select OPL Data File",
-            "Select the .dat data file (optional)",
             project,
             FileChooserDescriptorFactory.createSingleFileDescriptor("dat")
+                .withTitle("Select OPL Data File")
+                .withDescription("Select the .dat data file (optional)")
         )
     }
 
     private val cplexPathField = TextFieldWithBrowseButton().apply {
         addBrowseFolderListener(
-            "Select oplrun Executable",
-            "Select the oplrun binary from your CPLEX installation",
             project,
             FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor()
+                .withTitle("Select Oplrun Executable")
+                .withDescription("Select the oplrun binary from your CPLEX installation")
         )
     }
 
@@ -44,7 +44,7 @@ class OplRunConfigurationEditor(private val project: Project) : SettingsEditor<O
     private val panel: JPanel = FormBuilder.createFormBuilder()
         .addLabeledComponent("Model file (.mod):", modelFileField)
         .addLabeledComponent("Data file (.dat):", dataFileField)
-        .addLabeledComponent("oplrun path:", cplexPathField)
+        .addLabeledComponent("Oplrun path:", cplexPathField)
         .addComponentFillVertically(JPanel(), 0)
         .panel
 

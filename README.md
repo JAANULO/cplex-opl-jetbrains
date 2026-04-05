@@ -1,52 +1,51 @@
-# CPLEX-Plugin
+# CPLEX-Plugin for JetBrains IDEs
 
-![Build](https://github.com/JAANULO/CPLEX-Plugin/workflows/Build/badge.svg)
-[![Version](https://img.shields.io/jetbrains/plugin/v/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
-[![Downloads](https://img.shields.io/jetbrains/plugin/d/MARKETPLACE_ID.svg)](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID)
+[🇬🇧 English](#english) | [🇵🇱 Polski](#polski)
 
-## Template ToDo list
-- [x] Create a new [IntelliJ Platform Plugin Template][template] project.
-- [ ] Get familiar with the [template documentation][template].
-- [ ] Adjust the [pluginGroup](./gradle.properties) and [pluginName](./gradle.properties), as well as the [id](./src/main/resources/META-INF/plugin.xml) and [sources package](./src/main/kotlin).
-- [ ] Adjust the plugin description in `README` (see [Tips][docs:plugin-description])
-- [ ] Review the [Legal Agreements](https://plugins.jetbrains.com/docs/marketplace/legal-agreements.html?from=IJPluginTemplate).
-- [ ] [Publish a plugin manually](https://plugins.jetbrains.com/docs/intellij/publishing-plugin.html?from=IJPluginTemplate) for the first time.
-- [ ] Set the `MARKETPLACE_ID` in the above README badges. You can obtain it once the plugin is published to JetBrains Marketplace.
-- [ ] Set the [Plugin Signing](https://plugins.jetbrains.com/docs/intellij/plugin-signing.html?from=IJPluginTemplate) related [secrets](https://github.com/JetBrains/intellij-platform-plugin-template#environment-variables).
-- [ ] Set the [Deployment Token](https://plugins.jetbrains.com/docs/marketplace/plugin-upload.html?from=IJPluginTemplate).
-- [ ] Click the <kbd>Watch</kbd> button on the top of the [IntelliJ Platform Plugin Template][template] to be notified about releases containing new features and fixes.
-- [ ] Configure the [CODECOV_TOKEN](https://docs.codecov.com/docs/quick-start) secret for automated test coverage reports on PRs
+<p>Provides native support for IBM ILOG CPLEX Optimization Programming Language (OPL) in JetBrains IDEs.</p>
+<ul>
+  <li>Syntax highlighting for .mod and .dat files</li>
+  <li>Run configuration for local oplrun solver</li>
+  <li>Basic file type recognition and icons</li>
+</ul>
+---
 
-<!-- Plugin description -->
-This Fancy IntelliJ Platform Plugin is going to be your implementation of the brilliant ideas that you have.
+<h2 id="english">🇬🇧 English</h2>
 
-This specific section is a source for the [plugin.xml](/src/main/resources/META-INF/plugin.xml) file which will be extracted by the [Gradle](/build.gradle.kts) during the build process.
+Plugin adding native support for IBM ILOG CPLEX Optimization Programming Language (OPL) in JetBrains environments (IntelliJ IDEA, PyCharm, etc.).
 
-To keep everything working, do not remove `<!-- ... -->` sections. 
-<!-- Plugin description end -->
+### Features
+* **Syntax Highlighting:** Keyword, model structure, and operator highlighting for `.mod` and `.dat` files.
+* **Compiler Integration:** Built-in run configuration (`Run Opl Model`), allowing direct execution of the local `oplrun` solver from the editor.
 
-## Installation
+### Installation (Manual Install)
+Before the plugin reaches the official JetBrains Marketplace, you can install it manually:
+1. Go to the [Releases](../../releases) tab on GitHub and download the latest `.zip` package.
+2. Open your IDE (e.g., IntelliJ IDEA, PyCharm).
+3. Navigate to <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd>.
+4. Click the gear icon (⚙️) at the top and select <kbd>Install plugin from disk...</kbd>.
+5. Select the downloaded `.zip` file and restart the IDE.
 
-- Using the IDE built-in plugin system:
-
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>Marketplace</kbd> > <kbd>Search for "CPLEX-Plugin"</kbd> >
-  <kbd>Install</kbd>
-
-- Using JetBrains Marketplace:
-
-  Go to [JetBrains Marketplace](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID) and install it by clicking the <kbd>Install to ...</kbd> button in case your IDE is running.
-
-  You can also download the [latest release](https://plugins.jetbrains.com/plugin/MARKETPLACE_ID/versions) from JetBrains Marketplace and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
-- Manually:
-
-  Download the [latest release](https://github.com/JAANULO/CPLEX-Plugin/releases/latest) and install it manually using
-  <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd> > <kbd>⚙️</kbd> > <kbd>Install plugin from disk...</kbd>
-
+### Requirements
+A local installation of **IBM ILOG CPLEX Studio** is required for the compilation (Run Configuration) to work. The editor will prompt you to provide the path to the `oplrun` executable (or `oplrun.exe` on Windows).
 
 ---
-Plugin based on the [IntelliJ Platform Plugin Template][template].
 
-[template]: https://github.com/JetBrains/intellij-platform-plugin-template
-[docs:plugin-description]: https://plugins.jetbrains.com/docs/intellij/plugin-user-experience.html#plugin-description-and-presentation
+<h2 id="polski">🇵🇱 Polski</h2>
+
+Wtyczka dodająca natywne wsparcie dla języka IBM ILOG CPLEX Optimization Programming Language (OPL) w środowiskach JetBrains (IntelliJ IDEA, PyCharm, itp.).
+
+### Funkcje
+* **Kolorowanie składni:** Podświetlanie słów kluczowych, struktury modelu oraz operatorów dla plików `.mod` i `.dat`.
+* **Integracja z kompilatorem:** Wbudowana konfiguracja uruchomieniowa (`Run Opl Model`), pozwalająca na bezpośrednie wywoływanie lokalnego solvera `oplrun` z poziomu edytora.
+
+### Instalacja (Instalacja Ręczna)
+Zanim wtyczka trafi do oficjalnego sklepu JetBrains Marketplace, możesz ją zainstalować ręcznie:
+1. Przejdź do zakładki [Releases](../../releases) na GitHubie i pobierz najnowszą paczkę `.zip`.
+2. Otwórz swoje środowisko (np. IntelliJ IDEA, PyCharm).
+3. Wejdź w <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd>.
+4. Kliknij ikonę zębatki (⚙️) na górze i wybierz <kbd>Install plugin from disk...</kbd>.
+5. Wskaż pobrany plik `.zip` i zrestartuj IDE.
+
+### Wymagania
+Do poprawnego działania kompilacji (Run Configuration) wymagana jest lokalna instalacja **IBM ILOG CPLEX Studio**. Edytor poprosi o wskazanie ścieżki do pliku wykonywalnego `oplrun` (lub `oplrun.exe` na systemach Windows).

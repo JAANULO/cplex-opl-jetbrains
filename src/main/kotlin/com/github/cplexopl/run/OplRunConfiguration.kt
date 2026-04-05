@@ -7,9 +7,7 @@ import com.intellij.execution.process.ProcessHandlerFactory
 import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.ui.Messages
 import java.io.File
-import java.nio.file.Paths
 
 // RunConfiguration = konfiguracja uruchomieniowa (to co widzisz w dropdown obok przycisku Run)
 // Implementuje logikę co się stanie po kliknięciu zielonego przycisku ▶
@@ -78,7 +76,7 @@ class OplRunConfiguration(
 
 // RunProfileState = klasa wykonująca faktyczny proces (uruchamia oplrun jako subprocess)
 class OplRunState(
-    private val environment: ExecutionEnvironment,
+    environment: ExecutionEnvironment,
     private val config: OplRunConfiguration
 ) : CommandLineState(environment) {
 
