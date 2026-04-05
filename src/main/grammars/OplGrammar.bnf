@@ -1,0 +1,122 @@
+{
+  parserClass="com.github.cplexopl.parser.OplParser"
+  extends="com.intellij.extapi.psi.ASTWrapperPsiElement"
+
+  psiClassPrefix="Opl"
+  psiImplClassSuffix="Impl"
+  psiPackage="com.github.cplexopl.psi"
+  psiImplPackage="com.github.cplexopl.psi.impl"
+
+  elementTypeHolderClass="com.github.cplexopl.psi.OplTypes"
+  elementTypeClass="com.github.cplexopl.psi.OplElementType"
+  tokenTypeClass="com.github.cplexopl.psi.OplTokenType"
+
+  tokens=[
+    // Słowa kluczowe (keywords) - zarezerwowane słowa języka OPL
+    USING       = 'using'
+    WITH        = 'with'
+    MINIMIZE    = 'minimize'
+    MAXIMIZE    = 'maximize'
+    SUBJECT_TO  = 'subject to'
+    FORALL      = 'forall'
+    EXISTS      = 'exists'
+    IN          = 'in'
+    TO          = 'to'
+    IF          = 'if'
+    ELSE        = 'else'
+    THEN        = 'then'
+    INT         = 'int'
+    FLOAT       = 'float'
+    BOOLEAN     = 'boolean'
+    STRING      = 'string'
+    RANGE       = 'range'
+    TUPLE       = 'tuple'
+    DVAR        = 'dvar'
+    DEXPR       = 'dexpr'
+    EXECUTE     = 'execute'
+    INCLUDE     = 'include'
+    ASSERT      = 'assert'
+    SUM         = 'sum'
+    ALL         = 'all'
+
+    // Operatory
+    SEMICOLON   = ';'
+    COLON       = ':'
+    COMMA       = ','
+    DOT         = '.'
+    DOTDOT      = '..'
+    EQ          = '='
+    NEQ         = '!='
+    LT          = '<'
+    LE          = '<='
+    GT          = '>'
+    GE          = '>='
+    PLUS        = '+'
+    MINUS       = '-'
+    STAR        = '*'
+    SLASH       = '/'
+    LBRACE      = '{'
+    RBRACE      = '}'
+    LBRACKET    = '['
+    RBRACKET    = ']'
+    LPAREN      = '('
+    RPAREN      = ')'
+
+    // Typy tokenów z wyrażeniami regularnymi (regex)
+    // Regex to wzorzec opisujący format tekstu, np. [0-9]+ = jedna lub więcej cyfr
+    LINE_COMMENT  = 'regexp://[^\r\n]*'
+    BLOCK_COMMENT = 'regexp:/\*([^*]|\*(?!/))*\*/'
+    STRING_LITERAL = 'regexp:"([^"\\]|\\.)*"'
+    INTEGER_LITERAL = 'regexp:-?[0-9]+'
+    FLOAT_LITERAL   = 'regexp:-?[0-9]+\.[0-9]*([eE][+-]?[0-9]+)?'
+    ID              = 'regexp:[a-zA-Z_][a-zA-Z0-9_]*'
+  ]
+}
+
+// Root rule: plik OPL to sekwencja deklaracji
+oplFile ::= item_*
+private item_ ::= declaration | SEMICOLON
+
+// Deklaracja może być różnych typów
+declaration ::= varDeclaration
+              | dvarDeclaration
+              | objectiveDeclaration
+              | constraintSection
+              | executeBlock
+              | tupleDeclaration
+              | includeDeclaration
+
+// Deklaracja zmiennej danych: int n = 10;
+varDeclaration ::= (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (EQ expression)? SEMICOLON
+
+// Deklaracja zmiennej decyzyjnej: dvar float x in 0..10;
+// Zmienne decyzyjne to to, co CPLEX optymalizuje
+dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN) ID (IN rangeExpression)? SEMICOLON
+
+// Funkcja celu - to co minimalizujemy/maksymalizujemy
+objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON
+
+// Sekcja ograniczeń
+constraintSection ::= SUBJECT_TO LBRACE constraintItem* RBRACE
+
+constraintItem ::= (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) expression SEMICOLON
+                 | FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
+
+// Blok execute - kod skryptowy IBM Script (JavaScript-like)
+executeBlock ::= EXECUTE (ID)? LBRACE .* RBRACE
+
+// Deklaracja krotki (struct-like type)
+tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON
+tupleField ::= (INT | FLOAT | STRING | ID) ID SEMICOLON
+
+// Include innego pliku
+includeDeclaration ::= INCLUDE STRING_LITERAL SEMICOLON
+
+// Wyrażenia (uproszczone)
+expression ::= term ((PLUS | MINUS) term)*
+term ::= factor ((STAR | SLASH) factor)*
+factor ::= INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | ID | LPAREN expression RPAREN
+         | SUM LPAREN ID IN expression RPAREN expression
+         | FORALL LPAREN ID IN expression RPAREN expression
+
+rangeExpression ::= expression DOTDOT expression

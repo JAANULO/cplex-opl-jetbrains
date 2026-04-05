@@ -1,15 +1,76 @@
-<!-- Plugin Configuration File. Read more: https://plugins.jetbrains.com/docs/intellij/plugin-configuration-file.html -->
 <idea-plugin>
-    <id>com.github.jaanulo.cplexplugin</id>
-    <name>CPLEX-Plugin</name>
-    <vendor>jaanulo</vendor>
+    <id>com.github.cplexopl.opl-support</id>
+    <name>CPLEX OPL Support</name>
+    <version>0.1.0</version>
+    <vendor email="your@email.com" url="https://github.com/YOUR_USERNAME/cplex-opl-support">Your Name</vendor>
+
+    <description><![CDATA[
+        Provides native support for IBM ILOG CPLEX Optimization Programming Language (OPL)
+        in JetBrains IDEs (IntelliJ IDEA, PyCharm, etc.).<br>
+        <ul>
+            <li>Syntax highlighting for .mod and .dat files</li>
+            <li>Run configuration for oplrun solver</li>
+            <li>Code completion and live templates</li>
+            <li>Real-time error annotation</li>
+        </ul>
+    ]]></description>
 
     <depends>com.intellij.modules.platform</depends>
 
-    <resource-bundle>messages.MyBundle</resource-bundle>
-
     <extensions defaultExtensionNs="com.intellij">
-        <toolWindow factoryClass="com.github.jaanulo.cplexplugin.toolWindow.MyToolWindowFactory" id="MyToolWindow"/>
-        <postStartupActivity implementation="com.github.jaanulo.cplexplugin.startup.MyProjectActivity" />
+        <!-- File type -->
+        <fileType
+                name="OPL Model File"
+                implementationClass="com.github.cplexopl.OplFileType"
+                fieldName="INSTANCE"
+                language="OPL"
+                extensions="mod"/>
+        <fileType
+                name="OPL Data File"
+                implementationClass="com.github.cplexopl.OplDatFileType"
+                fieldName="INSTANCE"
+                language="OPLDat"
+                extensions="dat"/>
+
+        <!-- Syntax Highlighting -->
+        <lang.syntaxHighlighterFactory
+                language="OPL"
+                implementationClass="com.github.cplexopl.highlighting.OplSyntaxHighlighterFactory"/>
+
+        <!-- Annotator (real-time error checking) -->
+        <annotator
+                language="OPL"
+                implementationClass="com.github.cplexopl.annotator.OplAnnotator"/>
+
+        <!-- Code Completion -->
+        <completion.contributor
+                language="OPL"
+                implementationClass="com.github.cplexopl.completion.OplCompletionContributor"/>
+
+        <!-- Live Templates -->
+        <defaultLiveTemplatesProvider
+                implementation="com.github.cplexopl.templates.OplLiveTemplatesProvider"/>
+        <liveTemplateContext
+                implementation="com.github.cplexopl.templates.OplTemplateContextType"/>
+
+        <!-- Run Configuration -->
+        <configurationType
+                implementation="com.github.cplexopl.run.OplRunConfigurationType"/>
+        <runConfigurationProducer
+                implementation="com.github.cplexopl.run.OplRunConfigurationProducer"/>
+
+        <lang.parserDefinition
+                language="OPL"
+                implementationClass="com.github.cplexopl.parser.OplParserDefinition"/>
     </extensions>
+
+    <actions>
+        <action id="OPL.RunModel"
+                class="com.github.cplexopl.actions.RunOplModelAction"
+                text="Run OPL Model"
+                description="Run current OPL model with CPLEX solver">
+            <add-to-group group-id="RunMenu" anchor="first"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift F10"/>
+        </action>
+    </actions>
 </idea-plugin>

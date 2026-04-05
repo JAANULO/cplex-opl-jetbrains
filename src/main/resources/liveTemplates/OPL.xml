@@ -1,0 +1,117 @@
+<templateSet group="OPL">
+
+    <!-- Szkielet pełnego modelu OPL -->
+    <!-- Użycie: wpisz "model" + Tab -->
+    <template name="model"
+              value="// OPL Model: $NAME$&#10;// Description: $DESCRIPTION$&#10;&#10;// === DATA ===&#10;int n = $N$;&#10;range R = 1..n;&#10;&#10;// === DECISION VARIABLES ===&#10;dvar float+ x[R];&#10;&#10;// === OBJECTIVE ===&#10;minimize&#10;  sum(i in R) x[i];&#10;&#10;// === CONSTRAINTS ===&#10;subject to {&#10;  forall(i in R) {&#10;    ct_$CTNAME$:&#10;      $CONSTRAINT$;&#10;  }&#10;}&#10;$END$"
+              description="Full OPL model skeleton"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="&quot;MyModel&quot;" alwaysStopAt="true"/>
+        <variable name="DESCRIPTION" expression="" defaultValue="&quot;Model description&quot;" alwaysStopAt="true"/>
+        <variable name="N" expression="" defaultValue="10" alwaysStopAt="true"/>
+        <variable name="CTNAME" expression="" defaultValue="&quot;constraint&quot;" alwaysStopAt="true"/>
+        <variable name="CONSTRAINT" expression="" defaultValue="&quot;x[i] &gt;= 0&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Deklaracja zakresu (range) -->
+    <!-- Użycie: wpisz "range" + Tab -->
+    <template name="rng"
+              value="range $NAME$ = $FROM$..$TO$;"
+              description="Range declaration"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="&quot;R&quot;" alwaysStopAt="true"/>
+        <variable name="FROM" expression="" defaultValue="1" alwaysStopAt="true"/>
+        <variable name="TO" expression="" defaultValue="10" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Zmienna decyzyjna -->
+    <!-- Użycie: wpisz "dvar" + Tab -->
+    <template name="dv"
+              value="dvar $TYPE$ $NAME$[$RANGE$];"
+              description="Decision variable declaration"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="TYPE" expression="" defaultValue="&quot;float+&quot;" alwaysStopAt="true"/>
+        <variable name="NAME" expression="" defaultValue="&quot;x&quot;" alwaysStopAt="true"/>
+        <variable name="RANGE" expression="" defaultValue="&quot;R&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Sekcja ograniczeń -->
+    <!-- Użycie: wpisz "st" + Tab -->
+    <template name="st"
+              value="subject to {&#10;  $CTNAME$:&#10;    $CONSTRAINT$;&#10;}&#10;$END$"
+              description="Subject to constraint block"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="CTNAME" expression="" defaultValue="&quot;ct_name&quot;" alwaysStopAt="true"/>
+        <variable name="CONSTRAINT" expression="" defaultValue="&quot;// constraint here&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Pętla forall -->
+    <!-- Użycie: wpisz "forall" + Tab -->
+    <template name="fa"
+              value="forall($IDX$ in $RANGE$) {&#10;  $BODY$&#10;}"
+              description="Forall loop"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="IDX" expression="" defaultValue="&quot;i&quot;" alwaysStopAt="true"/>
+        <variable name="RANGE" expression="" defaultValue="&quot;R&quot;" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="&quot;// body&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Suma (sum) -->
+    <!-- Użycie: wpisz "sum" + Tab -->
+    <template name="sm"
+              value="sum($IDX$ in $RANGE$) $EXPR$"
+              description="Sum expression"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="IDX" expression="" defaultValue="&quot;i&quot;" alwaysStopAt="true"/>
+        <variable name="RANGE" expression="" defaultValue="&quot;R&quot;" alwaysStopAt="true"/>
+        <variable name="EXPR" expression="" defaultValue="&quot;x[i]&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Definicja krotki -->
+    <!-- Użycie: wpisz "tuple" + Tab -->
+    <template name="tup"
+              value="tuple $NAME$ {&#10;  int $FIELD1$;&#10;  float $FIELD2$;&#10;}&#10;{$NAME$} $SETNAME$ = ...;&#10;$END$"
+              description="Tuple type definition"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="&quot;MyTuple&quot;" alwaysStopAt="true"/>
+        <variable name="FIELD1" expression="" defaultValue="&quot;id&quot;" alwaysStopAt="true"/>
+        <variable name="FIELD2" expression="" defaultValue="&quot;value&quot;" alwaysStopAt="true"/>
+        <variable name="SETNAME" expression="" defaultValue="&quot;mySet&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Blok execute (skrypty) -->
+    <!-- Użycie: wpisz "exec" + Tab -->
+    <template name="exec"
+              value="execute $NAME$ {&#10;  writeln(&quot;$MESSAGE$&quot;);&#10;  $BODY$&#10;}&#10;$END$"
+              description="Execute scripting block"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="&quot;PARAMS&quot;" alwaysStopAt="true"/>
+        <variable name="MESSAGE" expression="" defaultValue="&quot;Running model...&quot;" alwaysStopAt="true"/>
+        <variable name="BODY" expression="" defaultValue="" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+</templateSet>
