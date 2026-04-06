@@ -55,7 +55,7 @@ intellijPlatform {
             name = providers.gradleProperty("pluginVendor")
         }
 
-        description.set("Profesjonalna wtyczka do obsługi języka IBM ILOG CPLEX OPL w środowisku IntelliJ IDEA. Zapewnia kolorowanie składni oraz integrację z silnikiem solvera.")
+        description.set("CPLEX OPL language support for IntelliJ IDEA. Profesjonalna wtyczka do obsługi języka IBM ILOG CPLEX OPL. Zapewnia podświetlanie składni, obsługę komentarzy oraz parowanie nawiasów.")
 
         val changelog = project.changelog
         changeNotes = providers.gradleProperty("pluginVersion").map { pluginVersion ->
