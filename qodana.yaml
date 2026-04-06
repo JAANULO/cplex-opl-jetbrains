@@ -1,6 +1,5 @@
-# Konfiguracja lintera Qodana
 version: "1.0"
+linter: jetbrains/qodana-jvm-community
 
-# Wykluczenie folderu src/main/gen, który zawiera kod wygenerowany automatycznie
 exclude:
   - path: gen
