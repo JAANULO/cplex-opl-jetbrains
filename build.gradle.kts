@@ -55,20 +55,7 @@ intellijPlatform {
             name = providers.gradleProperty("pluginVendor")
         }
 
-        description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map { text ->
-            val startTag = ""
-            val endTag = ""
-
-            if (text.contains(startTag) && text.contains(endTag)) {
-                text.substringAfter(startTag)
-                    .substringBefore(endTag)
-                    .trim()
-                    .let(::markdownToHTML)
-            } else {
-                // Zapasowy opis, jeśli tagi w README zostaną uszkodzone
-                "Wtyczka wspierająca język IBM ILOG CPLEX OPL w IntelliJ IDEA."
-            }
-        }
+        description.set("Profesjonalna wtyczka do obsługi języka IBM ILOG CPLEX OPL w środowisku IntelliJ IDEA. Zapewnia kolorowanie składni oraz integrację z silnikiem solvera.")
 
         val changelog = project.changelog
         changeNotes = providers.gradleProperty("pluginVersion").map { pluginVersion ->

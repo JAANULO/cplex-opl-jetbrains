@@ -2,4 +2,5 @@ version: "1.0"
 linter: jetbrains/qodana-jvm-community
 
 exclude:
-  - path: gen
+  - paths:
+      - "gen"
