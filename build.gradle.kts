@@ -10,7 +10,7 @@ plugins {
     alias(libs.plugins.qodana)
     alias(libs.plugins.kover)
     // Aktualizacja tej linii:
-    id("org.jetbrains.grammarkit") version "2022.3.2.2"
+    id("org.jetbrains.grammarkit") version "2023.3.0.3"
 }
 
 group = providers.gradleProperty("pluginGroup").get()
