@@ -51,7 +51,9 @@ intellijPlatform {
     pluginConfiguration {
         name = providers.gradleProperty("pluginName")
         version = providers.gradleProperty("pluginVersion")
-        vendor = providers.gradleProperty("pluginVendor") // Dodaj tę linię
+        vendor {
+            name = providers.gradleProperty("pluginVendor")
+        }
 
         description = providers.fileContents(layout.projectDirectory.file("README.md")).asText.map { text ->
             val startTag = ""
