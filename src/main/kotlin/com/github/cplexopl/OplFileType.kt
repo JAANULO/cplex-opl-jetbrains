@@ -11,12 +11,12 @@ object OplFileType : LanguageFileType(OplLanguage) {
     override fun getDescription(): String = "IBM ILOG CPLEX OPL model file"
     override fun getDefaultExtension(): String = "mod"
     // Używamy wbudowanej ikony IDE - możesz później podmienić na własną
-    override fun getIcon(): Icon = AllIcons.FileTypes.Text
+    override fun getIcon(): Icon = OplIcons.FILE
 }
 
 object OplDatFileType : LanguageFileType(OplDatLanguage) {
     override fun getName(): String = "OPL Data File"
     override fun getDescription(): String = "IBM ILOG CPLEX OPL data file"
     override fun getDefaultExtension(): String = "dat"
-    override fun getIcon(): Icon = AllIcons.FileTypes.Text
+    override fun getIcon(): Icon = OplIcons.FILE
 }

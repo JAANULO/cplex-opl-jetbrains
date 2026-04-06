@@ -18,6 +18,8 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+    <lang.commenter language="OPL" implementationClass="com.github.cplexopl.features.OplCommenter"/>
+    <lang.braceMatcher language="OPL" implementationClass="com.github.cplexopl.features.OplPairedBraceMatcher"/>
         <!-- File type -->
         <fileType
                 name="OPL Model File"
