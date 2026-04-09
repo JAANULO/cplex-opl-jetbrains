@@ -140,3 +140,7 @@ tasks {
         dependsOn(patchChangelog)
     }
 }
+// Wyłączenie zadań instrumentacji (zarówno dla kodu jak i testów) z powodu błędu z MS JDK
+tasks.matching { it.name == "instrumentCode" || it.name == "instrumentTestCode" }.configureEach {
+    enabled = false
+}

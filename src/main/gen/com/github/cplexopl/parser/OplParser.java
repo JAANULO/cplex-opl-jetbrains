@@ -36,7 +36,7 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) expression SEMICOLON
+  // (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) expression SEMICOLON
   //                  | FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
   public static boolean constraintItem(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintItem")) return false;
@@ -143,12 +143,12 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // varDeclaration
-  //               | dvarDeclaration
-  //               | objectiveDeclaration
-  //               | constraintSection
-  //               | executeBlock
-  //               | tupleDeclaration
+  // varDeclaration
+  //               | dvarDeclaration
+  //               | objectiveDeclaration
+  //               | constraintSection
+  //               | executeBlock
+  //               | tupleDeclaration
   //               | includeDeclaration
   public static boolean declaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "declaration")) return false;
@@ -274,8 +274,8 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | ID | LPAREN expression RPAREN
-  //          | SUM LPAREN ID IN expression RPAREN expression
+  // INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | ID | LPAREN expression RPAREN
+  //          | SUM LPAREN ID IN expression RPAREN expression
   //          | FORALL LPAREN ID IN expression RPAREN expression
   public static boolean factor(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factor")) return false;

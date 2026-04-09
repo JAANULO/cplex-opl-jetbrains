@@ -1,24 +1,32 @@
 <idea-plugin>
     <id>com.github.cplexopl.opl-support</id>
-    <name>CPLEX OPL Support</name>
-    <version>0.1.0</version>
-    <vendor email="your@email.com" url="https://github.com/YOUR_USERNAME/cplex-opl-support">Your Name</vendor>
+    <name>CPLEX OPL</name>
+    <vendor email="aton.andrzejewski@gmail.com" url="https://github.com/JAANULO/CPLEX-Plugin">Janusz Andrzejewski</vendor>
 
     <description><![CDATA[
-        Provides native support for IBM ILOG CPLEX Optimization Programming Language (OPL)
-        in JetBrains IDEs (IntelliJ IDEA, PyCharm, etc.).<br>
+        <h3>CPLEX OPL Support for IntelliJ IDEA</h3>
+        <p>Bring the power of IBM ILOG CPLEX Optimization Studio directly into your favorite IDE. This plugin provides essential language support for Optimization Programming Language (OPL).</p>
+
+        <h4>Key Features:</h4>
         <ul>
-            <li>Syntax highlighting for .mod and .dat files</li>
-            <li>Run configuration for oplrun solver</li>
-            <li>Code completion and live templates</li>
-            <li>Real-time error annotation</li>
+            <li><b>Syntax Highlighting:</b> Clear syntax coloring for keywords and constraints.</li>
+            <li><b>Native Run Configurations:</b> Execute .mod models directly from the editor.</li>
+            <li><b>Zero-Config:</b> Automatic detection of the local <i>oplrun</i> engine in the system.</li>
         </ul>
     ]]></description>
+
+    <change-notes><![CDATA[
+        <ul>
+            <li>Initial release: Support for syntax highlighting and model execution.</li>
+            <li>Added automatic CPLEX path detection mechanism.</li>
+        </ul>
+    ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-    <lang.commenter language="OPL" implementationClass="com.github.cplexopl.features.OplCommenter"/>
+        <applicationService serviceImplementation="com.github.cplexopl.settings.OplSettingsState"/>
+        <lang.commenter language="OPL" implementationClass="com.github.cplexopl.features.OplCommenter"/>
     <lang.braceMatcher language="OPL" implementationClass="com.github.cplexopl.features.OplPairedBraceMatcher"/>
         <!-- File type -->
         <fileType
@@ -50,10 +58,8 @@
                 implementationClass="com.github.cplexopl.completion.OplCompletionContributor"/>
 
         <!-- Live Templates -->
-        <defaultLiveTemplatesProvider
-                implementation="com.github.cplexopl.templates.OplLiveTemplatesProvider"/>
-        <liveTemplateContext
-                implementation="com.github.cplexopl.templates.OplTemplateContextType"/>
+        <defaultLiveTemplates file="/liveTemplates/OPL.xml"/>
+        <liveTemplateContext contextId="OPL" implementation="com.github.cplexopl.templates.OplTemplateContextType"/>
 
         <!-- Run Configuration -->
         <configurationType
