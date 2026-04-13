@@ -3,7 +3,11 @@
 # CPLEX-Plugin Changelog
 
 ## [Unreleased]
+
+## [1.2.0] - 2026-04-13
+
 ### Added
+
 - Initial support for IBM ILOG CPLEX OPL.
 - Syntax highlighting for .mod and .dat files.
 - Run configuration for oplrun solver with .dat file support.
@@ -18,11 +22,16 @@
 - **Custom Icons:** Unique SVG icons to visually distinguish `.mod` and `.dat` files in the project tree.
 
 ### Fixed
+
 - Qodana linting issues.
 - Plugin description in README.md.
 - **Annotator:** Removed an incorrect Java-style naming validation rule that flagged uppercase OPL variable names (like `NbItems`) as errors.
 - Removed duplicated `configurationType` registration from `plugin.xml`.
 
 ### Changed
+
 - Updated `README.md` feature lists (EN/PL) to match current implementation.
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
+
+[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.2.0...HEAD
+[1.2.0]: https://github.com/JAANULO/CPLEX-Plugin/commits/1.2.0
