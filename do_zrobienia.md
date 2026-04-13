@@ -1,59 +1,152 @@
-# ROADMAP.md: Strategia rozwoju i automatyzacji wtyczki OPL
+# ROADMAP.md — Strategia rozwoju wtyczki CPLEX OPL Support
 
-Dokument ten definiuje priorytety rozwojowe wtyczki.
+Celem projektu jest stworzenie lekkiego, ale funkcjonalnego środowiska do pracy z językiem OPL w IDE JetBrains, eliminując konieczność używania CPLEX Studio.
+
+## Legenda statusów
+- `PARTIAL` — funkcja wdrożona częściowo lub z ograniczeniami
+- `TODO` — funkcja planowana
+
+---
+
+## ✅ Już zaimplementowane
+
+- `DONE` Rejestracja języka OPL (pliki `.mod` i `.dat`)
+- `DONE` Syntax Highlighting (kolorowanie składni)
+- `DONE` Gramatyka BNF + Lexer JFlex
+- `DONE` Podstawowy Annotator (walidacja w locie)
+- `DONE` Code Completion (autouzupełnianie słów kluczowych)
+- `DONE` Live Templates (skróty: `model`, `rng`, `dv`, `st`, `fa`, `sm`, `tup`, `exec`)
+- `DONE` Run Configuration (integracja z `oplrun`)
+- `DONE` Ikony SVG dla plików `.mod` i `.dat`
+- `DONE` Obsługa skrótu `Ctrl+/` (komentowanie)
+- `DONE` Podświetlanie par nawiasów `{}`, `()`, `[]`
+- `DONE` **File Type Support:** automatyczne łączenie par plików `.mod` i `.dat` przy uruchamianiu
+- `DONE` **Mapowanie błędów solvera:** klikalne linki w konsoli przenoszące do linii z błędem w edytorze
+- `DONE` **Structure View:** widok struktury modelu w panelu IDE
+- `DONE` **Formatter:** podstawowe formatowanie kodu OPL
+
+---
+
+## Poziom 0: Execution Engine (Krytyczne — MVP)
+
+Warstwa odpowiedzialna za uruchamianie modeli i integrację z solverem CPLEX.
+Bez tego plugin nie spełnia swojego głównego celu.
+
+### 0.1 Run Configuration
+- `DONE` Uruchamianie modeli OPL z poziomu IDE: `oplrun model.mod data.dat`
+- `DONE` Obsługa wyboru plików `.mod` i `.dat`
+- `DONE` Integracja z konsolą IDE (stdout / stderr)
+
+### 0.2 Integracja środowiska CPLEX
+- `PARTIAL` Automatyczne wykrywanie instalacji (heurystyka ścieżek systemowych)
+- `TODO` Pełna obsługa zmiennej środowiskowej `CPLEX_STUDIO_DIR`
+- `DONE` Ręczna konfiguracja ścieżki do `oplrun` (w Run Configuration)
+- `TODO` Panel ustawień: `Settings -> Tools -> CPLEX`
+
+### 0.3 Obsługa wyników
+- `DONE` Wyświetlanie wyników solvera w konsoli
+- `DONE` Obsługa błędów wykonania
 
 ---
 
 ## Poziom 1: Fundamenty i Estetyka (Bardzo łatwe)
 
-### 1. Ikony i Branding (Zadanie 4.2)
-- **Opis:** Implementacja ikon SVG dla plików `.mod` i `.dat`.
-- **Inżynierski zysk:** Poprawa orientacji przestrzennej użytkownika w drzewie projektu.
+### 1.1 Ikony i Branding
+- `TODO` Ikona pluginu gotowa na JetBrains Marketplace
+- `DONE` Weryfikacja i użycie ikon SVG dla plików `.mod` i `.dat`
 
 ---
 
 ## Poziom 2: Automatyzacja i Walidacja (Średnio łatwe)
 
-### 2. Poprawa Annotatora (Zadanie 3.2)
-- **Opis:** Usunięcie błędu wielkich liter i walidacja duplikatów nazw.
-- **Inżynierski zysk:** Zgodność ze standardem OPL i czystość logiczna modelu.
+### 2.1 Poprawa Annotatora
+- `DONE` Usunięcie błędnej reguły wielkich liter
+- `TODO` Walidacja duplikatów nazw zmiennych
+- `TODO` Wykrywanie brakujących średników
+- `DONE` Wykrywanie niezdefiniowanych zmiennych
+- **Inżynierski zysk:** Zgodność ze standardem OPL i czystość logiczna modelu
 
 ---
 
 ## Poziom 3: Inteligencja Edytora (Wymagające)
 
-### 3. Inteligentne Autouzupełnianie (Zadanie 1.1)
-- **Opis:** Kontekstowe podpowiedzi słów kluczowych i zmiennych.
-- **Mechanizm:** Wykorzystanie klasy `CompletionContributor`.
+### 3.1 Structure View — Widok struktury
+- `DONE` Wizualna hierarchia modelu w bocznym panelu IDE
+- `DONE` Pokazuje zmienne decyzyjne, ograniczenia, funkcję celu
+- `DONE` **Implementacja:** mapowanie drzewa PSI na komponenty UI
+- **Inżynierski zysk:** Szybka nawigacja po dużych modelach
 
-### 4. Przygotowanie paczki i Metadata (Zadanie 4.1)
-- **Opis:** Optymalizacja projektu pod JetBrains Marketplace (ikona wtyczki, opis, changelog).
-- **Zasada:** Poprawna konfiguracja Gradle i unikalne FQCN.
+### 3.2 Rozszerzony Annotator
+- `TODO` Walidacja typów (np. `dvar boolean` nie może mieć zakresu `0..100`)
+- `TODO` Scope-aware analysis (zasięg zmiennych wewnątrz `forall`)
 
 ---
 
 ## Poziom 4: Zaawansowana Analiza Systemowa (Trudne)
 
-### 5. Widok struktury / Structure View (Zadanie 2.2)
-- **Opis:** Wizualna hierarchia modelu w bocznym panelu IDE.
-- **Implementacja:** Mapowanie drzewa PSI na komponenty UI.
+### 4.1 Inspekcja nieliniowości: `min`, `max`, `abs`
+- `TODO` Analiza wpływu na złożoność obliczeniową (MIP)
+- `TODO` **Logika:** weryfikacja typu parametrów (`dvar` vs `float/int`)
+- `TODO` Ostrzeganie o niejawnej linearyzacji przez solver
 
-### 6. Inspekcja nieliniowości: min, max, abs (Zadanie 3.1)
-- **Opis:** Analiza wpływu na złożoność obliczeniową (MIP).
-- **Logika:** Weryfikacja typu parametrów (dvar vs float/int) i ostrzeganie o niejawnej linearyzacji.
+### 4.2 Find Usages
+- `TODO` Wyszukiwanie wszystkich użyć zmiennej w projekcie
+- `TODO` Integracja z oknem "Find" IntelliJ
 
 ---
 
 ## Poziom 5: Architektura Referencji (Bardzo trudne)
 
-### 7. Skakanie do definicji / Go to Declaration (Zadanie 2.1)
-- **Opis:** Globalna nawigacja po identyfikatorach w projekcie.
-- **Mechanizm:** `PsiReference`.
-- **Wyzwanie:** Obsługa zasięgów (Scopes) i indeksowanie plików projektu.
+### 5.1 Go to Declaration — Skakanie do definicji
+- `TODO` Globalna nawigacja po identyfikatorach (`Ctrl+Click`)
+- `TODO` **Mechanizm:** `PsiReference`
+- `TODO` **Wyzwanie:** obsługa zasięgów (Scopes) i indeksowanie plików projektu
+
+### 5.2 Rename Refactoring
+- `TODO` Bezpieczna zmiana nazw identyfikatorów we wszystkich plikach projektu
+
+---
+
+## Poziom 6: Produkcja i Dystrybucja
+
+### 6.1 Publikacja na JetBrains Marketplace
+- `PARTIAL` Opis pluginu po angielsku
+- `TODO` Screenshoty pokazujące działanie
+- `PARTIAL` Uzupełniony CHANGELOG.md
+- `DONE` README z instrukcją instalacji i wymaganiami
+
+### 6.2 Stabilność i kompatybilność
+- `PARTIAL` Testy jednostkowe (IntelliJ Platform Test Framework)
+- `PARTIAL` Obsługa błędów runtime
+- `PARTIAL` Kompatybilność z PyCharm, IntelliJ IDEA, CLion
+
+---
+
+## ⭐ Priorytety — największa wartość dla użytkownika
+
+1. **Run Configuration** (`oplrun`) — bez tego wtyczka jest tylko edytorem tekstu
+2. **Integracja z CPLEX** (ścieżki, auto-wykrywanie)
+3. **Mapowanie błędów solvera** — klikalne błędy w edytorze
+4. **Autocomplete kontekstowy** — przyspiesza pisanie modeli
+5. **Structure View** — nawigacja po dużych modelach
+
+---
+
+## Zasady projektowe
+
+- **User-first:** minimalizowanie potrzeby używania CPLEX Studio
+- **Zero-Config:** automatyczne wykrywanie środowiska gdy możliwe
+- **Pragmatyzm:** lepsze proste działające rozwiązanie niż idealne nieukończone
+- **Iteracyjność:** rozwój od MVP do zaawansowanych funkcji
 
 ---
 
 ## Słowniczek techniczny
-- **Boilerplate code:** Fragmenty kodu, które muszą być powielane w wielu miejscach przy niewielkich zmianach.
-- **Heurystyka ścieżek:** Algorytm szukający danych w najbardziej prawdopodobnych lokalizacjach zamiast skanowania całego systemu.
-- **Zero-Config:** Cel projektowy, w którym oprogramowanie nie wymaga konfiguracji początkowej od użytkownika.
+
+- **Boilerplate code:** Fragmenty kodu powielane w wielu miejscach przy niewielkich zmianach
+- **Heurystyka ścieżek:** Algorytm szukający danych w najbardziej prawdopodobnych lokalizacjach zamiast skanowania całego systemu
+- **Zero-Config:** Cel projektowy, w którym oprogramowanie nie wymaga konfiguracji początkowej
+- **MIP:** Mixed Integer Programming — klasa problemów optymalizacyjnych z nieliniowością
+- **PSI:** Program Structure Interface — reprezentacja kodu jako drzewo w pamięci IntelliJ
+- **FQCN:** Fully Qualified Class Name — pełna ścieżka klasy z pakietem (np. `com.github.cplexopl.OplLanguage`)
+- **Scope:** Zasięg zmiennej — obszar kodu w którym zmienna jest widoczna i dostępna

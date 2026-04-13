@@ -12,6 +12,9 @@ import javax.swing.JPanel
 import java.awt.BorderLayout
 import com.github.cplexopl.utils.CplexPathFinder
 import com.github.cplexopl.settings.OplSettingsState
+import java.io.File
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 
 // SettingsEditor = panel UI wyświetlany w oknie "Edit Run Configuration"
 // FormBuilder = pomocnik IntelliJ do budowania formularzy (etykieta + pole)
@@ -72,6 +75,25 @@ class OplRunConfigurationEditor(private val project: Project) : SettingsEditor<O
         .addLabeledComponent("Oplrun path:", pathPanel)
         .addComponentFillVertically(JPanel(), 0)
         .panel
+
+    init {
+        // Czysty nasłuchiwacz Java Swing, odporny na zmiany w API JetBrains
+        modelFileField.textField.document.addDocumentListener(object : DocumentListener {
+            private fun autoFillDataFile() {
+                val modPath = modelFileField.text
+                if (modPath.endsWith(".mod") && dataFileField.text.isEmpty()) {
+                    val potentialDatPath = modPath.removeSuffix(".mod") + ".dat"
+                    if (File(potentialDatPath).exists()) {
+                        dataFileField.text = potentialDatPath
+                    }
+                }
+            }
+
+            override fun insertUpdate(e: DocumentEvent?) = autoFillDataFile()
+            override fun removeUpdate(e: DocumentEvent?) = autoFillDataFile()
+            override fun changedUpdate(e: DocumentEvent?) = autoFillDataFile()
+        })
+    }
 
     override fun resetEditorFrom(config: OplRunConfiguration) {
         // Wczytaj wartości z konfiguracji do pól UI

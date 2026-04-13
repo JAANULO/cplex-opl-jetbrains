@@ -43,8 +43,9 @@
     SEMICOLON   = ';'
     COLON       = ':'
     COMMA       = ','
-    DOT         = '.'
+    ELLIPSIS    = '...'
     DOTDOT      = '..'
+    DOT         = '.'
     EQ          = '='
     NEQ         = '!='
     LT          = '<'
@@ -86,12 +87,11 @@ declaration ::= varDeclaration
               | tupleDeclaration
               | includeDeclaration
 
-// Deklaracja zmiennej danych: int n = 10;
-varDeclaration ::= (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (EQ expression)? SEMICOLON
+// Deklaracja zmiennej danych (obsługuje tablice, wielokropki i zakresy)
+varDeclaration ::= (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (LBRACKET expression RBRACKET)* (EQ (ELLIPSIS | expression))? SEMICOLON
 
-// Deklaracja zmiennej decyzyjnej: dvar float x in 0..10;
-// Zmienne decyzyjne to to, co CPLEX optymalizuje
-dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN) ID (IN rangeExpression)? SEMICOLON
+// Deklaracja zmiennej decyzyjnej (obsługuje tablice)
+dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN) ID (LBRACKET expression RBRACKET)* (IN rangeExpression)? SEMICOLON
 
 // Funkcja celu - to co minimalizujemy/maksymalizujemy
 objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON
@@ -103,7 +103,7 @@ constraintItem ::= (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) express
                  | FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
 
 // Blok execute - kod skryptowy IBM Script (JavaScript-like)
-executeBlock ::= EXECUTE (ID)? LBRACE .* RBRACE
+executeBlock ::= EXECUTE ID? LBRACE RBRACE
 
 // Deklaracja krotki (struct-like type)
 tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON
@@ -113,10 +113,17 @@ tupleField ::= (INT | FLOAT | STRING | ID) ID SEMICOLON
 includeDeclaration ::= INCLUDE STRING_LITERAL SEMICOLON
 
 // Wyrażenia (uproszczone)
-expression ::= term ((PLUS | MINUS) term)*
-term ::= factor ((STAR | SLASH) factor)*
-factor ::= INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | ID | LPAREN expression RPAREN
-         | SUM LPAREN ID IN expression RPAREN expression
-         | FORALL LPAREN ID IN expression RPAREN expression
+// Zakresy (Ranges) - pozwala parserowi zrozumieć zapis np. 1..NbItems
+rangeExpression ::= additiveExpression DOTDOT additiveExpression
 
-rangeExpression ::= expression DOTDOT expression
+expression ::= rangeExpression | additiveExpression
+private additiveExpression ::= term ((PLUS | MINUS) term)*
+term ::= factor ((STAR | SLASH) factor)*
+
+// Rozszerzony factor: obsługuje pętle sumujące, tablice, liczby i zmienne
+factor ::= ID LPAREN ID IN expression RPAREN expression
+         | ID (LBRACKET expression RBRACKET)* | INTEGER_LITERAL
+         | FLOAT_LITERAL
+         | STRING_LITERAL
+         | LPAREN expression RPAREN
+         | SUM LPAREN ID IN expression RPAREN expression

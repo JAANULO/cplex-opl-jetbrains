@@ -29,8 +29,8 @@ public class OplRangeExpressionImpl extends ASTWrapperPsiElement implements OplR
 
   @Override
   @NotNull
-  public List<OplExpression> getExpressionList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, OplExpression.class);
+  public List<OplTerm> getTermList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, OplTerm.class);
   }
 
 }

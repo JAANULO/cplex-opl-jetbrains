@@ -28,21 +28,15 @@ public class OplFactorImpl extends ASTWrapperPsiElement implements OplFactor {
   }
 
   @Override
-  @Nullable
-  public OplExpression getExpression() {
-    return findChildByClass(OplExpression.class);
+  @NotNull
+  public List<OplExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, OplExpression.class);
   }
 
   @Override
   @Nullable
   public PsiElement getFloatLiteral() {
     return findChildByType(FLOAT_LITERAL);
-  }
-
-  @Override
-  @Nullable
-  public PsiElement getId() {
-    return findChildByType(ID);
   }
 
   @Override

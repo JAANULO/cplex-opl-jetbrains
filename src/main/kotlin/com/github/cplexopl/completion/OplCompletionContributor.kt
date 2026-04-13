@@ -98,5 +98,33 @@ class OplKeywordCompletionProvider : CompletionProvider<CompletionParameters>() 
                     .withTailText("()", true)  // Dodaj () jako podpowiedź
             )
         }
+
+        // --- ZADANIE 2.2 PRO: Dynamiczne skanowanie drzewa PSI ---
+        val file = parameters.originalFile
+        val foundVariables = mutableSetOf<String>()
+
+        // PsiRecursiveElementVisitor: Wzorzec projektowy Visitor. Rekurencyjnie przechodzi po każdym węźle drzewa składniowego.
+        file.accept(object : com.intellij.psi.PsiRecursiveElementVisitor() {
+            override fun visitElement(element: com.intellij.psi.PsiElement) {
+                super.visitElement(element)
+                // Sprawdzamy, czy dany węzeł to identyfikator (ID), odwołując się bezpośrednio do wygenerowanego typu
+                if (element.node?.elementType == com.github.cplexopl.psi.OplTypes.ID) {
+                    val text = element.text
+                    // Dummy Identifier: "IntellijIdeaRulezzz" to techniczny ciąg wstawiany przez IDE w miejscu kursora podczas wpisywania. Musimy go zignorować.
+                    if (text.isNotBlank() && !text.contains("IntellijIdeaRulezzz")) {
+                        foundVariables.add(text)
+                    }
+                }
+            }
+        })
+
+        // Dodajemy wszystkie zebrane identyfikatory do wyników
+        foundVariables.forEach { variable ->
+            result.addElement(
+                LookupElementBuilder.create(variable)
+                    .withIcon(com.intellij.icons.AllIcons.Nodes.Variable)
+                    .withTypeText("Local Variable")
+            )
+        }
     }
 }

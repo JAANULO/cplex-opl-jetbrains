@@ -28,9 +28,9 @@ public class OplVarDeclarationImpl extends ASTWrapperPsiElement implements OplVa
   }
 
   @Override
-  @Nullable
-  public OplExpression getExpression() {
-    return findChildByClass(OplExpression.class);
+  @NotNull
+  public List<OplExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, OplExpression.class);
   }
 
   @Override

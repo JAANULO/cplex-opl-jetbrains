@@ -23,7 +23,8 @@ WHITE_SPACE     = [ \t\f]
 ID              = [a-zA-Z_][a-zA-Z0-9_]*
 DIGIT           = [0-9]
 INTEGER         = -?{DIGIT}+
-FLOAT           = -?{DIGIT}+\.{DIGIT}*([eE][+-]?{DIGIT}+)?
+// Float wymaga teraz co najmniej jednej cyfry po kropce, aby nie kolidować z "1.."
+FLOAT           = -?{DIGIT}+\.{DIGIT}+([eE][+-]?{DIGIT}+)?
 STRING          = \"([^\"\\\n]|\\.)*\"
 LINE_COMMENT    = "//"[^\r\n]*
 BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
@@ -76,11 +77,12 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 // Identyfikator (zmienna, nazwa)
 {ID}                    { return OplTypes.ID; }
 
-// Operatory dwuznakowe (MUSZĄ być przed jednocznakowym)
+// Operatory wieloznakowe (Kolejność: najpierw najdłuższe!)
+"..."                   { return OplTypes.ELLIPSIS; }
+".."                    { return OplTypes.DOTDOT; }
 "<="                    { return OplTypes.LE; }
 ">="                    { return OplTypes.GE; }
 "!="                    { return OplTypes.NEQ; }
-".."                    { return OplTypes.DOTDOT; }
 
 // Operatory jednozkakowe
 ";"                     { return OplTypes.SEMICOLON; }

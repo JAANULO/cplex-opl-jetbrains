@@ -28,6 +28,12 @@ public class OplDvarDeclarationImpl extends ASTWrapperPsiElement implements OplD
   }
 
   @Override
+  @NotNull
+  public List<OplExpression> getExpressionList() {
+    return PsiTreeUtil.getChildrenOfTypeAsList(this, OplExpression.class);
+  }
+
+  @Override
   @Nullable
   public OplRangeExpression getRangeExpression() {
     return findChildByClass(OplRangeExpression.class);

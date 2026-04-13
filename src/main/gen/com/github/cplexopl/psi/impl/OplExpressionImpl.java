@@ -28,6 +28,12 @@ public class OplExpressionImpl extends ASTWrapperPsiElement implements OplExpres
   }
 
   @Override
+  @Nullable
+  public OplRangeExpression getRangeExpression() {
+    return findChildByClass(OplRangeExpression.class);
+  }
+
+  @Override
   @NotNull
   public List<OplTerm> getTermList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, OplTerm.class);

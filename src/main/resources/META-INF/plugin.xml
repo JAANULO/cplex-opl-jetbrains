@@ -25,6 +25,7 @@
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
+        <consoleFilterProvider implementation="com.github.cplexopl.console.OplConsoleFilterProvider"/>
         <applicationService serviceImplementation="com.github.cplexopl.settings.OplSettingsState"/>
         <lang.commenter language="OPL" implementationClass="com.github.cplexopl.features.OplCommenter"/>
     <lang.braceMatcher language="OPL" implementationClass="com.github.cplexopl.features.OplPairedBraceMatcher"/>
@@ -50,7 +51,7 @@
         <!-- Annotator (real-time error checking) -->
         <annotator
                 language="OPL"
-                implementationClass="com.github.cplexopl.annotator.OplAnnotator"/>
+                implementationClass="com.github.cplexopl.highlighting.OplAnnotator"/>
 
         <!-- Code Completion -->
         <completion.contributor
@@ -70,6 +71,15 @@
         <lang.parserDefinition
                 language="OPL"
                 implementationClass="com.github.cplexopl.parser.OplParserDefinition"/>
+
+        <lang.psiStructureViewFactory
+                language="OPL"
+                implementationClass="com.github.cplexopl.structure.OplStructureViewFactory"/>
+
+        <lang.formatter
+                language="OPL"
+                implementationClass="com.github.cplexopl.formatter.OplFormattingModelBuilder"/>
+
     </extensions>
 
     <actions>

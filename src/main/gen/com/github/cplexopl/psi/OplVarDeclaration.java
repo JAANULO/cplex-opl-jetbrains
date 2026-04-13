@@ -7,8 +7,8 @@ import com.intellij.psi.PsiElement;
 
 public interface OplVarDeclaration extends PsiElement {
 
-  @Nullable
-  OplExpression getExpression();
+  @NotNull
+  List<OplExpression> getExpressionList();
 
   @NotNull
   PsiElement getId();

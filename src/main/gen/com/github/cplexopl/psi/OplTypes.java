@@ -33,6 +33,7 @@ public interface OplTypes {
   IElementType DOT = new OplTokenType(".");
   IElementType DOTDOT = new OplTokenType("..");
   IElementType DVAR = new OplTokenType("dvar");
+  IElementType ELLIPSIS = new OplTokenType("...");
   IElementType ELSE = new OplTokenType("else");
   IElementType EQ = new OplTokenType("=");
   IElementType EXECUTE = new OplTokenType("execute");

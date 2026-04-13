@@ -7,14 +7,11 @@ import com.intellij.psi.PsiElement;
 
 public interface OplFactor extends PsiElement {
 
-  @Nullable
-  OplExpression getExpression();
+  @NotNull
+  List<OplExpression> getExpressionList();
 
   @Nullable
   PsiElement getFloatLiteral();
-
-  @Nullable
-  PsiElement getId();
 
   @Nullable
   PsiElement getIntegerLiteral();

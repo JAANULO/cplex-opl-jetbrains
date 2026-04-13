@@ -8,6 +8,6 @@ import com.intellij.psi.PsiElement;
 public interface OplRangeExpression extends PsiElement {
 
   @NotNull
-  List<OplExpression> getExpressionList();
+  List<OplTerm> getTermList();
 
 }

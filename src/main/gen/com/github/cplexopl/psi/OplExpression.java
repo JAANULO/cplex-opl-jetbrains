@@ -7,6 +7,9 @@ import com.intellij.psi.PsiElement;
 
 public interface OplExpression extends PsiElement {
 
+  @Nullable
+  OplRangeExpression getRangeExpression();
+
   @NotNull
   List<OplTerm> getTermList();
 
