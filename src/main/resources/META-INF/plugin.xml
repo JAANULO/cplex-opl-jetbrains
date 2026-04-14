@@ -82,7 +82,6 @@
 
 
         <applicationService serviceImplementation="com.github.cplexopl.settings.OplSettingsState"/>
-
         <applicationConfigurable
                 parentId="tools"
                 instance="com.github.cplexopl.settings.OplSettingsConfigurable"

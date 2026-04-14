@@ -3,6 +3,7 @@
 Celem projektu jest stworzenie lekkiego, ale funkcjonalnego środowiska do pracy z językiem OPL w IDE JetBrains, eliminując konieczność używania CPLEX Studio.
 
 ## Legenda statusów
+- `DONE` — funkcja zaimplementowana i dostępna
 - `PARTIAL` — funkcja wdrożona częściowo lub z ograniczeniami
 - `TODO` — funkcja planowana
 
@@ -21,7 +22,10 @@ Celem projektu jest stworzenie lekkiego, ale funkcjonalnego środowiska do pracy
 - `DONE` Obsługa skrótu `Ctrl+/` (komentowanie)
 - `DONE` Podświetlanie par nawiasów `{}`, `()`, `[]`
 - `DONE` **File Type Support:** automatyczne łączenie par plików `.mod` i `.dat` przy uruchamianiu
-- `DONE` **Mapowanie błędów solvera:** klikalne linki w konsoli przenoszące do linii z błędem w edytorze
+- `DONE` **Integracja CPLEX (0.2):** Auto-wykrywanie ścieżek, zmienna `CPLEX_STUDIO_DIR`, panel ustawień UI.
+- `DONE` **Contextual Autocomplete:** Semantyczne podpowiadanie zmiennych z drzewa PSI.
+- `DONE` **Zaawansowany Annotator (2.1):** Wykrywanie duplikatów i brakujących średników.
+- `DONE` **Structure View (3.1):** Interaktywne drzewo nawigacji (zmienne, cele, sekcje).
 - `DONE` **Structure View:** widok struktury modelu w panelu IDE
 - `DONE` **Formatter:** podstawowe formatowanie kodu OPL
 
@@ -38,10 +42,10 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `DONE` Integracja z konsolą IDE (stdout / stderr)
 
 ### 0.2 Integracja środowiska CPLEX
-- `PARTIAL` Automatyczne wykrywanie instalacji (heurystyka ścieżek systemowych)
-- `TODO` Pełna obsługa zmiennej środowiskowej `CPLEX_STUDIO_DIR`
+- `DONE` Automatyczne wykrywanie instalacji (heurystyka ścieżek systemowych)
+- `DONE` Obsługa zmiennej środowiskowej `CPLEX_STUDIO_DIR`
 - `DONE` Ręczna konfiguracja ścieżki do `oplrun` (w Run Configuration)
-- `TODO` Panel ustawień: `Settings -> Tools -> CPLEX`
+- `DONE` Panel ustawień: `Settings -> Tools -> CPLEX OPL`
 
 ### 0.3 Obsługa wyników
 - `DONE` Wyświetlanie wyników solvera w konsoli
@@ -61,8 +65,8 @@ Bez tego plugin nie spełnia swojego głównego celu.
 
 ### 2.1 Poprawa Annotatora
 - `DONE` Usunięcie błędnej reguły wielkich liter
-- `TODO` Walidacja duplikatów nazw zmiennych
-- `TODO` Wykrywanie brakujących średników
+- `DONE` Walidacja duplikatów nazw zmiennych
+- `DONE` Wykrywanie brakujących średników
 - `DONE` Wykrywanie niezdefiniowanych zmiennych
 - **Inżynierski zysk:** Zgodność ze standardem OPL i czystość logiczna modelu
 
@@ -77,7 +81,7 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - **Inżynierski zysk:** Szybka nawigacja po dużych modelach
 
 ### 3.2 Rozszerzony Annotator
-- `TODO` Walidacja typów (np. `dvar boolean` nie może mieć zakresu `0..100`)
+- `DONE` Walidacja typów (np. `dvar boolean` nie może mieć zakresu `0..100`)
 - `TODO` Scope-aware analysis (zasięg zmiennych wewnątrz `forall`)
 
 ---

@@ -9,6 +9,19 @@ import com.github.cplexopl.psi.*
 
 class OplAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
+        // --- ZADANIE 3.2: Walidacja typów ---
+        // Sprawdzamy błąd bezpośrednio na głównym węźle deklaracji
+        if (element is OplDvarDeclaration) {
+            val isBoolean = element.node.findChildByType(OplTypes.BOOLEAN) != null
+            val hasRange = element.node.findChildByType(OplTypes.IN) != null
+
+            if (isBoolean && hasRange) {
+                holder.newAnnotation(HighlightSeverity.ERROR, "Type 'boolean' cannot have a range ('in' clause)")
+                    .range(element.textRange)
+                    .create()
+            }
+        }
+
         // Analizujemy tylko węzły typu ID (nazwy zmiennych)
         if (element.node.elementType == OplTypes.ID) {
             val name = element.text
@@ -65,6 +78,7 @@ class OplAnnotator : Annotator {
                         .range(com.intellij.openapi.util.TextRange.create(parent.textRange.endOffset, parent.textRange.endOffset))
                         .create()
                 }
+
             } else {
                 // Jeśli jesteśmy w użyciu (zwykłe wywołanie zmiennej), sprawdzamy czy w ogóle istnieje
                 if (!declaredVariables.containsKey(name)) {

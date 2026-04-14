@@ -165,13 +165,14 @@ public class OplParser implements PsiParser, LightPsiParser {
   public static boolean constraintSection(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintSection")) return false;
     if (!nextTokenIs(builder_, SUBJECT_TO)) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, SUBJECT_TO, LBRACE);
-    result_ = result_ && constraintSection_2(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RBRACE);
-    exit_section_(builder_, marker_, CONSTRAINT_SECTION, result_);
-    return result_;
+    boolean result_, pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, CONSTRAINT_SECTION, null);
+    result_ = consumeTokens(builder_, 1, SUBJECT_TO, LBRACE);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, constraintSection_2(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   // constraintItem*
@@ -475,7 +476,7 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !(INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | SEMICOLON)
+  // !(INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | SEMICOLON | RBRACE)
   static boolean statement_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover")) return false;
     boolean result_;
@@ -485,7 +486,7 @@ public class OplParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | SEMICOLON
+  // INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | SEMICOLON | RBRACE
   private static boolean statement_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover_0")) return false;
     boolean result_;
@@ -502,6 +503,7 @@ public class OplParser implements PsiParser, LightPsiParser {
     if (!result_) result_ = consumeToken(builder_, INCLUDE);
     if (!result_) result_ = consumeToken(builder_, EXECUTE);
     if (!result_) result_ = consumeToken(builder_, SEMICOLON);
+    if (!result_) result_ = consumeToken(builder_, RBRACE);
     return result_;
   }
 

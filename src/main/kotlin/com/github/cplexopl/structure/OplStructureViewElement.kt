@@ -19,10 +19,7 @@ class OplStructureViewElement(private val element: PsiElement) : StructureViewTr
     }
 
     override fun canNavigate(): Boolean = (element as? NavigationItem)?.canNavigate() ?: false
-
     override fun canNavigateToSource(): Boolean = (element as? NavigationItem)?.canNavigateToSource() ?: false
-
-    // Wymagane przez NavigationItem
     override fun getName(): String? = (element as? NavigationItem)?.name
 
     override fun getPresentation(): ItemPresentation {
@@ -56,18 +53,21 @@ class OplStructureViewElement(private val element: PsiElement) : StructureViewTr
 
     override fun getChildren(): Array<TreeElement> {
         val children = mutableListOf<TreeElement>()
+
         if (element is com.intellij.psi.PsiFile) {
-            element.children.forEach {
-                if (it is OplVarDeclaration || it is OplDvarDeclaration ||
-                    it is OplTupleDeclaration || it is OplObjectiveDeclaration || it is OplConstraintSection) {
-                    children.add(OplStructureViewElement(it))
-                }
-            }
+            // Skanujemy drzewo w poszukiwaniu konkretnych typów, omijając węzły-wrappery (np. OplDeclaration)
+            PsiTreeUtil.findChildrenOfType(element, OplVarDeclaration::class.java).forEach { children.add(OplStructureViewElement(it)) }
+            PsiTreeUtil.findChildrenOfType(element, OplDvarDeclaration::class.java).forEach { children.add(OplStructureViewElement(it)) }
+            PsiTreeUtil.findChildrenOfType(element, OplTupleDeclaration::class.java).forEach { children.add(OplStructureViewElement(it)) }
+            PsiTreeUtil.findChildrenOfType(element, OplObjectiveDeclaration::class.java).forEach { children.add(OplStructureViewElement(it)) }
+            PsiTreeUtil.findChildrenOfType(element, OplConstraintSection::class.java).forEach { children.add(OplStructureViewElement(it)) }
         } else if (element is OplConstraintSection) {
-            PsiTreeUtil.getChildrenOfType(element, OplConstraintItem::class.java)?.forEach {
+            // Wewnątrz sekcji 'subject to' szukamy pojedynczych ograniczeń
+            PsiTreeUtil.findChildrenOfType(element, OplConstraintItem::class.java).forEach {
                 children.add(OplStructureViewElement(it))
             }
         }
+
         return children.toTypedArray()
     }
 }
