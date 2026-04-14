@@ -28,9 +28,9 @@ public class OplIncludeDeclarationImpl extends ASTWrapperPsiElement implements O
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getStringLiteral() {
-    return findNotNullChildByType(STRING_LITERAL);
+    return findChildByType(STRING_LITERAL);
   }
 
 }

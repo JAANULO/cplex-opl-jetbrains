@@ -40,9 +40,9 @@ public class OplDvarDeclarationImpl extends ASTWrapperPsiElement implements OplD
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(ID);
+    return findChildByType(ID);
   }
 
 }

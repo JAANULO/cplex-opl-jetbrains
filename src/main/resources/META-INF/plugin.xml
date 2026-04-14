@@ -80,6 +80,17 @@
                 language="OPL"
                 implementationClass="com.github.cplexopl.formatter.OplFormattingModelBuilder"/>
 
+
+        <applicationService serviceImplementation="com.github.cplexopl.settings.OplSettingsState"/>
+
+        <applicationConfigurable
+                parentId="tools"
+                instance="com.github.cplexopl.settings.OplSettingsConfigurable"
+                id="com.github.cplexopl.settings.OplSettingsConfigurable"
+                displayName="CPLEX OPL"/>
+
+        <lang.psiStructureView language="OPL" implementationClass="com.github.cplexopl.structure.OplStructureViewFactory"/>
+
     </extensions>
 
     <actions>

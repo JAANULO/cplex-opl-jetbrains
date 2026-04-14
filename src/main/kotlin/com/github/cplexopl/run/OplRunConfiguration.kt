@@ -8,6 +8,7 @@ import com.intellij.execution.process.ProcessTerminatedListener
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.project.Project
 import java.io.File
+import com.github.cplexopl.settings.OplSettingsState
 
 // RunConfiguration = konfiguracja uruchomieniowa (to co widzisz w dropdown obok przycisku Run)
 // Implementuje logikę co się stanie po kliknięciu zielonego przycisku ▶
@@ -29,7 +30,18 @@ class OplRunConfiguration(
         set(value) { options.dataFile = value }
 
     var cplexPath: String
-        get() = options.cplexPath ?: detectCplexPath()
+        get() {
+            // 1. Priorytet: Ścieżka nadpisana ręcznie w oknie "Edit Configurations..." dla tego konkretnego runa
+            val localPath = options.cplexPath
+            if (!localPath.isNullOrEmpty()) return localPath
+
+            // 2. Główna ścieżka: Z globalnych ustawień IDE (Settings -> Tools -> CPLEX OPL)
+            val globalPath = OplSettingsState.instance.savedCplexPath
+            if (globalPath.isNotEmpty()) return globalPath
+
+            // 3. Fallback: Jeśli użytkownik nic nie ustawił, próbuj zgadnąć
+            return detectCplexPath()
+        }
         set(value) { options.cplexPath = value }
 
     override fun getConfigurationEditor() = OplRunConfigurationEditor(project)
@@ -38,7 +50,7 @@ class OplRunConfiguration(
         if (modelFile.isEmpty()) throw RuntimeConfigurationError("Model file (.mod) not specified")
         if (!File(modelFile).exists()) throw RuntimeConfigurationError("Model file does not exist: $modelFile")
         if (cplexPath.isEmpty()) throw RuntimeConfigurationError(
-            "CPLEX installation not found. Install IBM ILOG CPLEX or set path manually."
+            "CPLEX installation not found. Set path globally in: File -> Settings -> Tools -> CPLEX OPL"
         )
     }
 
@@ -50,8 +62,19 @@ class OplRunConfiguration(
         // Automatyczne wykrywanie ścieżki CPLEX na różnych systemach operacyjnych
         fun detectCplexPath(): String {
             val os = System.getProperty("os.name").lowercase()
-            
-            // Typowe ścieżki instalacji CPLEX na różnych systemach
+
+            // 1. Najpierw sprawdzamy systemową zmienną środowiskową instalatora IBM
+            val envDir = System.getenv("CPLEX_STUDIO_DIR")
+            if (!envDir.isNullOrEmpty()) {
+                val envPath = when {
+                    os.contains("windows") -> "$envDir\\opl\\bin\\x64_win64\\oplrun.exe"
+                    os.contains("mac") -> "$envDir/opl/bin/x86-64_osx/oplrun"
+                    else -> "$envDir/opl/bin/x86-64_linux/oplrun"
+                }
+                if (File(envPath).exists()) return envPath
+            }
+
+            // 2. Jeśli zmiennej brak, sprawdzamy typowe ścieżki instalacji
             val candidates = when {
                 os.contains("windows") -> listOf(
                     "C:\\Program Files\\IBM\\ILOG\\CPLEX_Studio2211\\opl\\bin\\x64_win64\\oplrun.exe",

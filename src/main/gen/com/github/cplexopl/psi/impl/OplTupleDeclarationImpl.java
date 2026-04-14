@@ -34,9 +34,9 @@ public class OplTupleDeclarationImpl extends ASTWrapperPsiElement implements Opl
   }
 
   @Override
-  @NotNull
+  @Nullable
   public PsiElement getId() {
-    return findNotNullChildByType(ID);
+    return findChildByType(ID);
   }
 
 }

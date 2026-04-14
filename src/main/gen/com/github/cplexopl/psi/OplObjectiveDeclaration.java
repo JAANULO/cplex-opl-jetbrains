@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface OplObjectiveDeclaration extends PsiElement {
 
-  @NotNull
+  @Nullable
   OplExpression getExpression();
 
 }

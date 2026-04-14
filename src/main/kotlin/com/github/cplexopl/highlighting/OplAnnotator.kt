@@ -9,45 +9,69 @@ import com.github.cplexopl.psi.*
 
 class OplAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        // Interesują nas tylko węzły reprezentujące identyfikatory (zmienne/funkcje)
+        // Analizujemy tylko węzły typu ID (nazwy zmiennych)
         if (element.node.elementType == OplTypes.ID) {
             val name = element.text
             val parent = element.parent
 
-            // 1. Zignoruj słowa wbudowane CPLEX, które nie są deklarowane przez użytkownika
+            // 1. Zignoruj słowa wbudowane CPLEX
             val builtins = setOf("abs", "ceil", "floor", "round", "sqrt", "log", "exp", "max", "min", "card")
             if (builtins.contains(name)) return
 
-            // 2. Check if we are exactly at the DECLARATION name (left side), not the assignment (right side)
+            // 2. Rozróżniamy miejsce w kodzie: czy jesteśmy w DEKLARACJI czy w UŻYCIU zmiennej?
             val isVarDecl = parent is OplVarDeclaration && parent.node.findChildByType(OplTypes.ID)?.psi == element
             val isDvarDecl = parent is OplDvarDeclaration && parent.node.findChildByType(OplTypes.ID)?.psi == element
             val isTupleDecl = parent is OplTupleDeclaration && parent.node.findChildByType(OplTypes.ID)?.psi == element
             val isConstraintLabel = parent is OplConstraintItem && parent.node.findChildByType(OplTypes.ID)?.psi == element
             val isSumIterator = parent is OplFactor && parent.node.findChildByType(OplTypes.SUM) != null && parent.node.findChildByType(OplTypes.ID)?.psi == element
 
-            if (isVarDecl || isDvarDecl || isTupleDecl || isConstraintLabel || isSumIterator) return
+            val isDeclaration = isVarDecl || isDvarDecl || isTupleDecl || isConstraintLabel || isSumIterator
 
-            // 3. This is a "usage" of a variable. Scan the file for legal declarations.
+            // 3. Budujemy słownik wszystkich zmiennych w pliku wraz z ilością ich wystąpień (jako deklaracji)
             val file = element.containingFile
-            val definedVariables = mutableSetOf<String>()
+            val declaredVariables = mutableMapOf<String, MutableList<PsiElement>>()
 
-            fun extractId(psiElement: PsiElement) {
-                psiElement.node.findChildByType(OplTypes.ID)?.text?.let { definedVariables.add(it) }
+            fun registerDeclaration(psiElement: PsiElement) {
+                val idNode = psiElement.node.findChildByType(OplTypes.ID)?.psi
+                if (idNode != null) {
+                    val idText = idNode.text
+                    declaredVariables.getOrPut(idText) { mutableListOf() }.add(idNode)
+                }
             }
 
-            PsiTreeUtil.findChildrenOfType(file, OplVarDeclaration::class.java).forEach { extractId(it) }
-            PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java).forEach { extractId(it) }
-            PsiTreeUtil.findChildrenOfType(file, OplTupleDeclaration::class.java).forEach { extractId(it) }
-            PsiTreeUtil.findChildrenOfType(file, OplConstraintItem::class.java).forEach { extractId(it) }
+            // Skanowanie całego drzewa (uruchamiane bardzo szybko przez IDE)
+            PsiTreeUtil.findChildrenOfType(file, OplVarDeclaration::class.java).forEach { registerDeclaration(it) }
+            PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java).forEach { registerDeclaration(it) }
+            PsiTreeUtil.findChildrenOfType(file, OplTupleDeclaration::class.java).forEach { registerDeclaration(it) }
+            PsiTreeUtil.findChildrenOfType(file, OplConstraintItem::class.java).forEach { registerDeclaration(it) }
             PsiTreeUtil.findChildrenOfType(file, OplFactor::class.java).forEach {
-                if (it.node.findChildByType(OplTypes.SUM) != null) extractId(it)
+                if (it.node.findChildByType(OplTypes.SUM) != null) registerDeclaration(it)
             }
 
-            // 4. Verdict: If the variable is not defined, mark it as an error
-            if (!definedVariables.contains(name)) {
-                holder.newAnnotation(HighlightSeverity.ERROR, "Undefined variable: '$name'")
-                    .range(element.textRange)
-                    .create()
+            // 4. Logika sprawdzania błędów
+            if (isDeclaration) {
+                // Sprawdzanie duplikatów
+                val declarationsList = declaredVariables[name]
+                if (declarationsList != null && declarationsList.size > 1 && declarationsList.indexOf(element) > 0) {
+                    holder.newAnnotation(HighlightSeverity.ERROR, "Variable '$name' is already defined")
+                        .range(element.textRange)
+                        .create()
+                }
+
+                // Sprawdzanie brakującego średnika na końcu deklaracji
+                val lastChild = parent.node.lastChildNode
+                if (lastChild?.elementType != OplTypes.SEMICOLON) {
+                    holder.newAnnotation(HighlightSeverity.ERROR, "Missing semicolon ';'")
+                        .range(com.intellij.openapi.util.TextRange.create(parent.textRange.endOffset, parent.textRange.endOffset))
+                        .create()
+                }
+            } else {
+                // Jeśli jesteśmy w użyciu (zwykłe wywołanie zmiennej), sprawdzamy czy w ogóle istnieje
+                if (!declaredVariables.containsKey(name)) {
+                    holder.newAnnotation(HighlightSeverity.ERROR, "Undefined variable: '$name'")
+                        .range(element.textRange)
+                        .create()
+                }
             }
         }
     }

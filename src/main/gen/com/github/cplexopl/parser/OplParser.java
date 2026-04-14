@@ -79,7 +79,7 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) expression SEMICOLON
+  // (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) expression SEMICOLON
   //                  | FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
   public static boolean constraintItem(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintItem")) return false;
@@ -186,12 +186,12 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // varDeclaration
-  //               | dvarDeclaration
-  //               | objectiveDeclaration
-  //               | constraintSection
-  //               | executeBlock
-  //               | tupleDeclaration
+  // varDeclaration
+  //               | dvarDeclaration
+  //               | objectiveDeclaration
+  //               | constraintSection
+  //               | executeBlock
+  //               | tupleDeclaration
   //               | includeDeclaration
   public static boolean declaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "declaration")) return false;
@@ -212,17 +212,17 @@ public class OplParser implements PsiParser, LightPsiParser {
   // DVAR (INT | FLOAT | BOOLEAN) ID (LBRACKET expression RBRACKET)* (IN rangeExpression)? SEMICOLON
   public static boolean dvarDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "dvarDeclaration")) return false;
-    if (!nextTokenIs(builder_, DVAR)) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
+    boolean result_, pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, DVAR_DECLARATION, "<dvar declaration>");
     result_ = consumeToken(builder_, DVAR);
-    result_ = result_ && dvarDeclaration_1(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, ID);
-    result_ = result_ && dvarDeclaration_3(builder_, level_ + 1);
-    result_ = result_ && dvarDeclaration_4(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, SEMICOLON);
-    exit_section_(builder_, marker_, DVAR_DECLARATION, result_);
-    return result_;
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, dvarDeclaration_1(builder_, level_ + 1));
+    result_ = pinned_ && report_error_(builder_, consumeToken(builder_, ID)) && result_;
+    result_ = pinned_ && report_error_(builder_, dvarDeclaration_3(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && report_error_(builder_, dvarDeclaration_4(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, OplParser::statement_recover);
+    return result_ || pinned_;
   }
 
   // INT | FLOAT | BOOLEAN
@@ -310,11 +310,11 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // ID LPAREN ID IN expression RPAREN expression
-  //          | ID (LBRACKET expression RBRACKET)* | INTEGER_LITERAL
-  //          | FLOAT_LITERAL
-  //          | STRING_LITERAL
-  //          | LPAREN expression RPAREN
+  // ID LPAREN ID IN expression RPAREN expression
+  //          | ID (LBRACKET expression RBRACKET)* | INTEGER_LITERAL
+  //          | FLOAT_LITERAL
+  //          | STRING_LITERAL
+  //          | LPAREN expression RPAREN
   //          | SUM LPAREN ID IN expression RPAREN expression
   public static boolean factor(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factor")) return false;
@@ -408,11 +408,12 @@ public class OplParser implements PsiParser, LightPsiParser {
   public static boolean includeDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "includeDeclaration")) return false;
     if (!nextTokenIs(builder_, INCLUDE)) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, INCLUDE, STRING_LITERAL, SEMICOLON);
-    exit_section_(builder_, marker_, INCLUDE_DECLARATION, result_);
-    return result_;
+    boolean result_, pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, INCLUDE_DECLARATION, null);
+    result_ = consumeTokens(builder_, 1, INCLUDE, STRING_LITERAL, SEMICOLON);
+    pinned_ = result_; // pin = 1
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   /* ********************************************************** */
@@ -429,14 +430,14 @@ public class OplParser implements PsiParser, LightPsiParser {
   // (MINIMIZE | MAXIMIZE) expression SEMICOLON
   public static boolean objectiveDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "objectiveDeclaration")) return false;
-    if (!nextTokenIs(builder_, "<objective declaration>", MAXIMIZE, MINIMIZE)) return false;
-    boolean result_;
+    boolean result_, pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, OBJECTIVE_DECLARATION, "<objective declaration>");
     result_ = objectiveDeclaration_0(builder_, level_ + 1);
-    result_ = result_ && expression(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, SEMICOLON);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, expression(builder_, level_ + 1));
+    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, OplParser::statement_recover);
+    return result_ || pinned_;
   }
 
   // MINIMIZE | MAXIMIZE
@@ -470,6 +471,37 @@ public class OplParser implements PsiParser, LightPsiParser {
     result_ = result_ && consumeToken(builder_, DOTDOT);
     result_ = result_ && additiveExpression(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // !(INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | SEMICOLON)
+  static boolean statement_recover(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "statement_recover")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_, level_, _NOT_);
+    result_ = !statement_recover_0(builder_, level_ + 1);
+    exit_section_(builder_, level_, marker_, result_, false, null);
+    return result_;
+  }
+
+  // INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | SEMICOLON
+  private static boolean statement_recover_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "statement_recover_0")) return false;
+    boolean result_;
+    result_ = consumeToken(builder_, INT);
+    if (!result_) result_ = consumeToken(builder_, FLOAT);
+    if (!result_) result_ = consumeToken(builder_, BOOLEAN);
+    if (!result_) result_ = consumeToken(builder_, STRING);
+    if (!result_) result_ = consumeToken(builder_, RANGE);
+    if (!result_) result_ = consumeToken(builder_, DVAR);
+    if (!result_) result_ = consumeToken(builder_, TUPLE);
+    if (!result_) result_ = consumeToken(builder_, MINIMIZE);
+    if (!result_) result_ = consumeToken(builder_, MAXIMIZE);
+    if (!result_) result_ = consumeToken(builder_, SUBJECT_TO);
+    if (!result_) result_ = consumeToken(builder_, INCLUDE);
+    if (!result_) result_ = consumeToken(builder_, EXECUTE);
+    if (!result_) result_ = consumeToken(builder_, SEMICOLON);
     return result_;
   }
 
@@ -520,14 +552,14 @@ public class OplParser implements PsiParser, LightPsiParser {
   // TUPLE ID LBRACE tupleField* RBRACE SEMICOLON
   public static boolean tupleDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tupleDeclaration")) return false;
-    if (!nextTokenIs(builder_, TUPLE)) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, TUPLE, ID, LBRACE);
-    result_ = result_ && tupleDeclaration_3(builder_, level_ + 1);
-    result_ = result_ && consumeTokens(builder_, 0, RBRACE, SEMICOLON);
-    exit_section_(builder_, marker_, TUPLE_DECLARATION, result_);
-    return result_;
+    boolean result_, pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, TUPLE_DECLARATION, "<tuple declaration>");
+    result_ = consumeTokens(builder_, 1, TUPLE, ID, LBRACE);
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, tupleDeclaration_3(builder_, level_ + 1));
+    result_ = pinned_ && report_error_(builder_, consumeTokens(builder_, -1, RBRACE, SEMICOLON)) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, OplParser::statement_recover);
+    return result_ || pinned_;
   }
 
   // tupleField*
@@ -545,12 +577,13 @@ public class OplParser implements PsiParser, LightPsiParser {
   // (INT | FLOAT | STRING | ID) ID SEMICOLON
   public static boolean tupleField(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "tupleField")) return false;
-    boolean result_;
+    boolean result_, pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, TUPLE_FIELD, "<tuple field>");
     result_ = tupleField_0(builder_, level_ + 1);
-    result_ = result_ && consumeTokens(builder_, 0, ID, SEMICOLON);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
+    result_ = result_ && consumeTokens(builder_, 1, ID, SEMICOLON);
+    pinned_ = result_; // pin = 2
+    exit_section_(builder_, level_, marker_, result_, pinned_, null);
+    return result_ || pinned_;
   }
 
   // INT | FLOAT | STRING | ID
@@ -568,15 +601,16 @@ public class OplParser implements PsiParser, LightPsiParser {
   // (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (LBRACKET expression RBRACKET)* (EQ (ELLIPSIS | expression))? SEMICOLON
   public static boolean varDeclaration(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "varDeclaration")) return false;
-    boolean result_;
+    boolean result_, pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, VAR_DECLARATION, "<var declaration>");
     result_ = varDeclaration_0(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, ID);
-    result_ = result_ && varDeclaration_2(builder_, level_ + 1);
-    result_ = result_ && varDeclaration_3(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, SEMICOLON);
-    exit_section_(builder_, level_, marker_, result_, false, null);
-    return result_;
+    pinned_ = result_; // pin = 2
+    result_ = result_ && report_error_(builder_, varDeclaration_2(builder_, level_ + 1));
+    result_ = pinned_ && report_error_(builder_, varDeclaration_3(builder_, level_ + 1)) && result_;
+    result_ = pinned_ && consumeToken(builder_, SEMICOLON) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, OplParser::statement_recover);
+    return result_ || pinned_;
   }
 
   // INT | FLOAT | BOOLEAN | STRING | RANGE

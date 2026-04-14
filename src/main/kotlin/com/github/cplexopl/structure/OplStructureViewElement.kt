@@ -1,54 +1,73 @@
 package com.github.cplexopl.structure
 
+import com.github.cplexopl.psi.*
 import com.intellij.ide.structureView.StructureViewTreeElement
-import com.intellij.ide.structureView.impl.common.PsiTreeElementBase
+import com.intellij.ide.util.treeView.smartTree.TreeElement
+import com.intellij.navigation.ItemPresentation
+import com.intellij.navigation.NavigationItem
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
-import com.github.cplexopl.psi.*
 import com.intellij.icons.AllIcons
 import javax.swing.Icon
 
-class OplStructureViewElement(psiElement: PsiElement) : PsiTreeElementBase<PsiElement>(psiElement) {
+class OplStructureViewElement(private val element: PsiElement) : StructureViewTreeElement, NavigationItem {
 
-    override fun getChildrenBase(): MutableCollection<StructureViewTreeElement> {
-        val elements = mutableListOf<StructureViewTreeElement>()
-        val currentElement = element ?: return elements
+    override fun getValue(): Any = element
 
-        // Jeśli jesteśmy na poziomie głównego pliku, szukamy jego dzieci
-        if (currentElement.containingFile == currentElement) {
-
-            // 1. Zmienne (Dane i Decyzyjne)
-            PsiTreeUtil.findChildrenOfType(currentElement, OplVarDeclaration::class.java).forEach { elements.add(OplStructureViewElement(it)) }
-            PsiTreeUtil.findChildrenOfType(currentElement, OplDvarDeclaration::class.java).forEach { elements.add(OplStructureViewElement(it)) }
-
-            // 2. Funkcje celu
-            PsiTreeUtil.findChildrenOfType(currentElement, OplObjectiveDeclaration::class.java).forEach { elements.add(OplStructureViewElement(it)) }
-
-            // 3. Ograniczenia
-            PsiTreeUtil.findChildrenOfType(currentElement, OplConstraintItem::class.java).forEach { elements.add(OplStructureViewElement(it)) }
-        }
-        return elements
+    override fun navigate(requestFocus: Boolean) {
+        (element as? NavigationItem)?.navigate(requestFocus)
     }
 
-    override fun getPresentableText(): String? {
-        val el = element ?: return null
-        return when (el) {
-            is OplVarDeclaration -> el.node.findChildByType(OplTypes.ID)?.text ?: "Variable"
-            is OplDvarDeclaration -> el.node.findChildByType(OplTypes.ID)?.text ?: "Decision Variable"
-            is OplObjectiveDeclaration -> "Objective Function"
-            is OplConstraintItem -> el.node.findChildByType(OplTypes.ID)?.text ?: "Constraint"
-            else -> el.containingFile.name
+    override fun canNavigate(): Boolean = (element as? NavigationItem)?.canNavigate() ?: false
+
+    override fun canNavigateToSource(): Boolean = (element as? NavigationItem)?.canNavigateToSource() ?: false
+
+    // Wymagane przez NavigationItem
+    override fun getName(): String? = (element as? NavigationItem)?.name
+
+    override fun getPresentation(): ItemPresentation {
+        return object : ItemPresentation {
+            override fun getPresentableText(): String {
+                return when (element) {
+                    is OplVarDeclaration -> "var " + (element.node.findChildByType(OplTypes.ID)?.text ?: "")
+                    is OplDvarDeclaration -> "dvar " + (element.node.findChildByType(OplTypes.ID)?.text ?: "")
+                    is OplTupleDeclaration -> "tuple " + (element.node.findChildByType(OplTypes.ID)?.text ?: "")
+                    is OplObjectiveDeclaration -> if (element.text.contains("minimize")) "minimize" else "maximize"
+                    is OplConstraintItem -> element.node.findChildByType(OplTypes.ID)?.text ?: "constraint"
+                    is OplConstraintSection -> "subject to"
+                    else -> (element as? com.intellij.psi.PsiFile)?.name ?: ""
+                }
+            }
+
+            override fun getLocationString(): String? = null
+
+            override fun getIcon(unused: Boolean): Icon? {
+                return when (element) {
+                    is OplVarDeclaration -> AllIcons.Nodes.Variable
+                    is OplDvarDeclaration -> AllIcons.Nodes.Field
+                    is OplTupleDeclaration -> AllIcons.Nodes.Class
+                    is OplObjectiveDeclaration -> AllIcons.Nodes.Target
+                    is OplConstraintItem -> AllIcons.Nodes.Property
+                    else -> AllIcons.Nodes.Package
+                }
+            }
         }
     }
 
-    override fun getIcon(open: Boolean): Icon? {
-        val el = element ?: return null
-        return when (el) {
-            is OplVarDeclaration -> AllIcons.Nodes.Variable
-            is OplDvarDeclaration -> AllIcons.Nodes.Parameter
-            is OplObjectiveDeclaration -> AllIcons.Nodes.Function
-            is OplConstraintItem -> AllIcons.Nodes.Tag
-            else -> null
+    override fun getChildren(): Array<TreeElement> {
+        val children = mutableListOf<TreeElement>()
+        if (element is com.intellij.psi.PsiFile) {
+            element.children.forEach {
+                if (it is OplVarDeclaration || it is OplDvarDeclaration ||
+                    it is OplTupleDeclaration || it is OplObjectiveDeclaration || it is OplConstraintSection) {
+                    children.add(OplStructureViewElement(it))
+                }
+            }
+        } else if (element is OplConstraintSection) {
+            PsiTreeUtil.getChildrenOfType(element, OplConstraintItem::class.java)?.forEach {
+                children.add(OplStructureViewElement(it))
+            }
         }
+        return children.toTypedArray()
     }
 }

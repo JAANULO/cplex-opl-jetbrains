@@ -28,9 +28,9 @@ public class OplObjectiveDeclarationImpl extends ASTWrapperPsiElement implements
   }
 
   @Override
-  @NotNull
+  @Nullable
   public OplExpression getExpression() {
-    return findNotNullChildByClass(OplExpression.class);
+    return findChildByClass(OplExpression.class);
   }
 
 }

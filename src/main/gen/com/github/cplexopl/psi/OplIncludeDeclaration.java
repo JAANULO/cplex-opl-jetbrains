@@ -7,7 +7,7 @@ import com.intellij.psi.PsiElement;
 
 public interface OplIncludeDeclaration extends PsiElement {
 
-  @NotNull
+  @Nullable
   PsiElement getStringLiteral();
 
 }

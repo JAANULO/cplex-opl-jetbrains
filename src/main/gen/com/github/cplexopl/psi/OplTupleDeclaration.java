@@ -10,7 +10,7 @@ public interface OplTupleDeclaration extends PsiElement {
   @NotNull
   List<OplTupleField> getTupleFieldList();
 
-  @NotNull
+  @Nullable
   PsiElement getId();
 
 }

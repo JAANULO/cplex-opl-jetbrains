@@ -13,7 +13,7 @@ public interface OplDvarDeclaration extends PsiElement {
   @Nullable
   OplRangeExpression getRangeExpression();
 
-  @NotNull
+  @Nullable
   PsiElement getId();
 
 }

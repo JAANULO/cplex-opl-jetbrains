@@ -88,16 +88,16 @@ declaration ::= varDeclaration
               | includeDeclaration
 
 // Deklaracja zmiennej danych (obsługuje tablice, wielokropki i zakresy)
-varDeclaration ::= (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (LBRACKET expression RBRACKET)* (EQ (ELLIPSIS | expression))? SEMICOLON
+varDeclaration ::= (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (LBRACKET expression RBRACKET)* (EQ (ELLIPSIS | expression))? SEMICOLON { pin=2 recoverWhile=statement_recover }
 
 // Deklaracja zmiennej decyzyjnej (obsługuje tablice)
-dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN) ID (LBRACKET expression RBRACKET)* (IN rangeExpression)? SEMICOLON
+dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN) ID (LBRACKET expression RBRACKET)* (IN rangeExpression)? SEMICOLON { pin=1 recoverWhile=statement_recover }
 
 // Funkcja celu - to co minimalizujemy/maksymalizujemy
-objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON
+objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON { pin=1 recoverWhile=statement_recover }
 
 // Sekcja ograniczeń
-constraintSection ::= SUBJECT_TO LBRACE constraintItem* RBRACE
+constraintSection ::= SUBJECT_TO LBRACE constraintItem* RBRACE { pin=1 }
 
 constraintItem ::= (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) expression SEMICOLON
                  | FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
@@ -106,11 +106,11 @@ constraintItem ::= (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) express
 executeBlock ::= EXECUTE ID? LBRACE RBRACE
 
 // Deklaracja krotki (struct-like type)
-tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON
-tupleField ::= (INT | FLOAT | STRING | ID) ID SEMICOLON
+tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON { pin=1 recoverWhile=statement_recover }
+tupleField ::= (INT | FLOAT | STRING | ID) ID SEMICOLON { pin=2 }
 
 // Include innego pliku
-includeDeclaration ::= INCLUDE STRING_LITERAL SEMICOLON
+includeDeclaration ::= INCLUDE STRING_LITERAL SEMICOLON { pin=1 }
 
 // Wyrażenia (uproszczone)
 // Zakresy (Ranges) - pozwala parserowi zrozumieć zapis np. 1..NbItems
@@ -127,3 +127,6 @@ factor ::= ID LPAREN ID IN expression RPAREN expression
          | STRING_LITERAL
          | LPAREN expression RPAREN
          | SUM LPAREN ID IN expression RPAREN expression
+
+// Reguła odzyskiwania: "Pomijaj wszystko, dopóki nie natrafisz na początek nowej deklaracji lub średnik"
+private statement_recover ::= !(INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | SEMICOLON | RBRACE)
