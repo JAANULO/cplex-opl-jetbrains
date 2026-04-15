@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-04-15
+
+- Changelog update - 1.2.0 by @JAANULO in https://github.com/JAANULO/CPLEX-Plugin/pull/10
+- @JAANULO made their first contribution in https://github.com/JAANULO/CPLEX-Plugin/pull/10
+
 ## [1.2.0] - 2026-04-13
 
 ### Added
@@ -33,5 +38,6 @@
 - Updated `README.md` feature lists (EN/PL) to match current implementation.
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
 
-[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.2.0...HEAD
+[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.3.0...HEAD
+[1.3.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/JAANULO/CPLEX-Plugin/commits/1.2.0
