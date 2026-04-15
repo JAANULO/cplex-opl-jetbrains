@@ -70,6 +70,10 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `DONE` Wykrywanie niezdefiniowanych zmiennych
 - **Inżynierski zysk:** Zgodność ze standardem OPL i czystość logiczna modelu
 
+### 2.2 Rozpoznawanie bloków skryptowych (OPLScript)
+- `TODO` Obsługa bloków `execute { ... }` używanych do implementacji metaheurystyk (SA, Tabu Search).
+- **Mechanizm:** Złagodzenie reguł w pliku `OplGrammar.bnf` (np. przez traktowanie zawartości bloku jako ogólnego tekstu), aby parser nie zgłaszał błędów składniowych po napotkaniu imperatywnego kodu JavaScript.
+
 ---
 
 ## Poziom 3: Inteligencja Edytora (Wymagające)
@@ -82,7 +86,12 @@ Bez tego plugin nie spełnia swojego głównego celu.
 
 ### 3.2 Rozszerzony Annotator
 - `DONE` Walidacja typów (np. `dvar boolean` nie może mieć zakresu `0..100`)
-- `TODO` Scope-aware analysis (zasięg zmiennych wewnątrz `forall`)
+- `DONE` Scope-aware analysis (zasięg zmiennych wewnątrz `forall`)
+
+### 3.3 Obsługa Programowania w Ograniczeniach (CP) i Szeregowania
+- `PARTIAL` Obsługa słów kluczowych szeregowania (`interval`, `sequence`, `pulse`, `step`).
+- `PARTIAL` Obsługa dyrektywy silnika (`using cp;`) oraz globalnych ograniczeń (np. `allDifferent`, `pack`).
+- **Mechanizm:** Dodanie definicji tokenów w `src/main/grammars/OplLexer.flex` oraz odpowiednich wariantów reguł w `src/main/grammars/OplGrammar.bnf`. Po wygenerowaniu nowej wersji parsera przez Grammar-Kit, zaimplementowany już `CompletionContributor` obsłuży te podpowiedzi automatycznie.
 
 ---
 
@@ -93,7 +102,11 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `TODO` **Logika:** weryfikacja typu parametrów (`dvar` vs `float/int`)
 - `TODO` Ostrzeganie o niejawnej linearyzacji przez solver
 
-### 4.2 Find Usages
+### 4.2 Walidacja funkcji celu dla szeregowania
+- `TODO` Inspekcja poprawnego wyznaczania długości uszeregowania $C_{max}$.
+- **Logika:** Weryfikacja węzłów drzewa PSI wewnątrz bloku `minimize`. Ostrzeganie, jeśli przy zmiennych przedziałowych (`interval`) brakuje niezbędnych funkcji operujących na czasie zakończenia (np. `endOf()`).
+
+### 4.3 Find Usages
 - `TODO` Wyszukiwanie wszystkich użyć zmiennej w projekcie
 - `TODO` Integracja z oknem "Find" IntelliJ
 
@@ -102,8 +115,8 @@ Bez tego plugin nie spełnia swojego głównego celu.
 ## Poziom 5: Architektura Referencji (Bardzo trudne)
 
 ### 5.1 Go to Declaration — Skakanie do definicji
-- `TODO` Globalna nawigacja po identyfikatorach (`Ctrl+Click`)
-- `TODO` **Mechanizm:** `PsiReference`
+- `PARTIAL` Globalna nawigacja po identyfikatorach (`Ctrl+Click`)
+- `DONE` **Mechanizm:** `PsiReference`
 - `TODO` **Wyzwanie:** obsługa zasięgów (Scopes) i indeksowanie plików projektu
 
 ### 5.2 Rename Refactoring
@@ -120,7 +133,7 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `DONE` README z instrukcją instalacji i wymaganiami
 
 ### 6.2 Stabilność i kompatybilność
-- `PARTIAL` Testy jednostkowe (IntelliJ Platform Test Framework)
+- `TODO` Testy jednostkowe (IntelliJ Platform Test Framework)
 - `PARTIAL` Obsługa błędów runtime
 - `PARTIAL` Kompatybilność z PyCharm, IntelliJ IDEA, CLion
 
@@ -150,7 +163,10 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - **Boilerplate code:** Fragmenty kodu powielane w wielu miejscach przy niewielkich zmianach
 - **Heurystyka ścieżek:** Algorytm szukający danych w najbardziej prawdopodobnych lokalizacjach zamiast skanowania całego systemu
 - **Zero-Config:** Cel projektowy, w którym oprogramowanie nie wymaga konfiguracji początkowej
-- **MIP:** Mixed Integer Programming — klasa problemów optymalizacyjnych z nieliniowością
+- **MIP:** Mixed Integer Programming — mieszane programowanie całkowitoliczbowe. Klasa złożonych problemów z nieliniowością
+- **CP (Constraint Programming):** Programowanie w ograniczeniach. Paradygmat (i odrębny silnik w CPLEX) stosowany do problemów dyskretnych i szeregowania zadań
+- **Global Constraints:** Wbudowane w silnik CP wydajne algorytmy (np. `allDifferent`), modelujące złożone zależności kombinatoryczne
+- **Cmax (Makespan):** Długość uszeregowania, czas zakończenia wszystkich procesów
 - **PSI:** Program Structure Interface — reprezentacja kodu jako drzewo w pamięci IntelliJ
 - **FQCN:** Fully Qualified Class Name — pełna ścieżka klasy z pakietem (np. `com.github.cplexopl.OplLanguage`)
 - **Scope:** Zasięg zmiennej — obszar kodu w którym zmienna jest widoczna i dostępna

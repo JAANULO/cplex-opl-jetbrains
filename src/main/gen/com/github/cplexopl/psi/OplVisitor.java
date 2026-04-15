@@ -59,6 +59,10 @@ public class OplVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitUsingDeclaration(@NotNull OplUsingDeclaration o) {
+    visitPsiElement(o);
+  }
+
   public void visitVarDeclaration(@NotNull OplVarDeclaration o) {
     visitPsiElement(o);
   }

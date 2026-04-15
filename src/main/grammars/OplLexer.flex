@@ -43,6 +43,9 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 {BLOCK_COMMENT}         { return OplTypes.BLOCK_COMMENT; }
 
 // Słowa kluczowe - MUSZĄ być przed regułą ID
+"CP"                    { return OplTypes.CP; }
+"interval"              { return OplTypes.INTERVAL; }
+"sequence"              { return OplTypes.SEQUENCE; }
 "using"                 { return OplTypes.USING; }
 "with"                  { return OplTypes.WITH; }
 "minimize"              { return OplTypes.MINIMIZE; }

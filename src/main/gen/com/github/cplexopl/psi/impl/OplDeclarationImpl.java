@@ -65,6 +65,12 @@ public class OplDeclarationImpl extends ASTWrapperPsiElement implements OplDecla
 
   @Override
   @Nullable
+  public OplUsingDeclaration getUsingDeclaration() {
+    return findChildByClass(OplUsingDeclaration.class);
+  }
+
+  @Override
+  @Nullable
   public OplVarDeclaration getVarDeclaration() {
     return findChildByClass(OplVarDeclaration.class);
   }

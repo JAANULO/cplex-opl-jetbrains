@@ -14,6 +14,9 @@
   tokens=[
     // Słowa kluczowe (keywords) - zarezerwowane słowa języka OPL
     USING       = 'using'
+    CP          = 'cp'
+    INTERVAL    = 'interval'
+    SEQUENCE    = 'sequence'
     WITH        = 'with'
     MINIMIZE    = 'minimize'
     MAXIMIZE    = 'maximize'
@@ -86,12 +89,16 @@ declaration ::= varDeclaration
               | executeBlock
               | tupleDeclaration
               | includeDeclaration
+              | usingDeclaration
 
 // Deklaracja zmiennej danych (obsługuje tablice, wielokropki i zakresy)
 varDeclaration ::= (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (LBRACKET expression RBRACKET)* (EQ (ELLIPSIS | expression))? SEMICOLON { pin=2 recoverWhile=statement_recover }
 
 // Deklaracja zmiennej decyzyjnej (obsługuje tablice)
-dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN) ID (LBRACKET expression RBRACKET)* (IN rangeExpression)? SEMICOLON { pin=1 recoverWhile=statement_recover }
+usingDeclaration ::= USING CP SEMICOLON { pin=1 recoverWhile=statement_recover }
+
+// Deklaracja zmiennej decyzyjnej (obsługuje tablice)
+dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE) ID (LBRACKET expression RBRACKET)* (IN rangeExpression)? SEMICOLON { pin=1 recoverWhile=statement_recover }
 
 // Funkcja celu - to co minimalizujemy/maksymalizujemy
 objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON { pin=1 recoverWhile=statement_recover }
@@ -99,8 +106,14 @@ objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON { pin=1 reco
 // Sekcja ograniczeń
 constraintSection ::= SUBJECT_TO LBRACE constraintItem* RBRACE { pin=1 }
 
-constraintItem ::= (ID COLON)? expression (LT | LE | GT | GE | EQ | NEQ) expression SEMICOLON
+// Zabezpieczenie przed konfliktami: opcjonalna etykieta (prywatna, by nie psuć Annotatora)
+private label ::= ID COLON
+
+constraintItem ::= label? constraintExpression SEMICOLON
                  | FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
+
+// Ukryta reguła pomocnicza: ograniczenie może (ale nie musi) mieć operator relacyjny
+private constraintExpression ::= expression ((LE | LT | GT | GE | EQ | NEQ) expression)?
 
 // Blok execute - kod skryptowy IBM Script (JavaScript-like)
 executeBlock ::= EXECUTE ID? LBRACE RBRACE
@@ -120,13 +133,17 @@ expression ::= rangeExpression | additiveExpression
 private additiveExpression ::= term ((PLUS | MINUS) term)*
 term ::= factor ((STAR | SLASH) factor)*
 
-// Rozszerzony factor: obsługuje pętle sumujące, tablice, liczby i zmienne
-factor ::= ID LPAREN ID IN expression RPAREN expression
-         | ID (LBRACKET expression RBRACKET)* | INTEGER_LITERAL
+// Rozszerzony factor: obsługuje sumy, pętle all, funkcje CP, tablice, liczby i zmienne
+factor ::= (SUM | ALL) LPAREN ID IN expression RPAREN expression
+         | ID ( LPAREN (expression (COMMA expression)*)? RPAREN )? (LBRACKET expression RBRACKET)*
+         | INTEGER_LITERAL
          | FLOAT_LITERAL
          | STRING_LITERAL
          | LPAREN expression RPAREN
-         | SUM LPAREN ID IN expression RPAREN expression
+
+// Ukryta reguła pomocnicza rozwiązująca konflikty nawiasów po słowach (np. wywołania funkcji vs tablice)
+private factorIdSuffix ::= LPAREN ( ID IN expression RPAREN expression | (expression (COMMA expression)*)? RPAREN )
+                         | (LBRACKET expression RBRACKET)*
 
 // Reguła odzyskiwania: "Pomijaj wszystko, dopóki nie natrafisz na początek nowej deklaracji lub średnik"
-private statement_recover ::= !(INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | SEMICOLON | RBRACE)
+private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE)

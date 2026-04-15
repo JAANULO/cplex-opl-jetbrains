@@ -14,6 +14,9 @@ public interface OplFactor extends PsiElement {
   PsiElement getFloatLiteral();
 
   @Nullable
+  PsiElement getId();
+
+  @Nullable
   PsiElement getIntegerLiteral();
 
   @Nullable

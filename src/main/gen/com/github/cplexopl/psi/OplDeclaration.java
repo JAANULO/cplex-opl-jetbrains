@@ -26,6 +26,9 @@ public interface OplDeclaration extends PsiElement {
   OplTupleDeclaration getTupleDeclaration();
 
   @Nullable
+  OplUsingDeclaration getUsingDeclaration();
+
+  @Nullable
   OplVarDeclaration getVarDeclaration();
 
 }

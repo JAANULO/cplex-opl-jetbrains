@@ -41,6 +41,12 @@ public class OplFactorImpl extends ASTWrapperPsiElement implements OplFactor {
 
   @Override
   @Nullable
+  public PsiElement getId() {
+    return findChildByType(ID);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getIntegerLiteral() {
     return findChildByType(INTEGER_LITERAL);
   }

@@ -21,6 +21,7 @@ public interface OplTypes {
   IElementType TERM = new OplElementType("TERM");
   IElementType TUPLE_DECLARATION = new OplElementType("TUPLE_DECLARATION");
   IElementType TUPLE_FIELD = new OplElementType("TUPLE_FIELD");
+  IElementType USING_DECLARATION = new OplElementType("USING_DECLARATION");
   IElementType VAR_DECLARATION = new OplElementType("VAR_DECLARATION");
 
   IElementType ALL = new OplTokenType("all");
@@ -29,6 +30,7 @@ public interface OplTypes {
   IElementType BOOLEAN = new OplTokenType("boolean");
   IElementType COLON = new OplTokenType(":");
   IElementType COMMA = new OplTokenType(",");
+  IElementType CP = new OplTokenType("cp");
   IElementType DEXPR = new OplTokenType("dexpr");
   IElementType DOT = new OplTokenType(".");
   IElementType DOTDOT = new OplTokenType("..");
@@ -49,6 +51,7 @@ public interface OplTypes {
   IElementType INCLUDE = new OplTokenType("include");
   IElementType INT = new OplTokenType("int");
   IElementType INTEGER_LITERAL = new OplTokenType("INTEGER_LITERAL");
+  IElementType INTERVAL = new OplTokenType("interval");
   IElementType LBRACE = new OplTokenType("{");
   IElementType LBRACKET = new OplTokenType("[");
   IElementType LE = new OplTokenType("<=");
@@ -65,6 +68,7 @@ public interface OplTypes {
   IElementType RBRACKET = new OplTokenType("]");
   IElementType RPAREN = new OplTokenType(")");
   IElementType SEMICOLON = new OplTokenType(";");
+  IElementType SEQUENCE = new OplTokenType("sequence");
   IElementType SLASH = new OplTokenType("/");
   IElementType STAR = new OplTokenType("*");
   IElementType STRING = new OplTokenType("string");
@@ -118,6 +122,9 @@ public interface OplTypes {
       }
       else if (type == TUPLE_FIELD) {
         return new OplTupleFieldImpl(node);
+      }
+      else if (type == USING_DECLARATION) {
+        return new OplUsingDeclarationImpl(node);
       }
       else if (type == VAR_DECLARATION) {
         return new OplVarDeclarationImpl(node);
