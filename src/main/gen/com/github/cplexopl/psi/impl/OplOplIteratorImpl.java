@@ -11,14 +11,14 @@ import static com.github.cplexopl.psi.OplTypes.*;
 import com.intellij.extapi.psi.ASTWrapperPsiElement;
 import com.github.cplexopl.psi.*;
 
-public class OplConstraintItemImpl extends ASTWrapperPsiElement implements OplConstraintItem {
+public class OplOplIteratorImpl extends ASTWrapperPsiElement implements OplOplIterator {
 
-  public OplConstraintItemImpl(@NotNull ASTNode node) {
+  public OplOplIteratorImpl(@NotNull ASTNode node) {
     super(node);
   }
 
   public void accept(@NotNull OplVisitor visitor) {
-    visitor.visitConstraintItem(this);
+    visitor.visitOplIterator(this);
   }
 
   @Override
@@ -29,26 +29,14 @@ public class OplConstraintItemImpl extends ASTWrapperPsiElement implements OplCo
 
   @Override
   @NotNull
-  public List<OplConstraintItem> getConstraintItemList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, OplConstraintItem.class);
-  }
-
-  @Override
-  @NotNull
   public List<OplExpression> getExpressionList() {
     return PsiTreeUtil.getChildrenOfTypeAsList(this, OplExpression.class);
   }
 
   @Override
   @NotNull
-  public List<OplOplIterator> getOplIteratorList() {
-    return PsiTreeUtil.getChildrenOfTypeAsList(this, OplOplIterator.class);
-  }
-
-  @Override
-  @Nullable
   public PsiElement getId() {
-    return findChildByType(ID);
+    return findNotNullChildByType(ID);
   }
 
 }

@@ -13,10 +13,12 @@ public interface OplTypes {
   IElementType DECLARATION = new OplElementType("DECLARATION");
   IElementType DVAR_DECLARATION = new OplElementType("DVAR_DECLARATION");
   IElementType EXECUTE_BLOCK = new OplElementType("EXECUTE_BLOCK");
+  IElementType EXECUTE_BODY = new OplElementType("EXECUTE_BODY");
   IElementType EXPRESSION = new OplElementType("EXPRESSION");
   IElementType FACTOR = new OplElementType("FACTOR");
   IElementType INCLUDE_DECLARATION = new OplElementType("INCLUDE_DECLARATION");
   IElementType OBJECTIVE_DECLARATION = new OplElementType("OBJECTIVE_DECLARATION");
+  IElementType OPL_ITERATOR = new OplElementType("OPL_ITERATOR");
   IElementType RANGE_EXPRESSION = new OplElementType("RANGE_EXPRESSION");
   IElementType TERM = new OplElementType("TERM");
   IElementType TUPLE_DECLARATION = new OplElementType("TUPLE_DECLARATION");
@@ -25,6 +27,8 @@ public interface OplTypes {
   IElementType VAR_DECLARATION = new OplElementType("VAR_DECLARATION");
 
   IElementType ALL = new OplTokenType("all");
+  IElementType ALLDIFFERENT = new OplTokenType("allDifferent");
+  IElementType ANDAND = new OplTokenType("&&");
   IElementType ASSERT = new OplTokenType("assert");
   IElementType BLOCK_COMMENT = new OplTokenType("BLOCK_COMMENT");
   IElementType BOOLEAN = new OplTokenType("boolean");
@@ -38,6 +42,7 @@ public interface OplTypes {
   IElementType ELLIPSIS = new OplTokenType("...");
   IElementType ELSE = new OplTokenType("else");
   IElementType EQ = new OplTokenType("=");
+  IElementType EQEQ = new OplTokenType("==");
   IElementType EXECUTE = new OplTokenType("execute");
   IElementType EXISTS = new OplTokenType("exists");
   IElementType FLOAT = new OplTokenType("float");
@@ -61,8 +66,13 @@ public interface OplTypes {
   IElementType MAXIMIZE = new OplTokenType("maximize");
   IElementType MINIMIZE = new OplTokenType("minimize");
   IElementType MINUS = new OplTokenType("-");
+  IElementType MOD = new OplTokenType("%");
   IElementType NEQ = new OplTokenType("!=");
+  IElementType NOT = new OplTokenType("!");
+  IElementType OROR = new OplTokenType("||");
+  IElementType PACK = new OplTokenType("pack");
   IElementType PLUS = new OplTokenType("+");
+  IElementType PULSE = new OplTokenType("pulse");
   IElementType RANGE = new OplTokenType("range");
   IElementType RBRACE = new OplTokenType("}");
   IElementType RBRACKET = new OplTokenType("]");
@@ -71,6 +81,7 @@ public interface OplTypes {
   IElementType SEQUENCE = new OplTokenType("sequence");
   IElementType SLASH = new OplTokenType("/");
   IElementType STAR = new OplTokenType("*");
+  IElementType STEP = new OplTokenType("step");
   IElementType STRING = new OplTokenType("string");
   IElementType STRING_LITERAL = new OplTokenType("STRING_LITERAL");
   IElementType SUBJECT_TO = new OplTokenType("subject to");
@@ -99,6 +110,9 @@ public interface OplTypes {
       else if (type == EXECUTE_BLOCK) {
         return new OplExecuteBlockImpl(node);
       }
+      else if (type == EXECUTE_BODY) {
+        return new OplExecuteBodyImpl(node);
+      }
       else if (type == EXPRESSION) {
         return new OplExpressionImpl(node);
       }
@@ -110,6 +124,9 @@ public interface OplTypes {
       }
       else if (type == OBJECTIVE_DECLARATION) {
         return new OplObjectiveDeclarationImpl(node);
+      }
+      else if (type == OPL_ITERATOR) {
+        return new OplOplIteratorImpl(node);
       }
       else if (type == RANGE_EXPRESSION) {
         return new OplRangeExpressionImpl(node);

@@ -27,6 +27,10 @@ public class OplVisitor extends PsiElementVisitor {
     visitPsiElement(o);
   }
 
+  public void visitExecuteBody(@NotNull OplExecuteBody o) {
+    visitPsiElement(o);
+  }
+
   public void visitExpression(@NotNull OplExpression o) {
     visitPsiElement(o);
   }
@@ -40,6 +44,10 @@ public class OplVisitor extends PsiElementVisitor {
   }
 
   public void visitObjectiveDeclaration(@NotNull OplObjectiveDeclaration o) {
+    visitPsiElement(o);
+  }
+
+  public void visitOplIterator(@NotNull OplOplIterator o) {
     visitPsiElement(o);
   }
 

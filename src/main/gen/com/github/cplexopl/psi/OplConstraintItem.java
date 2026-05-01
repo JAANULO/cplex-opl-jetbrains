@@ -13,6 +13,9 @@ public interface OplConstraintItem extends PsiElement {
   @NotNull
   List<OplExpression> getExpressionList();
 
+  @NotNull
+  List<OplOplIterator> getOplIteratorList();
+
   @Nullable
   PsiElement getId();
 

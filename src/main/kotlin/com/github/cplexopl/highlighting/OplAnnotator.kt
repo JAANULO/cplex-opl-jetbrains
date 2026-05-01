@@ -26,6 +26,13 @@ class OplAnnotator : Annotator {
 
             // Analizujemy tylko tokeny zmiennych
             if (element.node.elementType == OplTypes.ID) {
+                // 0. Omijamy bloki execute (skrypt JS, nie deklaracje OPL)
+                var p = element.parent
+                while (p != null && p !is com.intellij.psi.PsiFile) {
+                    if (p.node.elementType.toString() == "EXECUTE_BLOCK") return
+                    p = p.parent
+                }
+
                 val name = element.text
                 val parent = element.parent ?: return
 
@@ -95,22 +102,35 @@ class OplAnnotator : Annotator {
                     }
 
                 } else {
-                    // --- 2. Scope-aware analysis (Zasięg w pętlach) ---
+
+                    // --- 2. Scope-aware analysis (Zasięg w pętlach i wielokrotnych iteratorach) ---
                     var isLocalVariable = false
                     var currentNode: PsiElement? = element.parent
 
                     while (currentNode != null && currentNode !is com.intellij.psi.PsiFile) {
-                        val node = currentNode.node
-                        if (node != null) {
-                            val hasInClause = node.findChildByType(OplTypes.IN) != null
-                            if (hasInClause) {
-                                val directIds = node.getChildren(null).filter { it.elementType == OplTypes.ID }
-                                if (directIds.any { it.text == name }) {
+
+                        // KROK 1: Sprawdzamy, czy obecny węzeł posiada pod-węzły typu OPL_ITERATOR (np. w FORALL lub SUM)
+                        val children = currentNode.node.getChildren(null)
+                        for (child in children) {
+                            if (child.elementType.toString() == "OPL_ITERATOR") {
+                                val idNode = child.findChildByType(OplTypes.ID)
+                                if (idNode != null && idNode.text == name) {
                                     isLocalVariable = true
                                     break
                                 }
                             }
                         }
+                        if (isLocalVariable) break // Znaleźliśmy zmienną w iteratorze obok, przerywamy!
+
+                        // KROK 2: Sprawdzamy, czy sami nie jesteśmy wewnątrz iteratora (np. warunek given[i][j] != 0)
+                        if (currentNode.node.elementType.toString() == "OPL_ITERATOR") {
+                            val idNode = currentNode.node.findChildByType(OplTypes.ID)
+                            if (idNode != null && idNode.text == name) {
+                                isLocalVariable = true
+                                break
+                            }
+                        }
+
                         currentNode = currentNode.parent
                     }
 
@@ -121,7 +141,7 @@ class OplAnnotator : Annotator {
                     }
                 }
             }
-        } catch (e: Exception) {
+        } catch (_: Exception) {
             // Wygłuszamy krytyczne wyjątki PSI, aby IDE kontynuowało pracę
         }
     }

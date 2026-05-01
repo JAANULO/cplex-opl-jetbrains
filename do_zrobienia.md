@@ -1,4 +1,4 @@
-# ROADMAP.md — Strategia rozwoju wtyczki CPLEX OPL Support
+# do_zrobienia.md — Strategia rozwoju wtyczki CPLEX OPL Support
 
 Celem projektu jest stworzenie lekkiego, ale funkcjonalnego środowiska do pracy z językiem OPL w IDE JetBrains, eliminując konieczność używania CPLEX Studio.
 
@@ -11,6 +11,7 @@ Celem projektu jest stworzenie lekkiego, ale funkcjonalnego środowiska do pracy
 
 ## ✅ Już zaimplementowane
 
+- `DONE` **Szablony plików:** Akcja "New -> OPL File" w menu kontekstowym
 - `DONE` Rejestracja języka OPL (pliki `.mod` i `.dat`)
 - `DONE` Syntax Highlighting (kolorowanie składni)
 - `DONE` Gramatyka BNF + Lexer JFlex
@@ -26,7 +27,6 @@ Celem projektu jest stworzenie lekkiego, ale funkcjonalnego środowiska do pracy
 - `DONE` **Contextual Autocomplete:** Semantyczne podpowiadanie zmiennych z drzewa PSI.
 - `DONE` **Zaawansowany Annotator (2.1):** Wykrywanie duplikatów i brakujących średników.
 - `DONE` **Structure View (3.1):** Interaktywne drzewo nawigacji (zmienne, cele, sekcje).
-- `DONE` **Structure View:** widok struktury modelu w panelu IDE
 - `DONE` **Formatter:** podstawowe formatowanie kodu OPL
 
 ---
@@ -59,6 +59,9 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `TODO` Ikona pluginu gotowa na JetBrains Marketplace
 - `DONE` Weryfikacja i użycie ikon SVG dla plików `.mod` i `.dat`
 
+### 1.2 Formatowanie (Code Style)
+- `DONE` Inteligentne wcięcia (Indentation) w formaterze, aby wyeliminować błędne tabulatory w nowych liniach.
+
 ---
 
 ## Poziom 2: Automatyzacja i Walidacja (Średnio łatwe)
@@ -71,9 +74,8 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - **Inżynierski zysk:** Zgodność ze standardem OPL i czystość logiczna modelu
 
 ### 2.2 Rozpoznawanie bloków skryptowych (OPLScript)
-- `TODO` Obsługa bloków `execute { ... }` używanych do implementacji metaheurystyk (SA, Tabu Search).
-- **Mechanizm:** Złagodzenie reguł w pliku `OplGrammar.bnf` (np. przez traktowanie zawartości bloku jako ogólnego tekstu), aby parser nie zgłaszał błędów składniowych po napotkaniu imperatywnego kodu JavaScript.
-
+- `DONE` Obsługa bloków `execute { ... }` używanych do implementacji metaheurystyk (SA, Tabu Search).
+- **Mechanizm:** Złagodzenie reguł w pliku `OplGrammar.bnf` poprzez akceptowanie dowolnej sekwencji znanych tokenów oraz dodanie operatorów skryptowych (`&&`, `||`, `!`, `%`). Takie podejście zapobiega błędom analizatora, zachowując jednocześnie pełne możliwości inteligentnego formatowania kodu.
 ---
 
 ## Poziom 3: Inteligencja Edytora (Wymagające)
@@ -89,10 +91,9 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `DONE` Scope-aware analysis (zasięg zmiennych wewnątrz `forall`)
 
 ### 3.3 Obsługa Programowania w Ograniczeniach (CP) i Szeregowania
-- `PARTIAL` Obsługa słów kluczowych szeregowania (`interval`, `sequence`, `pulse`, `step`).
-- `PARTIAL` Obsługa dyrektywy silnika (`using cp;`) oraz globalnych ograniczeń (np. `allDifferent`, `pack`).
-- **Mechanizm:** Dodanie definicji tokenów w `src/main/grammars/OplLexer.flex` oraz odpowiednich wariantów reguł w `src/main/grammars/OplGrammar.bnf`. Po wygenerowaniu nowej wersji parsera przez Grammar-Kit, zaimplementowany już `CompletionContributor` obsłuży te podpowiedzi automatycznie.
-
+- `DONE` Obsługa słów kluczowych szeregowania (`interval`, `sequence`, `pulse`, `step`).
+- `DONE` Obsługa dyrektywy silnika (`using cp;`) oraz globalnych ograniczeń (np. `allDifferent`, `pack`).
+- **Mechanizm:** Definicje tokenów i funkcji w `OplGrammar.bnf` oraz integracja w obrębie reguły `factor`. `CompletionContributor` automatycznie wspiera autouzupełnianie po wygenerowaniu parsera/lexera.
 ---
 
 ## Poziom 4: Zaawansowana Analiza Systemowa (Trudne)

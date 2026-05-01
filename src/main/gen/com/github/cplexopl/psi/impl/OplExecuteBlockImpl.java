@@ -29,6 +29,12 @@ public class OplExecuteBlockImpl extends ASTWrapperPsiElement implements OplExec
 
   @Override
   @Nullable
+  public OplExecuteBody getExecuteBody() {
+    return findChildByClass(OplExecuteBody.class);
+  }
+
+  @Override
+  @Nullable
   public PsiElement getId() {
     return findChildByType(ID);
   }

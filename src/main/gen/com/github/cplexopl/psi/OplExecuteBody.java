@@ -5,12 +5,9 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface OplExecuteBlock extends PsiElement {
+public interface OplExecuteBody extends PsiElement {
 
-  @Nullable
-  OplExecuteBody getExecuteBody();
-
-  @Nullable
-  PsiElement getId();
+  @NotNull
+  List<OplExecuteBody> getExecuteBodyList();
 
 }

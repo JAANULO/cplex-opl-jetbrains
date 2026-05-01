@@ -41,6 +41,10 @@
     ASSERT      = 'assert'
     SUM         = 'sum'
     ALL         = 'all'
+    PULSE       = 'pulse'
+    STEP        = 'step'
+    ALLDIFFERENT= 'allDifferent'
+    PACK        = 'pack'
 
     // Operatory
     SEMICOLON   = ';'
@@ -50,6 +54,7 @@
     DOTDOT      = '..'
     DOT         = '.'
     EQ          = '='
+    EQEQ        = '=='
     NEQ         = '!='
     LT          = '<'
     LE          = '<='
@@ -59,6 +64,10 @@
     MINUS       = '-'
     STAR        = '*'
     SLASH       = '/'
+    ANDAND      = '&&'
+    OROR        = '||'
+    NOT         = '!'
+    MOD         = '%'
     LBRACE      = '{'
     RBRACE      = '}'
     LBRACKET    = '['
@@ -106,17 +115,24 @@ objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON { pin=1 reco
 // Sekcja ograniczeń
 constraintSection ::= SUBJECT_TO LBRACE constraintItem* RBRACE { pin=1 }
 
+// Definicja iteratora dla pętli i sum (np. i in 1..9 : x != 0)
+oplIterator ::= ID IN expression (COLON constraintExpression)?
+
 // Zabezpieczenie przed konfliktami: opcjonalna etykieta (prywatna, by nie psuć Annotatora)
 private label ::= ID COLON
 
 constraintItem ::= label? constraintExpression SEMICOLON
-                 | FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
+                 | FORALL LPAREN oplIterator (COMMA oplIterator)* RPAREN LBRACE constraintItem* RBRACE
+                 | FORALL LPAREN oplIterator (COMMA oplIterator)* RPAREN constraintItem
 
 // Ukryta reguła pomocnicza: ograniczenie może (ale nie musi) mieć operator relacyjny
-private constraintExpression ::= expression ((LE | LT | GT | GE | EQ | NEQ) expression)?
+private constraintExpression ::= expression ((LE | LT | GT | GE | EQ | EQEQ | NEQ) expression)?
 
 // Blok execute - kod skryptowy IBM Script (JavaScript-like)
-executeBlock ::= EXECUTE ID? LBRACE RBRACE
+executeBlock ::= EXECUTE ID? executeBody { pin=1 recoverWhile=statement_recover }
+executeBody ::= LBRACE executeItem* RBRACE
+private executeItem ::= executeBody | executeToken
+private executeToken ::= ID | INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | LPAREN | RPAREN | LBRACKET | RBRACKET | PLUS | MINUS | STAR | SLASH | EQ | EQEQ | NEQ | LT | LE | GT | GE | SEMICOLON | COMMA | DOT | DOTDOT | ELLIPSIS | COLON | INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | DEXPR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | FORALL | EXISTS | IN | TO | IF | ELSE | THEN | USING | CP | INTERVAL | SEQUENCE | WITH | ASSERT | SUM | ALL | PULSE | STEP | ALLDIFFERENT | PACK | ANDAND | OROR | NOT | MOD
 
 // Deklaracja krotki (struct-like type)
 tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON { pin=1 recoverWhile=statement_recover }
@@ -134,16 +150,14 @@ private additiveExpression ::= term ((PLUS | MINUS) term)*
 term ::= factor ((STAR | SLASH) factor)*
 
 // Rozszerzony factor: obsługuje sumy, pętle all, funkcje CP, tablice, liczby i zmienne
-factor ::= (SUM | ALL) LPAREN ID IN expression RPAREN expression
-         | ID ( LPAREN (expression (COMMA expression)*)? RPAREN )? (LBRACKET expression RBRACKET)*
+factor ::= (PLUS | MINUS) factor
+         | (SUM | ALL) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
+         | (ID | ALLDIFFERENT | PACK | PULSE | STEP) ( LPAREN (expression (COMMA expression)*)? RPAREN )? (LBRACKET expression RBRACKET)*
          | INTEGER_LITERAL
          | FLOAT_LITERAL
          | STRING_LITERAL
+         | LBRACKET (expression (COMMA expression)*)? RBRACKET
          | LPAREN expression RPAREN
-
-// Ukryta reguła pomocnicza rozwiązująca konflikty nawiasów po słowach (np. wywołania funkcji vs tablice)
-private factorIdSuffix ::= LPAREN ( ID IN expression RPAREN expression | (expression (COMMA expression)*)? RPAREN )
-                         | (LBRACKET expression RBRACKET)*
 
 // Reguła odzyskiwania: "Pomijaj wszystko, dopóki nie natrafisz na początek nowej deklaracji lub średnik"
 private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE)

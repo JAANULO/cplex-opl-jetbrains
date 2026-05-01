@@ -17,11 +17,13 @@ class OplFormattingModelBuilder : FormattingModelBuilder {
         return SpacingBuilder(settings, OplLanguage)
             // Spacje wokół operatorów przypisania i porównania
             .around(com.github.cplexopl.psi.OplTypes.EQ).spaceIf(true)
+            .around(com.github.cplexopl.psi.OplTypes.EQEQ).spaceIf(true) // Dodane podwójne ==
+            .around(com.github.cplexopl.psi.OplTypes.NEQ).spaceIf(true)  // Dodane nierówne !=
             .around(com.github.cplexopl.psi.OplTypes.LE).spaceIf(true)
             .around(com.github.cplexopl.psi.OplTypes.GE).spaceIf(true)
             // Spacja po przecinku
             .after(com.github.cplexopl.psi.OplTypes.COMMA).spaceIf(true)
-            // Nowa linia przed klamrami sekcji
+            // Brak nowej linii przed klamrami sekcji
             .before(com.github.cplexopl.psi.OplTypes.LBRACE).none()
     }
 }

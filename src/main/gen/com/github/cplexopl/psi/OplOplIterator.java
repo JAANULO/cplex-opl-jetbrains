@@ -5,12 +5,12 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface OplExecuteBlock extends PsiElement {
+public interface OplOplIterator extends PsiElement {
 
-  @Nullable
-  OplExecuteBody getExecuteBody();
+  @NotNull
+  List<OplExpression> getExpressionList();
 
-  @Nullable
+  @NotNull
   PsiElement getId();
 
 }

@@ -79,7 +79,7 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // expression ((LE | LT | GT | GE | EQ | NEQ) expression)?
+  // expression ((LE | LT | GT | GE | EQ | EQEQ | NEQ) expression)?
   static boolean constraintExpression(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintExpression")) return false;
     boolean result_;
@@ -90,14 +90,14 @@ public class OplParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // ((LE | LT | GT | GE | EQ | NEQ) expression)?
+  // ((LE | LT | GT | GE | EQ | EQEQ | NEQ) expression)?
   private static boolean constraintExpression_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintExpression_1")) return false;
     constraintExpression_1_0(builder_, level_ + 1);
     return true;
   }
 
-  // (LE | LT | GT | GE | EQ | NEQ) expression
+  // (LE | LT | GT | GE | EQ | EQEQ | NEQ) expression
   private static boolean constraintExpression_1_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintExpression_1_0")) return false;
     boolean result_;
@@ -108,7 +108,7 @@ public class OplParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // LE | LT | GT | GE | EQ | NEQ
+  // LE | LT | GT | GE | EQ | EQEQ | NEQ
   private static boolean constraintExpression_1_0_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintExpression_1_0_0")) return false;
     boolean result_;
@@ -117,19 +117,22 @@ public class OplParser implements PsiParser, LightPsiParser {
     if (!result_) result_ = consumeToken(builder_, GT);
     if (!result_) result_ = consumeToken(builder_, GE);
     if (!result_) result_ = consumeToken(builder_, EQ);
+    if (!result_) result_ = consumeToken(builder_, EQEQ);
     if (!result_) result_ = consumeToken(builder_, NEQ);
     return result_;
   }
 
   /* ********************************************************** */
   // label? constraintExpression SEMICOLON
-  //                  | FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
+  //                  | FORALL LPAREN oplIterator (COMMA oplIterator)* RPAREN LBRACE constraintItem* RBRACE
+  //                  | FORALL LPAREN oplIterator (COMMA oplIterator)* RPAREN constraintItem
   public static boolean constraintItem(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintItem")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, CONSTRAINT_ITEM, "<constraint item>");
     result_ = constraintItem_0(builder_, level_ + 1);
     if (!result_) result_ = constraintItem_1(builder_, level_ + 1);
+    if (!result_) result_ = constraintItem_2(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
@@ -153,29 +156,88 @@ public class OplParser implements PsiParser, LightPsiParser {
     return true;
   }
 
-  // FORALL LPAREN ID IN expression RPAREN LBRACE constraintItem* RBRACE
+  // FORALL LPAREN oplIterator (COMMA oplIterator)* RPAREN LBRACE constraintItem* RBRACE
   private static boolean constraintItem_1(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintItem_1")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, FORALL, LPAREN, ID, IN);
-    result_ = result_ && expression(builder_, level_ + 1);
+    result_ = consumeTokens(builder_, 0, FORALL, LPAREN);
+    result_ = result_ && oplIterator(builder_, level_ + 1);
+    result_ = result_ && constraintItem_1_3(builder_, level_ + 1);
     result_ = result_ && consumeTokens(builder_, 0, RPAREN, LBRACE);
-    result_ = result_ && constraintItem_1_7(builder_, level_ + 1);
+    result_ = result_ && constraintItem_1_6(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, RBRACE);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
+  // (COMMA oplIterator)*
+  private static boolean constraintItem_1_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constraintItem_1_3")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!constraintItem_1_3_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "constraintItem_1_3", pos_)) break;
+    }
+    return true;
+  }
+
+  // COMMA oplIterator
+  private static boolean constraintItem_1_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constraintItem_1_3_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && oplIterator(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
   // constraintItem*
-  private static boolean constraintItem_1_7(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "constraintItem_1_7")) return false;
+  private static boolean constraintItem_1_6(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constraintItem_1_6")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
       if (!constraintItem(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "constraintItem_1_7", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "constraintItem_1_6", pos_)) break;
     }
     return true;
+  }
+
+  // FORALL LPAREN oplIterator (COMMA oplIterator)* RPAREN constraintItem
+  private static boolean constraintItem_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constraintItem_2")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokens(builder_, 0, FORALL, LPAREN);
+    result_ = result_ && oplIterator(builder_, level_ + 1);
+    result_ = result_ && constraintItem_2_3(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, RPAREN);
+    result_ = result_ && constraintItem(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // (COMMA oplIterator)*
+  private static boolean constraintItem_2_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constraintItem_2_3")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!constraintItem_2_3_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "constraintItem_2_3", pos_)) break;
+    }
+    return true;
+  }
+
+  // COMMA oplIterator
+  private static boolean constraintItem_2_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constraintItem_2_3_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && oplIterator(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -300,17 +362,17 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // EXECUTE ID? LBRACE RBRACE
+  // EXECUTE ID? executeBody
   public static boolean executeBlock(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "executeBlock")) return false;
-    if (!nextTokenIs(builder_, EXECUTE)) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
+    boolean result_, pinned_;
+    Marker marker_ = enter_section_(builder_, level_, _NONE_, EXECUTE_BLOCK, "<execute block>");
     result_ = consumeToken(builder_, EXECUTE);
-    result_ = result_ && executeBlock_1(builder_, level_ + 1);
-    result_ = result_ && consumeTokens(builder_, 0, LBRACE, RBRACE);
-    exit_section_(builder_, marker_, EXECUTE_BLOCK, result_);
-    return result_;
+    pinned_ = result_; // pin = 1
+    result_ = result_ && report_error_(builder_, executeBlock_1(builder_, level_ + 1));
+    result_ = pinned_ && executeBody(builder_, level_ + 1) && result_;
+    exit_section_(builder_, level_, marker_, result_, pinned_, OplParser::statement_recover);
+    return result_ || pinned_;
   }
 
   // ID?
@@ -318,6 +380,110 @@ public class OplParser implements PsiParser, LightPsiParser {
     if (!recursion_guard_(builder_, level_, "executeBlock_1")) return false;
     consumeToken(builder_, ID);
     return true;
+  }
+
+  /* ********************************************************** */
+  // LBRACE executeItem* RBRACE
+  public static boolean executeBody(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "executeBody")) return false;
+    if (!nextTokenIs(builder_, LBRACE)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, LBRACE);
+    result_ = result_ && executeBody_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, RBRACE);
+    exit_section_(builder_, marker_, EXECUTE_BODY, result_);
+    return result_;
+  }
+
+  // executeItem*
+  private static boolean executeBody_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "executeBody_1")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!executeItem(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "executeBody_1", pos_)) break;
+    }
+    return true;
+  }
+
+  /* ********************************************************** */
+  // executeBody | executeToken
+  static boolean executeItem(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "executeItem")) return false;
+    boolean result_;
+    result_ = executeBody(builder_, level_ + 1);
+    if (!result_) result_ = executeToken(builder_, level_ + 1);
+    return result_;
+  }
+
+  /* ********************************************************** */
+  // ID | INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | LPAREN | RPAREN | LBRACKET | RBRACKET | PLUS | MINUS | STAR | SLASH | EQ | EQEQ | NEQ | LT | LE | GT | GE | SEMICOLON | COMMA | DOT | DOTDOT | ELLIPSIS | COLON | INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | DEXPR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | FORALL | EXISTS | IN | TO | IF | ELSE | THEN | USING | CP | INTERVAL | SEQUENCE | WITH | ASSERT | SUM | ALL | PULSE | STEP | ALLDIFFERENT | PACK | ANDAND | OROR | NOT | MOD
+  static boolean executeToken(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "executeToken")) return false;
+    boolean result_;
+    result_ = consumeToken(builder_, ID);
+    if (!result_) result_ = consumeToken(builder_, INTEGER_LITERAL);
+    if (!result_) result_ = consumeToken(builder_, FLOAT_LITERAL);
+    if (!result_) result_ = consumeToken(builder_, STRING_LITERAL);
+    if (!result_) result_ = consumeToken(builder_, LPAREN);
+    if (!result_) result_ = consumeToken(builder_, RPAREN);
+    if (!result_) result_ = consumeToken(builder_, LBRACKET);
+    if (!result_) result_ = consumeToken(builder_, RBRACKET);
+    if (!result_) result_ = consumeToken(builder_, PLUS);
+    if (!result_) result_ = consumeToken(builder_, MINUS);
+    if (!result_) result_ = consumeToken(builder_, STAR);
+    if (!result_) result_ = consumeToken(builder_, SLASH);
+    if (!result_) result_ = consumeToken(builder_, EQ);
+    if (!result_) result_ = consumeToken(builder_, EQEQ);
+    if (!result_) result_ = consumeToken(builder_, NEQ);
+    if (!result_) result_ = consumeToken(builder_, LT);
+    if (!result_) result_ = consumeToken(builder_, LE);
+    if (!result_) result_ = consumeToken(builder_, GT);
+    if (!result_) result_ = consumeToken(builder_, GE);
+    if (!result_) result_ = consumeToken(builder_, SEMICOLON);
+    if (!result_) result_ = consumeToken(builder_, COMMA);
+    if (!result_) result_ = consumeToken(builder_, DOT);
+    if (!result_) result_ = consumeToken(builder_, DOTDOT);
+    if (!result_) result_ = consumeToken(builder_, ELLIPSIS);
+    if (!result_) result_ = consumeToken(builder_, COLON);
+    if (!result_) result_ = consumeToken(builder_, INT);
+    if (!result_) result_ = consumeToken(builder_, FLOAT);
+    if (!result_) result_ = consumeToken(builder_, BOOLEAN);
+    if (!result_) result_ = consumeToken(builder_, STRING);
+    if (!result_) result_ = consumeToken(builder_, RANGE);
+    if (!result_) result_ = consumeToken(builder_, DVAR);
+    if (!result_) result_ = consumeToken(builder_, DEXPR);
+    if (!result_) result_ = consumeToken(builder_, TUPLE);
+    if (!result_) result_ = consumeToken(builder_, MINIMIZE);
+    if (!result_) result_ = consumeToken(builder_, MAXIMIZE);
+    if (!result_) result_ = consumeToken(builder_, SUBJECT_TO);
+    if (!result_) result_ = consumeToken(builder_, INCLUDE);
+    if (!result_) result_ = consumeToken(builder_, EXECUTE);
+    if (!result_) result_ = consumeToken(builder_, FORALL);
+    if (!result_) result_ = consumeToken(builder_, EXISTS);
+    if (!result_) result_ = consumeToken(builder_, IN);
+    if (!result_) result_ = consumeToken(builder_, TO);
+    if (!result_) result_ = consumeToken(builder_, IF);
+    if (!result_) result_ = consumeToken(builder_, ELSE);
+    if (!result_) result_ = consumeToken(builder_, THEN);
+    if (!result_) result_ = consumeToken(builder_, USING);
+    if (!result_) result_ = consumeToken(builder_, CP);
+    if (!result_) result_ = consumeToken(builder_, INTERVAL);
+    if (!result_) result_ = consumeToken(builder_, SEQUENCE);
+    if (!result_) result_ = consumeToken(builder_, WITH);
+    if (!result_) result_ = consumeToken(builder_, ASSERT);
+    if (!result_) result_ = consumeToken(builder_, SUM);
+    if (!result_) result_ = consumeToken(builder_, ALL);
+    if (!result_) result_ = consumeToken(builder_, PULSE);
+    if (!result_) result_ = consumeToken(builder_, STEP);
+    if (!result_) result_ = consumeToken(builder_, ALLDIFFERENT);
+    if (!result_) result_ = consumeToken(builder_, PACK);
+    if (!result_) result_ = consumeToken(builder_, ANDAND);
+    if (!result_) result_ = consumeToken(builder_, OROR);
+    if (!result_) result_ = consumeToken(builder_, NOT);
+    if (!result_) result_ = consumeToken(builder_, MOD);
+    return result_;
   }
 
   /* ********************************************************** */
@@ -333,34 +499,59 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // (SUM | ALL) LPAREN ID IN expression RPAREN expression
-  //          | ID ( LPAREN (expression (COMMA expression)*)? RPAREN )? (LBRACKET expression RBRACKET)*
+  // (PLUS | MINUS) factor
+  //          | (SUM | ALL) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
+  //          | (ID | ALLDIFFERENT | PACK | PULSE | STEP) ( LPAREN (expression (COMMA expression)*)? RPAREN )? (LBRACKET expression RBRACKET)*
   //          | INTEGER_LITERAL
   //          | FLOAT_LITERAL
   //          | STRING_LITERAL
+  //          | LBRACKET (expression (COMMA expression)*)? RBRACKET
   //          | LPAREN expression RPAREN
   public static boolean factor(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factor")) return false;
     boolean result_;
-    Marker marker_ = enter_section_(builder_, level_, _NONE_, FACTOR, "<factor>");
+    Marker marker_ = enter_section_(builder_, level_, _COLLAPSE_, FACTOR, "<factor>");
     result_ = factor_0(builder_, level_ + 1);
     if (!result_) result_ = factor_1(builder_, level_ + 1);
+    if (!result_) result_ = factor_2(builder_, level_ + 1);
     if (!result_) result_ = consumeToken(builder_, INTEGER_LITERAL);
     if (!result_) result_ = consumeToken(builder_, FLOAT_LITERAL);
     if (!result_) result_ = consumeToken(builder_, STRING_LITERAL);
-    if (!result_) result_ = factor_5(builder_, level_ + 1);
+    if (!result_) result_ = factor_6(builder_, level_ + 1);
+    if (!result_) result_ = factor_7(builder_, level_ + 1);
     exit_section_(builder_, level_, marker_, result_, false, null);
     return result_;
   }
 
-  // (SUM | ALL) LPAREN ID IN expression RPAREN expression
+  // (PLUS | MINUS) factor
   private static boolean factor_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "factor_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = factor_0_0(builder_, level_ + 1);
-    result_ = result_ && consumeTokens(builder_, 0, LPAREN, ID, IN);
-    result_ = result_ && expression(builder_, level_ + 1);
+    result_ = result_ && factor(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // PLUS | MINUS
+  private static boolean factor_0_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_0_0")) return false;
+    boolean result_;
+    result_ = consumeToken(builder_, PLUS);
+    if (!result_) result_ = consumeToken(builder_, MINUS);
+    return result_;
+  }
+
+  // (SUM | ALL) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
+  private static boolean factor_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_1")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = factor_1_0(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, LPAREN);
+    result_ = result_ && oplIterator(builder_, level_ + 1);
+    result_ = result_ && factor_1_3(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, RPAREN);
     result_ = result_ && expression(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
@@ -368,77 +559,111 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   // SUM | ALL
-  private static boolean factor_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_0_0")) return false;
+  private static boolean factor_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_1_0")) return false;
     boolean result_;
     result_ = consumeToken(builder_, SUM);
     if (!result_) result_ = consumeToken(builder_, ALL);
     return result_;
   }
 
-  // ID ( LPAREN (expression (COMMA expression)*)? RPAREN )? (LBRACKET expression RBRACKET)*
-  private static boolean factor_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1")) return false;
+  // (COMMA oplIterator)*
+  private static boolean factor_1_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_1_3")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!factor_1_3_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "factor_1_3", pos_)) break;
+    }
+    return true;
+  }
+
+  // COMMA oplIterator
+  private static boolean factor_1_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_1_3_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, ID);
-    result_ = result_ && factor_1_1(builder_, level_ + 1);
-    result_ = result_ && factor_1_2(builder_, level_ + 1);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && oplIterator(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
+  // (ID | ALLDIFFERENT | PACK | PULSE | STEP) ( LPAREN (expression (COMMA expression)*)? RPAREN )? (LBRACKET expression RBRACKET)*
+  private static boolean factor_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = factor_2_0(builder_, level_ + 1);
+    result_ = result_ && factor_2_1(builder_, level_ + 1);
+    result_ = result_ && factor_2_2(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // ID | ALLDIFFERENT | PACK | PULSE | STEP
+  private static boolean factor_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_0")) return false;
+    boolean result_;
+    result_ = consumeToken(builder_, ID);
+    if (!result_) result_ = consumeToken(builder_, ALLDIFFERENT);
+    if (!result_) result_ = consumeToken(builder_, PACK);
+    if (!result_) result_ = consumeToken(builder_, PULSE);
+    if (!result_) result_ = consumeToken(builder_, STEP);
+    return result_;
+  }
+
   // ( LPAREN (expression (COMMA expression)*)? RPAREN )?
-  private static boolean factor_1_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1_1")) return false;
-    factor_1_1_0(builder_, level_ + 1);
+  private static boolean factor_2_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_1")) return false;
+    factor_2_1_0(builder_, level_ + 1);
     return true;
   }
 
   // LPAREN (expression (COMMA expression)*)? RPAREN
-  private static boolean factor_1_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1_1_0")) return false;
+  private static boolean factor_2_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_1_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LPAREN);
-    result_ = result_ && factor_1_1_0_1(builder_, level_ + 1);
+    result_ = result_ && factor_2_1_0_1(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, RPAREN);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // (expression (COMMA expression)*)?
-  private static boolean factor_1_1_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1_1_0_1")) return false;
-    factor_1_1_0_1_0(builder_, level_ + 1);
+  private static boolean factor_2_1_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_1_0_1")) return false;
+    factor_2_1_0_1_0(builder_, level_ + 1);
     return true;
   }
 
   // expression (COMMA expression)*
-  private static boolean factor_1_1_0_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1_1_0_1_0")) return false;
+  private static boolean factor_2_1_0_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_1_0_1_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = expression(builder_, level_ + 1);
-    result_ = result_ && factor_1_1_0_1_0_1(builder_, level_ + 1);
+    result_ = result_ && factor_2_1_0_1_0_1(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // (COMMA expression)*
-  private static boolean factor_1_1_0_1_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1_1_0_1_0_1")) return false;
+  private static boolean factor_2_1_0_1_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_1_0_1_0_1")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
-      if (!factor_1_1_0_1_0_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "factor_1_1_0_1_0_1", pos_)) break;
+      if (!factor_2_1_0_1_0_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "factor_2_1_0_1_0_1", pos_)) break;
     }
     return true;
   }
 
   // COMMA expression
-  private static boolean factor_1_1_0_1_0_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1_1_0_1_0_1_0")) return false;
+  private static boolean factor_2_1_0_1_0_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_1_0_1_0_1_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, COMMA);
@@ -448,158 +673,88 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   // (LBRACKET expression RBRACKET)*
-  private static boolean factor_1_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1_2")) return false;
+  private static boolean factor_2_2(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_2")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
-      if (!factor_1_2_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "factor_1_2", pos_)) break;
+      if (!factor_2_2_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "factor_2_2", pos_)) break;
     }
     return true;
   }
 
   // LBRACKET expression RBRACKET
-  private static boolean factor_1_2_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_1_2_0")) return false;
+  private static boolean factor_2_2_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_2_2_0")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LBRACKET);
     result_ = result_ && expression(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, RBRACKET);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // LBRACKET (expression (COMMA expression)*)? RBRACKET
+  private static boolean factor_6(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_6")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, LBRACKET);
+    result_ = result_ && factor_6_1(builder_, level_ + 1);
+    result_ = result_ && consumeToken(builder_, RBRACKET);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // (expression (COMMA expression)*)?
+  private static boolean factor_6_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_6_1")) return false;
+    factor_6_1_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // expression (COMMA expression)*
+  private static boolean factor_6_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_6_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = expression(builder_, level_ + 1);
+    result_ = result_ && factor_6_1_0_1(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
+  }
+
+  // (COMMA expression)*
+  private static boolean factor_6_1_0_1(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_6_1_0_1")) return false;
+    while (true) {
+      int pos_ = current_position_(builder_);
+      if (!factor_6_1_0_1_0(builder_, level_ + 1)) break;
+      if (!empty_element_parsed_guard_(builder_, "factor_6_1_0_1", pos_)) break;
+    }
+    return true;
+  }
+
+  // COMMA expression
+  private static boolean factor_6_1_0_1_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_6_1_0_1_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COMMA);
+    result_ = result_ && expression(builder_, level_ + 1);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
 
   // LPAREN expression RPAREN
-  private static boolean factor_5(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factor_5")) return false;
+  private static boolean factor_7(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "factor_7")) return false;
     boolean result_;
     Marker marker_ = enter_section_(builder_);
     result_ = consumeToken(builder_, LPAREN);
     result_ = result_ && expression(builder_, level_ + 1);
     result_ = result_ && consumeToken(builder_, RPAREN);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  /* ********************************************************** */
-  // LPAREN ( ID IN expression RPAREN expression | (expression (COMMA expression)*)? RPAREN )
-  //                          | (LBRACKET expression RBRACKET)*
-  static boolean factorIdSuffix(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = factorIdSuffix_0(builder_, level_ + 1);
-    if (!result_) result_ = factorIdSuffix_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // LPAREN ( ID IN expression RPAREN expression | (expression (COMMA expression)*)? RPAREN )
-  private static boolean factorIdSuffix_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, LPAREN);
-    result_ = result_ && factorIdSuffix_0_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // ID IN expression RPAREN expression | (expression (COMMA expression)*)? RPAREN
-  private static boolean factorIdSuffix_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_0_1")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = factorIdSuffix_0_1_0(builder_, level_ + 1);
-    if (!result_) result_ = factorIdSuffix_0_1_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // ID IN expression RPAREN expression
-  private static boolean factorIdSuffix_0_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_0_1_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeTokens(builder_, 0, ID, IN);
-    result_ = result_ && expression(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RPAREN);
-    result_ = result_ && expression(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // (expression (COMMA expression)*)? RPAREN
-  private static boolean factorIdSuffix_0_1_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_0_1_1")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = factorIdSuffix_0_1_1_0(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RPAREN);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // (expression (COMMA expression)*)?
-  private static boolean factorIdSuffix_0_1_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_0_1_1_0")) return false;
-    factorIdSuffix_0_1_1_0_0(builder_, level_ + 1);
-    return true;
-  }
-
-  // expression (COMMA expression)*
-  private static boolean factorIdSuffix_0_1_1_0_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_0_1_1_0_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = expression(builder_, level_ + 1);
-    result_ = result_ && factorIdSuffix_0_1_1_0_0_1(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // (COMMA expression)*
-  private static boolean factorIdSuffix_0_1_1_0_0_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_0_1_1_0_0_1")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!factorIdSuffix_0_1_1_0_0_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "factorIdSuffix_0_1_1_0_0_1", pos_)) break;
-    }
-    return true;
-  }
-
-  // COMMA expression
-  private static boolean factorIdSuffix_0_1_1_0_0_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_0_1_1_0_0_1_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, COMMA);
-    result_ = result_ && expression(builder_, level_ + 1);
-    exit_section_(builder_, marker_, null, result_);
-    return result_;
-  }
-
-  // (LBRACKET expression RBRACKET)*
-  private static boolean factorIdSuffix_1(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_1")) return false;
-    while (true) {
-      int pos_ = current_position_(builder_);
-      if (!factorIdSuffix_1_0(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "factorIdSuffix_1", pos_)) break;
-    }
-    return true;
-  }
-
-  // LBRACKET expression RBRACKET
-  private static boolean factorIdSuffix_1_0(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "factorIdSuffix_1_0")) return false;
-    boolean result_;
-    Marker marker_ = enter_section_(builder_);
-    result_ = consumeToken(builder_, LBRACKET);
-    result_ = result_ && expression(builder_, level_ + 1);
-    result_ = result_ && consumeToken(builder_, RBRACKET);
     exit_section_(builder_, marker_, null, result_);
     return result_;
   }
@@ -672,6 +827,38 @@ public class OplParser implements PsiParser, LightPsiParser {
       if (!empty_element_parsed_guard_(builder_, "oplFile", pos_)) break;
     }
     return true;
+  }
+
+  /* ********************************************************** */
+  // ID IN expression (COLON constraintExpression)?
+  public static boolean oplIterator(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "oplIterator")) return false;
+    if (!nextTokenIs(builder_, ID)) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeTokens(builder_, 0, ID, IN);
+    result_ = result_ && expression(builder_, level_ + 1);
+    result_ = result_ && oplIterator_3(builder_, level_ + 1);
+    exit_section_(builder_, marker_, OPL_ITERATOR, result_);
+    return result_;
+  }
+
+  // (COLON constraintExpression)?
+  private static boolean oplIterator_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "oplIterator_3")) return false;
+    oplIterator_3_0(builder_, level_ + 1);
+    return true;
+  }
+
+  // COLON constraintExpression
+  private static boolean oplIterator_3_0(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "oplIterator_3_0")) return false;
+    boolean result_;
+    Marker marker_ = enter_section_(builder_);
+    result_ = consumeToken(builder_, COLON);
+    result_ = result_ && constraintExpression(builder_, level_ + 1);
+    exit_section_(builder_, marker_, null, result_);
+    return result_;
   }
 
   /* ********************************************************** */
