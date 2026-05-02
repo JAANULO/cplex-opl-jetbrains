@@ -109,12 +109,13 @@ class OplAnnotator : Annotator {
 
                     while (currentNode != null && currentNode !is com.intellij.psi.PsiFile) {
 
-                        // KROK 1: Sprawdzamy, czy obecny węzeł posiada pod-węzły typu OPL_ITERATOR (np. w FORALL lub SUM)
+                        // KROK 1: Sprawdzamy, czy obecny węzeł posiada pod-węzły typu ITERATOR (np. w FORALL lub SUM)
                         val children = currentNode.node.getChildren(null)
                         for (child in children) {
-                            if (child.elementType.toString() == "OPL_ITERATOR") {
-                                val idNode = child.findChildByType(OplTypes.ID)
-                                if (idNode != null && idNode.text == name) {
+                            if (child.elementType.toString().contains("ITERATOR")) {
+                                // Pobieramy WSZYSTKIE identyfikatory z iteratora, aby obsłużyć wpisy takie jak: forall(i, j in 1..10)
+                                val idNodes = child.getChildren(null).filter { it.elementType == OplTypes.ID }
+                                if (idNodes.any { it.text == name }) {
                                     isLocalVariable = true
                                     break
                                 }
@@ -123,9 +124,9 @@ class OplAnnotator : Annotator {
                         if (isLocalVariable) break // Znaleźliśmy zmienną w iteratorze obok, przerywamy!
 
                         // KROK 2: Sprawdzamy, czy sami nie jesteśmy wewnątrz iteratora (np. warunek given[i][j] != 0)
-                        if (currentNode.node.elementType.toString() == "OPL_ITERATOR") {
-                            val idNode = currentNode.node.findChildByType(OplTypes.ID)
-                            if (idNode != null && idNode.text == name) {
+                        if (currentNode.node.elementType.toString().contains("ITERATOR")) {
+                            val idNodes = currentNode.node.getChildren(null).filter { it.elementType == OplTypes.ID }
+                            if (idNodes.any { it.text == name }) {
                                 isLocalVariable = true
                                 break
                             }

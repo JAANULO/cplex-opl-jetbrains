@@ -4,6 +4,15 @@
 
 ## [Unreleased]
 
+## [1.4.2] - 2026-05-02
+
+### Changed
+- **Compatibility:** Lowered minimum required IDE version to 2024.3 (build 243) to support older IDE installations.
+
+### Fixed
+- **Formatter:** Fixed indentation logic in `OplBlock` to correctly indent nested structures within constraint blocks.
+- **Annotator:** Fixed false positive "Undefined variable" errors for multiple iterators in loops (e.g., `forall(i, j in ...)`).
+
 ## [1.4.1] - 2026-05-02
 
 ### Fixed
@@ -13,6 +22,7 @@
 ## [1.4.0] - 2026-05-02
 
 ### Added
+
 - **File Templates:** Added "New -> OPL File" action to generate `.mod` and `.dat` files from templates.
 - **Execute Blocks:** Extended parser support for `execute` blocks and script-style tokens/operators.
 - **CP Keywords:** Added lexer/parser support for `pulse`, `step`, `allDifferent`, and `pack`.
@@ -21,6 +31,7 @@
 - **Array Literals:** Added grammar support for bracketed array literals in expressions.
 
 ### Fixed
+
 - **Greedy Lexer Bug:** Fixed lexer rules for minus signs and variables (e.g., `r-1` without spaces) preventing false syntax errors.
 - **Parser Completeness:** Added missing `==` (double equals) operator to the Lexer and Parser.
 - **Formatter:** Added spacing for `==` and `!=`, plus improved indentation in constraint/execute blocks and nested loops.
@@ -55,8 +66,9 @@
 - Updated `README.md` feature lists (EN/PL) to match current implementation.
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
 
-[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.0...HEAD
+[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.2...HEAD
+[1.4.2]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.3.0...1.4.0
-[1.3.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.2.0...1.3.0
+[1.3.0]: https://github.com/JAANULO/CPLEX-Plugin/commits/1.3.0
 [1.2.0]: https://github.com/JAANULO/CPLEX-Plugin/commits/1.2.0

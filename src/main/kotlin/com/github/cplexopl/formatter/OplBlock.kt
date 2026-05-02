@@ -47,9 +47,10 @@ class OplBlock(
             return Indent.getNormalIndent()
         }
 
-        // 3. Obsługa zagnieżdżeń w pętlach forall
+        // 3. Obsługa zagnieżdżeń w pętlach forall i blokach warunkowych
         if (parentType == OplTypes.CONSTRAINT_ITEM) {
-            if (elementType == OplTypes.CONSTRAINT_ITEM) {
+            // Zawartość ograniczenia ma być wcięta, z wyjątkiem ewentualnych klamer otaczających
+            if (elementType != OplTypes.LBRACE && elementType != OplTypes.RBRACE) {
                 return Indent.getNormalIndent()
             }
             return Indent.getNoneIndent()

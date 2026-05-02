@@ -40,6 +40,7 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `DONE` Uruchamianie modeli OPL z poziomu IDE: `oplrun model.mod data.dat`
 - `DONE` Obsługa wyboru plików `.mod` i `.dat`
 - `DONE` Integracja z konsolą IDE (stdout / stderr)
+- `DONE` **Asynchroniczność (UI Freezes):** Odklejenie procesu rozwiązywania od wątku EDT za pomocą `ProcessHandler` lub `Task.Backgroundable`, aby IDE nie zawieszało się przy trudnych modelach.
 
 ### 0.2 Integracja środowiska CPLEX
 - `DONE` Automatyczne wykrywanie instalacji (heurystyka ścieżek systemowych)
@@ -56,12 +57,12 @@ Bez tego plugin nie spełnia swojego głównego celu.
 ## Poziom 1: Fundamenty i Estetyka (Bardzo łatwe)
 
 ### 1.1 Ikony i Branding
-- `TODO` Ikona pluginu gotowa na JetBrains Marketplace
+- `DONE` Ikona pluginu gotowa na JetBrains Marketplace
 - `DONE` Weryfikacja i użycie ikon SVG dla plików `.mod` i `.dat`
 
 ### 1.2 Formatowanie (Code Style)
 - `DONE` Inteligentne wcięcia (Indentation) w formaterze, aby wyeliminować błędne tabulatory w nowych liniach.
-
+- `DONE` **Zaawansowany Formatter:** Układanie klamer i wcięć dla zagnieżdżonych bloków ograniczeń (`constraints`) i skryptów (`execute`) za pomocą `FormattingModelBuilder`.
 ---
 
 ## Poziom 2: Automatyzacja i Walidacja (Średnio łatwe)
@@ -71,6 +72,7 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `DONE` Walidacja duplikatów nazw zmiennych
 - `DONE` Wykrywanie brakujących średników
 - `DONE` Wykrywanie niezdefiniowanych zmiennych
+- `DONE` **Eliminacja fałszywych błędów (False Positives):** Ciągłe dostrajanie parsera, aby nie podkreślał na czerwono poprawnego kodu.
 - **Inżynierski zysk:** Zgodność ze standardem OPL i czystość logiczna modelu
 
 ### 2.2 Rozpoznawanie bloków skryptowych (OPLScript)
@@ -118,10 +120,10 @@ Bez tego plugin nie spełnia swojego głównego celu.
 ### 5.1 Go to Declaration — Skakanie do definicji
 - `PARTIAL` Globalna nawigacja po identyfikatorach (`Ctrl+Click`)
 - `DONE` **Mechanizm:** `PsiReference`
-- `TODO` **Wyzwanie:** obsługa zasięgów (Scopes) i indeksowanie plików projektu
+- `TODO` **Wyzwanie:** Poprawne budowanie drzewa AST i rozwiązywanie referencji ściśle w obrębie zadeklarowanych zasięgów (Scope), aby zmienne lokalne nie nadpisywały globalnych.
 
 ### 5.2 Rename Refactoring
-- `TODO` Bezpieczna zmiana nazw identyfikatorów we wszystkich plikach projektu
+- `TODO` Bezpieczna zmiana nazw identyfikatorów we wszystkich plikach projektu (`Shift+F6`) przy użyciu interfejsu `PsiNamedElement`.
 
 ---
 
@@ -136,8 +138,8 @@ Bez tego plugin nie spełnia swojego głównego celu.
 ### 6.2 Stabilność i kompatybilność
 - `TODO` Testy jednostkowe (IntelliJ Platform Test Framework)
 - `PARTIAL` Obsługa błędów runtime
-- `PARTIAL` Kompatybilność z PyCharm, IntelliJ IDEA, CLion
-
+- `DONE` Kompatybilność z PyCharm, IntelliJ IDEA, CLion (odblokowane przez `com.intellij.modules.lang` oraz obniżenie bazowej wersji do 2024.3)
+- `TODO` **Przegląd API (Deprecations):** Aktualizacja przestarzałych metod w kodzie (np. wymuszenie `getActionUpdateThread()` w klasach `AnAction`), aby uniknąć problemów w przyszłych wersjach IDE.
 ---
 
 ## ⭐ Priorytety — największa wartość dla użytkownika
@@ -169,5 +171,7 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - **Global Constraints:** Wbudowane w silnik CP wydajne algorytmy (np. `allDifferent`), modelujące złożone zależności kombinatoryczne
 - **Cmax (Makespan):** Długość uszeregowania, czas zakończenia wszystkich procesów
 - **PSI:** Program Structure Interface — reprezentacja kodu jako drzewo w pamięci IntelliJ
+- **AST:** Abstract Syntax Tree — abstrakcyjne drzewo składniowe, wewnętrzna struktura kodu po sparsowaniu
+- **EDT:** Event Dispatch Thread — główny wątek interfejsu graficznego IDE. Wykonywanie w nim ciężkich operacji powoduje zawieszenie edytora.
 - **FQCN:** Fully Qualified Class Name — pełna ścieżka klasy z pakietem (np. `com.github.cplexopl.OplLanguage`)
 - **Scope:** Zasięg zmiennej — obszar kodu w którym zmienna jest widoczna i dostępna
