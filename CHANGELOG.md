@@ -4,6 +4,12 @@
 
 ## [Unreleased]
 
+## [1.4.1] - 2026-05-02
+
+### Fixed
+- **PyCharm Compatibility:** Added missing `com.intellij.modules.lang` dependency to `plugin.xml` to fix installation issues in PyCharm and other JetBrains IDEs.
+- **File Icons:** Added `icon=` attributes to `fileType` definitions in `plugin.xml` to enforce rendering of dedicated SVG icons for `.mod` and `.dat` files.
+
 ## [1.4.0] - 2026-05-02
 
 ### Added
@@ -50,6 +56,7 @@
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
 
 [Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.0...HEAD
+[1.4.1]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.3.0...1.4.0
 [1.3.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/JAANULO/CPLEX-Plugin/commits/1.2.0
