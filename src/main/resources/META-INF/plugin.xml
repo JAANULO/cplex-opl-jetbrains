@@ -42,12 +42,14 @@
                 fieldName="INSTANCE"
                 language="OPL"
                 extensions="mod"/>
+                icon="/icons/oplMod.svg"/>
         <fileType
                 name="OPL Data File"
                 implementationClass="com.github.cplexopl.OplDatFileType"
                 fieldName="INSTANCE"
                 language="OPLDat"
                 extensions="dat"/>
+                icon="/icons/oplDat.svg"/>
 
         <!-- Syntax Highlighting -->
         <lang.syntaxHighlighterFactory
@@ -103,7 +105,7 @@
             <keyboard-shortcut keymap="$default" first-keystroke="shift F10"/>
         </action>
 
-        <action id="Opl.NewFile" class="com.github.cplexopl.actions.OplCreateFileAction" text="OPL File" description="Create new OPL file">
+        <action id="Opl.NewFile" class="com.github.cplexopl.actions.OplCreateFileAction" text="OPL File" description="Create new OPL file" icon="/icons/oplMod.svg">
             <add-to-group group-id="NewGroup" anchor="before" relative-to-action="NewFile"/>
         </action>
     </actions>
