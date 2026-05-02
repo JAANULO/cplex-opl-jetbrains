@@ -7,15 +7,18 @@
 ## [1.4.2] - 2026-05-02
 
 ### Changed
+
 - **Compatibility:** Lowered minimum required IDE version to 2024.3 (build 243) to support older IDE installations.
 
 ### Fixed
+
 - **Formatter:** Fixed indentation logic in `OplBlock` to correctly indent nested structures within constraint blocks.
 - **Annotator:** Fixed false positive "Undefined variable" errors for multiple iterators in loops (e.g., `forall(i, j in ...)`).
 
 ## [1.4.1] - 2026-05-02
 
 ### Fixed
+
 - **PyCharm Compatibility:** Added missing `com.intellij.modules.lang` dependency to `plugin.xml` to fix installation issues in PyCharm and other JetBrains IDEs.
 - **File Icons:** Added `icon=` attributes to `fileType` definitions in `plugin.xml` to enforce rendering of dedicated SVG icons for `.mod` and `.dat` files.
 
