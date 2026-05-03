@@ -138,6 +138,10 @@ Bez tego plugin nie spełnia swojego głównego celu.
 ### 6.2 Stabilność i kompatybilność
 - `TODO` Testy jednostkowe (IntelliJ Platform Test Framework)
 - `PARTIAL` Obsługa błędów runtime
+
+### 6.3 Ekspansja poza środowiska JetBrains (Wizja długoterminowa)
+- `TODO` **Language Server Protocol (LSP):** Stworzenie niezależnego serwera językowego opartego na obecnej logice lexera i parsera. Umożliwi to udostępnienie funkcji OPL (autouzupełnianie, błędy) w VS Code, Neovim, Sublime Text i innych edytorach wspierających LSP.
+- `TODO` Wydanie prostego rozszerzenia dla VS Code komunikującego się z serwerem LSP.
 - `DONE` Kompatybilność z PyCharm, IntelliJ IDEA, CLion (odblokowane przez `com.intellij.modules.lang` oraz obniżenie bazowej wersji do 2024.3)
 - `TODO` **Przegląd API (Deprecations):** Aktualizacja przestarzałych metod w kodzie (np. wymuszenie `getActionUpdateThread()` w klasach `AnAction`), aby uniknąć problemów w przyszłych wersjach IDE.
 ---
