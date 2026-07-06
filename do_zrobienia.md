@@ -134,6 +134,8 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `TODO` Screenshoty pokazujące działanie
 - `PARTIAL` Uzupełniony CHANGELOG.md
 - `DONE` README z instrukcją instalacji i wymaganiami
+- `TODO` Wygenerowanie i dodanie certyfikatów oraz klucza prywatnego do podpisywania wtyczki (`CERTIFICATE_CHAIN`, `PRIVATE_KEY`, `PRIVATE_KEY_PASSWORD`) w GitHub Secrets
+
 
 ### 6.2 Stabilność i kompatybilność
 - `DONE` Testy jednostkowe (IntelliJ Platform Test Framework)
