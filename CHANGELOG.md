@@ -4,29 +4,38 @@
 
 ## [Unreleased]
 
+## [1.4.3] - 2026-07-06
+
 ### Added
+
 - **Testing:** Implemented comprehensive automated test suite (Unit Tests, Parsing, Highlighting, Completion, Formatting, Commenter) using IntelliJ Platform Test Framework.
 - **IDE Features:** Implemented `Find Usages` for OPL variables and parameters.
 - **IDE Features:** Added `Rename Refactoring` (Shift+F6) support for variables, tuples, and constraints.
 - **Inspections:** Added real-time CP/MIP semantic inspections (e.g. warning about `min`/`max` nonlinearity, missing `endOf()` in scheduling).
 
 ### Changed
+
 - **API Modernization:** Migrated action classes (`RunOplModelAction`, `OplCreateFileAction`) to `ActionUpdateThread.BGT` to prevent UI freezes.
 
 ### Fixed
+
 - **Qodana & Settings:** Translated settings strings to English and corrected path exclusions for generated parser/lexer files to resolve Qodana warnings.
+
 ## [1.4.2] - 2026-05-02
 
 ### Changed
+
 - **Compatibility:** Lowered minimum required IDE version to 2024.3 (build 243) to support older IDE installations.
 
 ### Fixed
+
 - **Formatter:** Fixed indentation logic in `OplBlock` to correctly indent nested structures within constraint blocks.
 - **Annotator:** Fixed false positive "Undefined variable" errors for multiple iterators in loops (e.g., `forall(i, j in ...)`).
 
 ## [1.4.1] - 2026-05-02
 
 ### Fixed
+
 - **PyCharm Compatibility:** Added missing `com.intellij.modules.lang` dependency to `plugin.xml` to fix installation issues in PyCharm and other JetBrains IDEs.
 - **File Icons:** Added `icon=` attributes to `fileType` definitions in `plugin.xml` to enforce rendering of dedicated SVG icons for `.mod` and `.dat` files.
 
@@ -77,7 +86,8 @@
 - Updated `README.md` feature lists (EN/PL) to match current implementation.
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
 
-[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.2...HEAD
+[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.3...HEAD
+[1.4.3]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.2...1.4.3
 [1.4.2]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.3.0...1.4.0
