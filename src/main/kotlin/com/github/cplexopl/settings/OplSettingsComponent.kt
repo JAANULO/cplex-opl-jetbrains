@@ -14,7 +14,7 @@ class OplSettingsComponent {
         cplexPathField.addBrowseFolderListener(
             null,
             FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor().apply {
-                title = "Select CPLEX Executable (oplrun)"
+                title = "Select CPLEX Executable (Oplrun)"
                 description = "Specify the path to the oplrun executable."
             }
         )
