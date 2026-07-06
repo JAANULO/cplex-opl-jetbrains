@@ -26,6 +26,7 @@ Plugin adding native support for IBM ILOG CPLEX Optimization Programming Languag
 * **Console Navigation:** Clickable error links (for `.mod`) in run console.
 * **Structure View:** Side panel listing declarations, objective, and constraints.
 * **Editor Utilities:** Live templates, commenter (`Ctrl+/`), brace matcher, and basic code formatter.
+* **Refactoring:** Rename refactoring (`Shift+F6`) and Find Usages support.
 
 ### Installation (Manual Install)
 Before the plugin reaches the official JetBrains Marketplace, you can install it manually:
@@ -53,6 +54,7 @@ Wtyczka dodająca natywne wsparcie dla języka IBM ILOG CPLEX Optimization Progr
 * **Nawigacja błędów:** Klikalne linki błędów solvera (dla `.mod`) w konsoli uruchomienia.
 * **Structure View:** Boczne drzewo elementów modelu (deklaracje, cel, ograniczenia).
 * **Narzędzia edytora:** Live templates, komentowanie (`Ctrl+/`), pary nawiasów i podstawowy formatter.
+* **Refaktoryzacja:** Zmiana nazwy (`Shift+F6`) we wszystkich plikach projektu oraz wyszukiwanie użyć (Find Usages).
 
 ### Instalacja (Instalacja Ręczna)
 Zanim wtyczka trafi do oficjalnego sklepu JetBrains Marketplace, możesz ją zainstalować ręcznie:

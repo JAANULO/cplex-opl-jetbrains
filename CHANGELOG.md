@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+### Added
+- **Testing:** Implemented comprehensive automated test suite (Unit Tests, Parsing, Highlighting, Completion, Formatting, Commenter) using IntelliJ Platform Test Framework.
+- **IDE Features:** Implemented `Find Usages` for OPL variables and parameters.
+- **IDE Features:** Added `Rename Refactoring` (Shift+F6) support for variables, tuples, and constraints.
+- **Inspections:** Added real-time CP/MIP semantic inspections (e.g. warning about `min`/`max` nonlinearity, missing `endOf()` in scheduling).
+
+### Changed
+- **API Modernization:** Migrated action classes (`RunOplModelAction`, `OplCreateFileAction`) to `ActionUpdateThread.BGT` to prevent UI freezes.
 ## [1.4.2] - 2026-05-02
 
 ### Changed

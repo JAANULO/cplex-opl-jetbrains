@@ -101,17 +101,17 @@ Bez tego plugin nie spełnia swojego głównego celu.
 ## Poziom 4: Zaawansowana Analiza Systemowa (Trudne)
 
 ### 4.1 Inspekcja nieliniowości: `min`, `max`, `abs`
-- `TODO` Analiza wpływu na złożoność obliczeniową (MIP)
-- `TODO` **Logika:** weryfikacja typu parametrów (`dvar` vs `float/int`)
-- `TODO` Ostrzeganie o niejawnej linearyzacji przez solver
+- `DONE` Analiza wpływu na złożoność obliczeniową (MIP)
+- `DONE` **Logika:** weryfikacja typu parametrów (`dvar` vs `float/int`)
+- `DONE` Ostrzeganie o niejawnej linearyzacji przez solver
 
 ### 4.2 Walidacja funkcji celu dla szeregowania
-- `TODO` Inspekcja poprawnego wyznaczania długości uszeregowania $C_{max}$.
+- `DONE` Inspekcja poprawnego wyznaczania długości uszeregowania $C_{max}$.
 - **Logika:** Weryfikacja węzłów drzewa PSI wewnątrz bloku `minimize`. Ostrzeganie, jeśli przy zmiennych przedziałowych (`interval`) brakuje niezbędnych funkcji operujących na czasie zakończenia (np. `endOf()`).
 
 ### 4.3 Find Usages
-- `TODO` Wyszukiwanie wszystkich użyć zmiennej w projekcie
-- `TODO` Integracja z oknem "Find" IntelliJ
+- `DONE` Wyszukiwanie wszystkich użyć zmiennej w projekcie
+- `DONE` Integracja z oknem "Find" IntelliJ
 
 ---
 
@@ -123,7 +123,7 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `TODO` **Wyzwanie:** Poprawne budowanie drzewa AST i rozwiązywanie referencji ściśle w obrębie zadeklarowanych zasięgów (Scope), aby zmienne lokalne nie nadpisywały globalnych.
 
 ### 5.2 Rename Refactoring
-- `TODO` Bezpieczna zmiana nazw identyfikatorów we wszystkich plikach projektu (`Shift+F6`) przy użyciu interfejsu `PsiNamedElement`.
+- `DONE` Bezpieczna zmiana nazw identyfikatorów we wszystkich plikach projektu (`Shift+F6`) przy użyciu interfejsu `PsiNamedElement`.
 
 ---
 
@@ -136,17 +136,17 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `DONE` README z instrukcją instalacji i wymaganiami
 
 ### 6.2 Stabilność i kompatybilność
-- `TODO` Testy jednostkowe (IntelliJ Platform Test Framework)
+- `DONE` Testy jednostkowe (IntelliJ Platform Test Framework)
 - `PARTIAL` Obsługa błędów runtime
 
 ### 6.3 Ekspansja poza środowiska JetBrains (Wizja długoterminowa)
 - `TODO` **Language Server Protocol (LSP):** Stworzenie niezależnego serwera językowego opartego na obecnej logice lexera i parsera. Umożliwi to udostępnienie funkcji OPL (autouzupełnianie, błędy) w VS Code, Neovim, Sublime Text i innych edytorach wspierających LSP.
 - `TODO` Wydanie prostego rozszerzenia dla VS Code komunikującego się z serwerem LSP.
 - `DONE` Kompatybilność z PyCharm, IntelliJ IDEA, CLion (odblokowane przez `com.intellij.modules.lang` oraz obniżenie bazowej wersji do 2024.3)
-- `TODO` **Przegląd API (Deprecations):** Aktualizacja przestarzałych metod w kodzie (np. wymuszenie `getActionUpdateThread()` w klasach `AnAction`), aby uniknąć problemów w przyszłych wersjach IDE.
+- `DONE` **Przegląd API (Deprecations):** Aktualizacja przestarzałych metod w kodzie (np. wymuszenie `getActionUpdateThread()` w klasach `AnAction`), aby uniknąć problemów w przyszłych wersjach IDE.
 ---
 
-## ⭐ Priorytety — największa wartość dla użytkownika
+##  Priorytety — największa wartość dla użytkownika
 
 1. **Run Configuration** (`oplrun`) — bez tego wtyczka jest tylko edytorem tekstu
 2. **Integracja z CPLEX** (ścieżki, auto-wykrywanie)
