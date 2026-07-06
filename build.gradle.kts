@@ -144,3 +144,4 @@ tasks {
 tasks.matching { it.name == "instrumentCode" || it.name == "instrumentTestCode" }.configureEach {
     enabled = false
 }
+tasks.withType<Test> { testLogging { showStandardStreams = true } }

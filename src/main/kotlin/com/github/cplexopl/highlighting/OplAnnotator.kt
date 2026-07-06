@@ -24,6 +24,38 @@ class OplAnnotator : Annotator {
                 }
             }
 
+            // --- Inspekcje: Nieliniowość (MIP) ---
+            if (element is OplFactor) {
+                val idNode = element.node.findChildByType(OplTypes.ID)
+                if (idNode != null) {
+                    val name = idNode.text
+                    if (name == "min" || name == "max" || name == "abs") {
+                        holder.newAnnotation(HighlightSeverity.WARNING, "Użycie funkcji nieliniowej '$name' może wydłużyć czas obliczeń (MIP).")
+                            .range(idNode.textRange)
+                            .create()
+                    }
+                }
+            }
+
+            // --- Inspekcje: Walidacja funkcji celu w szeregowaniu (CP) ---
+            if (element is OplObjectiveDeclaration) {
+                val file = element.containingFile
+                if (file != null) {
+                    val hasInterval = PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java).any {
+                        it.node.findChildByType(OplTypes.INTERVAL) != null || it.node.findChildByType(OplTypes.SEQUENCE) != null
+                    }
+                    if (hasInterval) {
+                        val objText = element.text
+                        if (!objText.contains("endOf") && !objText.contains("lengthOf") && !objText.contains("startOf") && !objText.contains("startAtEnd")) {
+                            val targetRange = element.node.findChildByType(OplTypes.MINIMIZE)?.textRange ?: element.node.findChildByType(OplTypes.MAXIMIZE)?.textRange ?: element.textRange
+                            holder.newAnnotation(HighlightSeverity.WARNING, "Brak funkcji czasu (np. endOf) w funkcji celu przy szeregowaniu.")
+                                .range(targetRange)
+                                .create()
+                        }
+                    }
+                }
+            }
+
             // Analizujemy tylko tokeny zmiennych
             if (element.node.elementType == OplTypes.ID) {
                 // 0. Omijamy bloki execute (skrypt JS, nie deklaracje OPL)

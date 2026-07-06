@@ -1,0 +1,2 @@
+// Oczekujemy autouzupełniania tutaj
+<caret>

@@ -40,17 +40,16 @@ class OplBlock(
             return Indent.getNoneIndent()
         }
 
-        // 2. Wcięcia dla głównych bloków (ograniczenia, skrypty, struktury w tablicach)
+        // 2. Wcięcia dla głównych bloków (ograniczenia, skrypty)
         if (parentType == OplTypes.CONSTRAINT_SECTION ||
-            parentType == OplTypes.EXECUTE_BODY ||
-            parentType == OplTypes.FACTOR) {
+            parentType == OplTypes.EXECUTE_BODY) {
             return Indent.getNormalIndent()
         }
 
         // 3. Obsługa zagnieżdżeń w pętlach forall i blokach warunkowych
         if (parentType == OplTypes.CONSTRAINT_ITEM) {
-            // Zawartość ograniczenia ma być wcięta, z wyjątkiem ewentualnych klamer otaczających
-            if (elementType != OplTypes.LBRACE && elementType != OplTypes.RBRACE) {
+            // Wcinamy tylko zagnieżdżone elementy wewnątrz forall
+            if (elementType == OplTypes.CONSTRAINT_ITEM) {
                 return Indent.getNormalIndent()
             }
             return Indent.getNoneIndent()
@@ -64,8 +63,7 @@ class OplBlock(
         // Enter automatycznie nadaje odpowiedni poziom wcięć
         if (elementType == OplTypes.CONSTRAINT_SECTION ||
             elementType == OplTypes.CONSTRAINT_ITEM ||
-            elementType == OplTypes.EXECUTE_BODY ||
-            elementType == OplTypes.FACTOR) {
+            elementType == OplTypes.EXECUTE_BODY) {
             return ChildAttributes(Indent.getNormalIndent(), null)
         }
         return ChildAttributes(Indent.getNoneIndent(), null)

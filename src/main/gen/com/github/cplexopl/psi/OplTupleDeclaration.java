@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface OplTupleDeclaration extends PsiElement {
+public interface OplTupleDeclaration extends OplNamedElement {
 
   @NotNull
   List<OplTupleField> getTupleFieldList();

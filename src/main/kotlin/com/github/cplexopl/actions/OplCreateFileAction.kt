@@ -7,7 +7,10 @@ import com.intellij.psi.PsiDirectory
 import com.github.cplexopl.OplFileType
 import com.github.cplexopl.OplDatFileType
 
+import com.intellij.openapi.actionSystem.ActionUpdateThread
+
 class OplCreateFileAction : CreateFileFromTemplateAction("OPL File", "Creates a new OPL file", OplFileType.icon) {
+    override fun getActionUpdateThread() = ActionUpdateThread.BGT
     override fun buildDialog(project: Project, directory: PsiDirectory, builder: CreateFileFromTemplateDialog.Builder) {
         builder.setTitle("New OPL File")
             .addKind("Model file (.mod)", OplFileType.icon, "OplModel")

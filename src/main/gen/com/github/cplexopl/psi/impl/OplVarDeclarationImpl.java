@@ -8,12 +8,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.cplexopl.psi.OplTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.cplexopl.psi.OplNamedElementImpl;
 import com.github.cplexopl.psi.*;
 
-public class OplVarDeclarationImpl extends ASTWrapperPsiElement implements OplVarDeclaration {
+public class OplVarDeclarationImpl extends OplNamedElementImpl implements OplVarDeclaration {
 
-  public OplVarDeclarationImpl(@NotNull ASTNode node) {
+  public OplVarDeclarationImpl(ASTNode node) {
     super(node);
   }
 

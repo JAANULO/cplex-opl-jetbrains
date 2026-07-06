@@ -31,6 +31,8 @@
         <consoleFilterProvider implementation="com.github.cplexopl.console.OplConsoleFilterProvider"/>
         <applicationService serviceImplementation="com.github.cplexopl.settings.OplSettingsState"/>
         <lang.commenter language="OPL" implementationClass="com.github.cplexopl.features.OplCommenter"/>
+        <lang.findUsagesProvider language="OPL" implementationClass="com.github.cplexopl.features.OplFindUsagesProvider"/>
+        <lang.refactoringSupport language="OPL" implementationClass="com.github.cplexopl.features.OplRefactoringSupportProvider"/>
         <internalFileTemplate name="OplModel"/>
         <internalFileTemplate name="OplData"/>
 
@@ -41,14 +43,14 @@
                 implementationClass="com.github.cplexopl.OplFileType"
                 fieldName="INSTANCE"
                 language="OPL"
-                extensions="mod"/>
+                extensions="mod"
                 icon="/icons/oplMod.svg"/>
         <fileType
                 name="OPL Data File"
                 implementationClass="com.github.cplexopl.OplDatFileType"
                 fieldName="INSTANCE"
                 language="OPLDat"
-                extensions="dat"/>
+                extensions="dat"
                 icon="/icons/oplDat.svg"/>
 
         <!-- Syntax Highlighting -->

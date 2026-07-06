@@ -8,12 +8,12 @@ import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import com.intellij.psi.util.PsiTreeUtil;
 import static com.github.cplexopl.psi.OplTypes.*;
-import com.intellij.extapi.psi.ASTWrapperPsiElement;
+import com.github.cplexopl.psi.OplNamedElementImpl;
 import com.github.cplexopl.psi.*;
 
-public class OplTupleDeclarationImpl extends ASTWrapperPsiElement implements OplTupleDeclaration {
+public class OplTupleDeclarationImpl extends OplNamedElementImpl implements OplTupleDeclaration {
 
-  public OplTupleDeclarationImpl(@NotNull ASTNode node) {
+  public OplTupleDeclarationImpl(ASTNode node) {
     super(node);
   }
 

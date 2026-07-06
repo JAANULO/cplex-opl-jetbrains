@@ -20,7 +20,7 @@ public class OplVisitor extends PsiElementVisitor {
   }
 
   public void visitDvarDeclaration(@NotNull OplDvarDeclaration o) {
-    visitPsiElement(o);
+    visitNamedElement(o);
   }
 
   public void visitExecuteBlock(@NotNull OplExecuteBlock o) {
@@ -60,7 +60,7 @@ public class OplVisitor extends PsiElementVisitor {
   }
 
   public void visitTupleDeclaration(@NotNull OplTupleDeclaration o) {
-    visitPsiElement(o);
+    visitNamedElement(o);
   }
 
   public void visitTupleField(@NotNull OplTupleField o) {
@@ -72,6 +72,10 @@ public class OplVisitor extends PsiElementVisitor {
   }
 
   public void visitVarDeclaration(@NotNull OplVarDeclaration o) {
+    visitNamedElement(o);
+  }
+
+  public void visitNamedElement(@NotNull OplNamedElement o) {
     visitPsiElement(o);
   }
 

@@ -5,7 +5,7 @@ import java.util.List;
 import org.jetbrains.annotations.*;
 import com.intellij.psi.PsiElement;
 
-public interface OplDvarDeclaration extends PsiElement {
+public interface OplDvarDeclaration extends OplNamedElement {
 
   @NotNull
   List<OplExpression> getExpressionList();

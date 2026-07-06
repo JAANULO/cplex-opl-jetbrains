@@ -39,4 +39,17 @@ class OplReference(
     }
 
     override fun getVariants(): Array<Any> = emptyArray()
+
+    override fun handleElementRename(newElementName: String): PsiElement {
+        val element = element as? OplFactor
+        if (element != null) {
+            val idNode = element.node.findChildByType(OplTypes.ID)
+            if (idNode != null) {
+                val newIdentifier = OplElementFactory.createIdentifier(element.project, newElementName)
+                element.node.replaceChild(idNode, newIdentifier.node)
+                return element
+            }
+        }
+        return super.handleElementRename(newElementName)
+    }
 }

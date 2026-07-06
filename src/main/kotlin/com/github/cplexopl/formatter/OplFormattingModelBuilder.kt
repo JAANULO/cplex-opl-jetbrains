@@ -23,7 +23,8 @@ class OplFormattingModelBuilder : FormattingModelBuilder {
             .around(com.github.cplexopl.psi.OplTypes.GE).spaceIf(true)
             // Spacja po przecinku
             .after(com.github.cplexopl.psi.OplTypes.COMMA).spaceIf(true)
-            // Brak nowej linii przed klamrami sekcji
-            .before(com.github.cplexopl.psi.OplTypes.LBRACE).none()
+            // Wymuszenie dokładnie jednej spacji i zakaz nowej linii przed LBRACE i EXECUTE_BODY
+            .before(com.github.cplexopl.psi.OplTypes.LBRACE).spacing(1, 1, 0, false, 0)
+            .before(com.github.cplexopl.psi.OplTypes.EXECUTE_BODY).spacing(1, 1, 0, false, 0)
     }
 }
