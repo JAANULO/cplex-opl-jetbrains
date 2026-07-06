@@ -12,6 +12,9 @@
 
 ### Changed
 - **API Modernization:** Migrated action classes (`RunOplModelAction`, `OplCreateFileAction`) to `ActionUpdateThread.BGT` to prevent UI freezes.
+
+### Fixed
+- **Qodana & Settings:** Translated settings strings to English and corrected path exclusions for generated parser/lexer files to resolve Qodana warnings.
 ## [1.4.2] - 2026-05-02
 
 ### Changed
