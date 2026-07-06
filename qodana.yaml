@@ -2,6 +2,6 @@ version: "1.0"
 linter: jetbrains/qodana-jvm-community
 
 exclude:
-  - paths:
+  - name: All
+    paths:
       - "src/main/gen"
-  - name: IncorrectStringCapitalization

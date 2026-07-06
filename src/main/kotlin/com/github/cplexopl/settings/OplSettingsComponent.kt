@@ -14,14 +14,14 @@ class OplSettingsComponent {
         cplexPathField.addBrowseFolderListener(
             null,
             FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor().apply {
-                title = "Wybierz plik wykonywalny CPLEX (oplrun)"
-                description = "Wskaż ścieżkę do pliku oplrun."
+                title = "Select CPLEX Executable (oplrun)"
+                description = "Specify the path to the oplrun executable."
             }
         )
 
         panel = FormBuilder.createFormBuilder()
 
-            .addLabeledComponent("Ścieżka do oplrun:", cplexPathField, 1, false)
+            .addLabeledComponent("Path to oplrun:", cplexPathField, 1, false)
             .addComponentFillVertically(JPanel(), 0)
             .panel
     }
