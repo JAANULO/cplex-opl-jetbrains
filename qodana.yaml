@@ -3,4 +3,5 @@ linter: jetbrains/qodana-jvm-community
 
 exclude:
   - paths:
-      - "gen"
+      - "src/main/gen"
+  - name: IncorrectStringCapitalization
