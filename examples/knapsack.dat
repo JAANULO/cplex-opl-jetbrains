@@ -1,0 +1,5 @@
+// Dane testowe do problemu plecakowego
+Capacity = 15;
+
+Value = [4, 2, 1, 2, 10];
+Weight = [12, 1, 2, 1, 4];
