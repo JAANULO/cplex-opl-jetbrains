@@ -4,17 +4,24 @@
 
 ## [Unreleased]
 
+## [1.4.4] - 2026-07-09
+
 ### Added
 - **Testing:** Implemented comprehensive automated test suite (Unit Tests, Parsing, Highlighting, Completion, Formatting, Commenter) using IntelliJ Platform Test Framework.
 - **IDE Features:** Implemented `Find Usages` for OPL variables and parameters.
 - **IDE Features:** Added `Rename Refactoring` (Shift+F6) support for variables, tuples, and constraints.
 - **Inspections:** Added real-time CP/MIP semantic inspections (e.g. warning about `min`/`max` nonlinearity, missing `endOf()` in scheduling).
+- **Examples:** Created a new `examples/` directory containing sample models (MIP knapsack, CP job-shop scheduling) and a self-contained English demo model (`knapsack_demo.mod`) for JetBrains Marketplace.
 
 ### Changed
 - **API Modernization:** Migrated action classes (`RunOplModelAction`, `OplCreateFileAction`) to `ActionUpdateThread.BGT` to prevent UI freezes.
+- **Architectural Cleanup (Light Services):** Migrated `OplSettingsState` to a modern JetBrains Light Service (`@Service`) to improve IDE startup time and dynamic loading support.
+- **Language Parser:** Split the compound token `subject to` into two distinct tokens (`SUBJECT` and `TO`). This ensures proper spacing and indentation tolerance (e.g. multiple spaces or newlines) and resolves syntax parsing failures.
 
 ### Fixed
 - **Qodana & Settings:** Translated settings strings to English and corrected path exclusions for generated parser/lexer files to resolve Qodana warnings.
+- **Performance:** Optimized `OplAnnotator` variable scope checks using `CachedValuesManager` to cache declarations, reducing complexity from $O(N^2)$ to $O(N)$ and preventing UI lags on large `.mod` files.
+- **Windows Support:** Standardized file path separators in `OplLinkFilter` to ensure clickable console links work correctly on Windows systems.
 ## [1.4.2] - 2026-05-02
 
 ### Changed
@@ -77,7 +84,8 @@
 - Updated `README.md` feature lists (EN/PL) to match current implementation.
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
 
-[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.2...HEAD
+[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.4...HEAD
+[1.4.4]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.2...1.4.4
 [1.4.2]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.0...1.4.1
 [1.4.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.3.0...1.4.0
