@@ -20,7 +20,7 @@
     WITH        = 'with'
     MINIMIZE    = 'minimize'
     MAXIMIZE    = 'maximize'
-    SUBJECT_TO  = 'subject to'
+    SUBJECT     = 'subject'
     FORALL      = 'forall'
     EXISTS      = 'exists'
     IN          = 'in'
@@ -123,7 +123,7 @@ dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE) ID (LBRAC
 objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON { pin=1 recoverWhile=statement_recover }
 
 // Sekcja ograniczeń
-constraintSection ::= SUBJECT_TO LBRACE constraintItem* RBRACE { pin=1 }
+constraintSection ::= SUBJECT TO LBRACE constraintItem* RBRACE { pin=1 }
 
 // Definicja iteratora dla pętli i sum (np. i in 1..9 : x != 0)
 oplIterator ::= ID IN expression (COLON constraintExpression)?
@@ -175,4 +175,4 @@ factor ::= (PLUS | MINUS) factor
          | LPAREN expression RPAREN
 
 // Reguła odzyskiwania: "Pomijaj wszystko, dopóki nie natrafisz na początek nowej deklaracji lub średnik"
-private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE)
+private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE)

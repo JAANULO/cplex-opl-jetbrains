@@ -31,7 +31,7 @@ class OplSyntaxHighlighter : SyntaxHighlighterBase() {
     override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {
         return when (tokenType) {
             OplTypes.USING, OplTypes.WITH, OplTypes.MINIMIZE, OplTypes.MAXIMIZE,
-            OplTypes.SUBJECT_TO, OplTypes.FORALL, OplTypes.EXISTS, OplTypes.IN,
+            OplTypes.SUBJECT, OplTypes.FORALL, OplTypes.EXISTS, OplTypes.IN,
             OplTypes.TO, OplTypes.IF, OplTypes.ELSE, OplTypes.THEN,
             OplTypes.INT, OplTypes.FLOAT, OplTypes.BOOLEAN, OplTypes.STRING,
             OplTypes.RANGE, OplTypes.TUPLE, OplTypes.DVAR, OplTypes.DEXPR,

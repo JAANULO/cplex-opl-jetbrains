@@ -50,7 +50,7 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 "with"                  { return OplTypes.WITH; }
 "minimize"              { return OplTypes.MINIMIZE; }
 "maximize"              { return OplTypes.MAXIMIZE; }
-"subject to"            { return OplTypes.SUBJECT_TO; }
+"subject"               { return OplTypes.SUBJECT; }
 "forall"                { return OplTypes.FORALL; }
 "exists"                { return OplTypes.EXISTS; }
 "in"                    { return OplTypes.IN; }

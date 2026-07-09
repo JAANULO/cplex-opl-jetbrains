@@ -241,27 +241,27 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // SUBJECT_TO LBRACE constraintItem* RBRACE
+  // SUBJECT TO LBRACE constraintItem* RBRACE
   public static boolean constraintSection(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "constraintSection")) return false;
-    if (!nextTokenIs(builder_, SUBJECT_TO)) return false;
+    if (!nextTokenIs(builder_, SUBJECT)) return false;
     boolean result_, pinned_;
     Marker marker_ = enter_section_(builder_, level_, _NONE_, CONSTRAINT_SECTION, null);
-    result_ = consumeTokens(builder_, 1, SUBJECT_TO, LBRACE);
+    result_ = consumeTokens(builder_, 1, SUBJECT, TO, LBRACE);
     pinned_ = result_; // pin = 1
-    result_ = result_ && report_error_(builder_, constraintSection_2(builder_, level_ + 1));
+    result_ = result_ && report_error_(builder_, constraintSection_3(builder_, level_ + 1));
     result_ = pinned_ && consumeToken(builder_, RBRACE) && result_;
     exit_section_(builder_, level_, marker_, result_, pinned_, null);
     return result_ || pinned_;
   }
 
   // constraintItem*
-  private static boolean constraintSection_2(PsiBuilder builder_, int level_) {
-    if (!recursion_guard_(builder_, level_, "constraintSection_2")) return false;
+  private static boolean constraintSection_3(PsiBuilder builder_, int level_) {
+    if (!recursion_guard_(builder_, level_, "constraintSection_3")) return false;
     while (true) {
       int pos_ = current_position_(builder_);
       if (!constraintItem(builder_, level_ + 1)) break;
-      if (!empty_element_parsed_guard_(builder_, "constraintSection_2", pos_)) break;
+      if (!empty_element_parsed_guard_(builder_, "constraintSection_3", pos_)) break;
     }
     return true;
   }
@@ -875,7 +875,7 @@ public class OplParser implements PsiParser, LightPsiParser {
   }
 
   /* ********************************************************** */
-  // !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE)
+  // !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE)
   static boolean statement_recover(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover")) return false;
     boolean result_;
@@ -885,7 +885,7 @@ public class OplParser implements PsiParser, LightPsiParser {
     return result_;
   }
 
-  // INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE
+  // INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE
   private static boolean statement_recover_0(PsiBuilder builder_, int level_) {
     if (!recursion_guard_(builder_, level_, "statement_recover_0")) return false;
     boolean result_;
@@ -900,7 +900,7 @@ public class OplParser implements PsiParser, LightPsiParser {
     if (!result_) result_ = consumeToken(builder_, TUPLE);
     if (!result_) result_ = consumeToken(builder_, MINIMIZE);
     if (!result_) result_ = consumeToken(builder_, MAXIMIZE);
-    if (!result_) result_ = consumeToken(builder_, SUBJECT_TO);
+    if (!result_) result_ = consumeToken(builder_, SUBJECT);
     if (!result_) result_ = consumeToken(builder_, INCLUDE);
     if (!result_) result_ = consumeToken(builder_, EXECUTE);
     if (!result_) result_ = consumeToken(builder_, USING);

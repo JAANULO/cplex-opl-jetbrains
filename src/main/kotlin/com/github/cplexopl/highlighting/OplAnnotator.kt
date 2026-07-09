@@ -4,6 +4,8 @@ import com.intellij.lang.annotation.AnnotationHolder
 import com.intellij.lang.annotation.Annotator
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import com.intellij.psi.util.CachedValueProvider
+import com.intellij.psi.util.CachedValuesManager
 import com.intellij.lang.annotation.HighlightSeverity
 import com.github.cplexopl.psi.*
 
@@ -61,7 +63,7 @@ class OplAnnotator : Annotator {
                 // 0. Omijamy bloki execute (skrypt JS, nie deklaracje OPL)
                 var p = element.parent
                 while (p != null && p !is com.intellij.psi.PsiFile) {
-                    if (p.node.elementType.toString() == "EXECUTE_BLOCK") return
+                    if (p is OplExecuteBlock) return
                     p = p.parent
                 }
 
@@ -84,26 +86,27 @@ class OplAnnotator : Annotator {
                         (parent is OplFactor && parent.node.findChildByType(OplTypes.SUM) != null)
 
                 val file = element.containingFile ?: return
-                val declaredVariables = mutableMapOf<String, MutableList<PsiElement>>()
-
-                // Funkcja skanująca plik w poszukiwaniu deklaracji
-                fun registerDeclaration(declarationNode: PsiElement) {
-                    val idNode = declarationNode.node.findChildByType(OplTypes.ID)
-                    if (idNode != null) {
-                        declaredVariables.computeIfAbsent(idNode.text) { mutableListOf() }.add(declarationNode)
+                val declaredVariables = CachedValuesManager.getCachedValue(file) {
+                    val map = mutableMapOf<String, MutableList<PsiElement>>()
+                    fun registerDeclaration(declarationNode: PsiElement) {
+                        val idNode = declarationNode.node.findChildByType(OplTypes.ID)
+                        if (idNode != null) {
+                            map.computeIfAbsent(idNode.text) { mutableListOf() }.add(declarationNode)
+                        }
                     }
-                }
 
-                PsiTreeUtil.findChildrenOfType(file, OplVarDeclaration::class.java).forEach { registerDeclaration(it) }
-                PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java).forEach { registerDeclaration(it) }
-                PsiTreeUtil.findChildrenOfType(file, OplTupleDeclaration::class.java).forEach { registerDeclaration(it) }
+                    PsiTreeUtil.findChildrenOfType(file, OplVarDeclaration::class.java).forEach { registerDeclaration(it) }
+                    PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java).forEach { registerDeclaration(it) }
+                    PsiTreeUtil.findChildrenOfType(file, OplTupleDeclaration::class.java).forEach { registerDeclaration(it) }
 
-                // Rejestrujemy jako globalne TYLKO etykiety ograniczeń (te z dwukropkiem, np. CapacityConstraint:)
-                // Pętle forall mają własne iteratory, których NIE WOLNO dodawać do puli globalnej.
-                PsiTreeUtil.findChildrenOfType(file, OplConstraintItem::class.java).forEach {
-                    if (it.node.findChildByType(OplTypes.COLON) != null) {
-                        registerDeclaration(it)
+                    // Rejestrujemy jako globalne TYLKO etykiety ograniczeń (te z dwukropkiem, np. CapacityConstraint:)
+                    // Pętle forall mają własne iteratory, których NIE WOLNO dodawać do puli globalnej.
+                    PsiTreeUtil.findChildrenOfType(file, OplConstraintItem::class.java).forEach {
+                        if (it.node.findChildByType(OplTypes.COLON) != null) {
+                            registerDeclaration(it)
+                        }
                     }
+                    CachedValueProvider.Result.create(map, file)
                 }
 
                 if (isDeclaration) {
@@ -140,30 +143,24 @@ class OplAnnotator : Annotator {
                     var currentNode: PsiElement? = element.parent
 
                     while (currentNode != null && currentNode !is com.intellij.psi.PsiFile) {
-
-                        // KROK 1: Sprawdzamy, czy obecny węzeł posiada pod-węzły typu ITERATOR (np. w FORALL lub SUM)
-                        val children = currentNode.node.getChildren(null)
-                        for (child in children) {
-                            if (child.elementType.toString().contains("ITERATOR")) {
-                                // Pobieramy WSZYSTKIE identyfikatory z iteratora, aby obsłużyć wpisy takie jak: forall(i, j in 1..10)
-                                val idNodes = child.getChildren(null).filter { it.elementType == OplTypes.ID }
-                                if (idNodes.any { it.text == name }) {
-                                    isLocalVariable = true
-                                    break
-                                }
-                            }
-                        }
-                        if (isLocalVariable) break // Znaleźliśmy zmienną w iteratorze obok, przerywamy!
-
-                        // KROK 2: Sprawdzamy, czy sami nie jesteśmy wewnątrz iteratora (np. warunek given[i][j] != 0)
-                        if (currentNode.node.elementType.toString().contains("ITERATOR")) {
-                            val idNodes = currentNode.node.getChildren(null).filter { it.elementType == OplTypes.ID }
-                            if (idNodes.any { it.text == name }) {
+                        if (currentNode is OplFactor) {
+                            if (currentNode.oplIteratorList.any { it.id.text == name }) {
                                 isLocalVariable = true
                                 break
                             }
                         }
-
+                        if (currentNode is OplConstraintItem) {
+                            if (currentNode.oplIteratorList.any { it.id.text == name }) {
+                                isLocalVariable = true
+                                break
+                            }
+                        }
+                        if (currentNode is OplOplIterator) {
+                            if (currentNode.id.text == name) {
+                                isLocalVariable = true
+                                break
+                            }
+                        }
                         currentNode = currentNode.parent
                     }
 

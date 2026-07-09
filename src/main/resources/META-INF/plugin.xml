@@ -29,7 +29,6 @@
 
         <psi.referenceContributor language="OPL" implementation="com.github.cplexopl.reference.OplReferenceContributor"/>
         <consoleFilterProvider implementation="com.github.cplexopl.console.OplConsoleFilterProvider"/>
-        <applicationService serviceImplementation="com.github.cplexopl.settings.OplSettingsState"/>
         <lang.commenter language="OPL" implementationClass="com.github.cplexopl.features.OplCommenter"/>
         <lang.findUsagesProvider language="OPL" implementationClass="com.github.cplexopl.features.OplFindUsagesProvider"/>
         <lang.refactoringSupport language="OPL" implementationClass="com.github.cplexopl.features.OplRefactoringSupportProvider"/>

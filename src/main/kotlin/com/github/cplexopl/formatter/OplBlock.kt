@@ -34,7 +34,8 @@ class OplBlock(
             elementType == OplTypes.RBRACE ||
             elementType == OplTypes.LBRACKET ||
             elementType == OplTypes.RBRACKET ||
-            elementType == OplTypes.SUBJECT_TO ||
+            elementType == OplTypes.SUBJECT ||
+            elementType == OplTypes.TO ||
             elementType == OplTypes.EXECUTE ||
             (parentType == OplTypes.EXECUTE_BLOCK && elementType == OplTypes.ID)) {
             return Indent.getNoneIndent()

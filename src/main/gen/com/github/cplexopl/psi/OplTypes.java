@@ -84,7 +84,8 @@ public interface OplTypes {
   IElementType STEP = new OplTokenType("step");
   IElementType STRING = new OplTokenType("string");
   IElementType STRING_LITERAL = new OplTokenType("STRING_LITERAL");
-  IElementType SUBJECT_TO = new OplTokenType("subject to");
+  IElementType SUBJECT = new OplTokenType("subject");
+  IElementType SUBJECT_TO = new OplTokenType("SUBJECT_TO");
   IElementType SUM = new OplTokenType("sum");
   IElementType THEN = new OplTokenType("then");
   IElementType TO = new OplTokenType("to");
