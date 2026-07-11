@@ -17,7 +17,6 @@
 - **Examples:** Created a new `examples/` directory containing sample models (MIP knapsack, CP job-shop scheduling) and a self-contained English demo model (`knapsack_demo.mod`) for JetBrains Marketplace.
 
 ### Changed
-- **Compatibility:** Further lowered minimum required IDE version to 2024.1 (build 241) to support older JetBrains IDE installations (like CLion, PyCharm, and IntelliJ IDEA).
 - **API Modernization:** Migrated action classes (`RunOplModelAction`, `OplCreateFileAction`) to `ActionUpdateThread.BGT` to prevent UI freezes.
 - **Architectural Cleanup (Light Services):** Migrated `OplSettingsState` to a modern JetBrains Light Service (`@Service`) to improve IDE startup time and dynamic loading support.
 - **Language Parser:** Split the compound token `subject to` into two distinct tokens (`SUBJECT` and `TO`). This ensures proper spacing and indentation tolerance (e.g. multiple spaces or newlines) and resolves syntax parsing failures.
