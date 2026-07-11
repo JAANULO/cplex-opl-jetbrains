@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- **Testing:** Fixed path assertion issue in `testCommandLineConstruction` when running on Unix-based OS (GitHub Actions CI/CD).
+
 ## [1.4.4] - 2026-07-09
 
 ### Added
