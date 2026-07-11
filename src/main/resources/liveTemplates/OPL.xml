@@ -1,7 +1,7 @@
 <templateSet group="OPL">
 
-    <!-- Szkielet pełnego modelu OPL -->
-    <!-- Użycie: wpisz "model" + Tab -->
+    <!-- OPL model skeleton -->
+    <!-- Usage: type "model" + Tab -->
     <template name="model"
               value="// OPL Model: $NAME$&#10;// Description: $DESCRIPTION$&#10;&#10;// === DATA ===&#10;int n = $N$;&#10;range R = 1..n;&#10;&#10;// === DECISION VARIABLES ===&#10;dvar float+ x[R];&#10;&#10;// === OBJECTIVE ===&#10;minimize&#10;  sum(i in R) x[i];&#10;&#10;// === CONSTRAINTS ===&#10;subject to {&#10;  forall(i in R) {&#10;    ct_$CTNAME$:&#10;      $CONSTRAINT$;&#10;  }&#10;}&#10;$END$"
               description="Full OPL model skeleton"
@@ -16,8 +16,8 @@
         <context><option name="OPL" value="true"/></context>
     </template>
 
-    <!-- Deklaracja zakresu (range) -->
-    <!-- Użycie: wpisz "range" + Tab -->
+    <!-- Range declaration -->
+    <!-- Usage: type "rng" + Tab -->
     <template name="rng"
               value="range $NAME$ = $FROM$..$TO$;"
               description="Range declaration"
@@ -30,8 +30,8 @@
         <context><option name="OPL" value="true"/></context>
     </template>
 
-    <!-- Zmienna decyzyjna -->
-    <!-- Użycie: wpisz "dvar" + Tab -->
+    <!-- Decision variable -->
+    <!-- Usage: type "dv" + Tab -->
     <template name="dv"
               value="dvar $TYPE$ $NAME$[$RANGE$];"
               description="Decision variable declaration"
@@ -44,8 +44,8 @@
         <context><option name="OPL" value="true"/></context>
     </template>
 
-    <!-- Sekcja ograniczeń -->
-    <!-- Użycie: wpisz "st" + Tab -->
+    <!-- Constraint section -->
+    <!-- Usage: type "st" + Tab -->
     <template name="st"
               value="subject to {&#10;  $CTNAME$:&#10;    $CONSTRAINT$;&#10;}&#10;$END$"
               description="Subject to constraint block"
@@ -57,8 +57,8 @@
         <context><option name="OPL" value="true"/></context>
     </template>
 
-    <!-- Pętla forall -->
-    <!-- Użycie: wpisz "forall" + Tab -->
+    <!-- Forall loop -->
+    <!-- Usage: type "fa" + Tab -->
     <template name="fa"
               value="forall($IDX$ in $RANGE$) {&#10;  $BODY$&#10;}"
               description="Forall loop"
@@ -71,8 +71,8 @@
         <context><option name="OPL" value="true"/></context>
     </template>
 
-    <!-- Suma (sum) -->
-    <!-- Użycie: wpisz "sum" + Tab -->
+    <!-- Sum expression -->
+    <!-- Usage: type "sum" + Tab -->
     <template name="sm"
               value="sum($IDX$ in $RANGE$) $EXPR$"
               description="Sum expression"
@@ -85,8 +85,8 @@
         <context><option name="OPL" value="true"/></context>
     </template>
 
-    <!-- Definicja krotki -->
-    <!-- Użycie: wpisz "tuple" + Tab -->
+    <!-- Tuple definition -->
+    <!-- Usage: type "tup" + Tab -->
     <template name="tup"
               value="tuple $NAME$ {&#10;  int $FIELD1$;&#10;  float $FIELD2$;&#10;}&#10;{$NAME$} $SETNAME$ = ...;&#10;$END$"
               description="Tuple type definition"
@@ -100,8 +100,8 @@
         <context><option name="OPL" value="true"/></context>
     </template>
 
-    <!-- Blok execute (skrypty) -->
-    <!-- Użycie: wpisz "exec" + Tab -->
+    <!-- Execute block (scripting) -->
+    <!-- Usage: type "exec" + Tab -->
     <template name="exec"
               value="execute $NAME$ {&#10;  writeln(&quot;$MESSAGE$&quot;);&#10;  $BODY$&#10;}&#10;$END$"
               description="Execute scripting block"

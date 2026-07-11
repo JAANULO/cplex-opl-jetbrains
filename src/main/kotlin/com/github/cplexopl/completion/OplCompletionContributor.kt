@@ -6,17 +6,17 @@ import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
 
-// CompletionContributor = klasa dodająca podpowiedzi do autouzupełniania (Ctrl+Space)
-// LookupElementBuilder = budowniczy elementu na liście podpowiedzi
+// CompletionContributor = class adding autocomplete hints (Ctrl+Space)
+// LookupElementBuilder = builder for hint list element
 
 class OplCompletionContributor : CompletionContributor() {
 
     init {
-        // Rejestrujemy dostawcę podpowiedzi dla języka OPL
-        // PlatformPatterns.psiElement() = wzorzec dopasowania miejsca kursora
+        // Register hint provider for OPL language
+        // PlatformPatterns.psiElement() = pattern for matching cursor location
         extend(
             CompletionType.BASIC,
-            PlatformPatterns.psiElement().withLanguage(OplLanguage),
+            PlatformPatterns.psiElement(),
             OplKeywordCompletionProvider()
         )
     }
@@ -24,45 +24,45 @@ class OplCompletionContributor : CompletionContributor() {
 
 class OplKeywordCompletionProvider : CompletionProvider<CompletionParameters>() {
 
-    // Słowa kluczowe z opisami - pojawią się na liście podpowiedzi
+    // Keywords with descriptions - will appear on hint list
     private val keywords = listOf(
-        // Typy danych
+        // Data types
         "int" to "Integer type",
         "float" to "Float type",
         "boolean" to "Boolean type",
         "string" to "String type",
         "range" to "Range type (e.g. range R = 1..10)",
 
-        // Zmienne decyzyjne
+        // Decision variables
         "dvar" to "Decision variable",
         "dexpr" to "Decision expression",
 
-        // Cel optymalizacji
+        // Optimization objective
         "minimize" to "Minimize objective function",
         "maximize" to "Maximize objective function",
 
-        // Ograniczenia
+        // Constraints
         "subject to" to "Constraint section",
         "forall" to "Universal quantifier",
         "exists" to "Existential quantifier",
 
-        // Operacje
+        // Operators
         "sum" to "Summation operator",
         "all" to "All elements",
 
-        // Struktury
+        // Structures
         "tuple" to "Tuple type definition",
         "execute" to "Scripting block",
         "include" to "Include another file",
         "assert" to "Assertion check",
 
-        // Inne
+        // Other
         "in" to "Membership / range operator",
         "using" to "Using constraint programming",
         "with" to "With clause"
     )
 
-    // Funkcje wbudowane CPLEX OPL
+    // CPLEX OPL built-in functions
     private val builtinFunctions = listOf(
         "abs" to "Absolute value",
         "ceil" to "Ceiling function",
@@ -81,7 +81,7 @@ class OplKeywordCompletionProvider : CompletionProvider<CompletionParameters>() 
         context: ProcessingContext,
         result: CompletionResultSet
     ) {
-        // Dodaj słowa kluczowe (bold = pogrubione, bo to słowa kluczowe)
+        // Add keywords (bold = bold because these are keywords)
         keywords.forEach { (keyword, description) ->
             result.addElement(
                 LookupElementBuilder.create(keyword)
@@ -90,30 +90,30 @@ class OplKeywordCompletionProvider : CompletionProvider<CompletionParameters>() 
             )
         }
 
-        // Dodaj funkcje wbudowane
+        // Add built-in functions
         builtinFunctions.forEach { (func, description) ->
             result.addElement(
                 LookupElementBuilder.create(func)
                     .withTypeText(description)
-                    .withTailText("()", true)  // Dodaj () jako podpowiedź
+                    .withTailText("()", true)  // Add () as hint
             )
         }
 
-// --- ZADANIE 2.2 PRO: Semantyczne skanowanie deklaracji z drzewa PSI ---
+// --- TASK 2.2 PRO: Semantic scanning of declarations from PSI tree ---
         val file = parameters.originalFile
         val declaredVariables = mutableSetOf<String>()
 
-        // Funkcja pomocnicza: wyciąga ID tylko ze sprawdzonych węzłów deklaracji
+        // Helper function: extracts ID only from checked declaration nodes
         fun extractId(psiElement: com.intellij.psi.PsiElement) {
             psiElement.node.findChildByType(com.github.cplexopl.psi.OplTypes.ID)?.text?.let { declaredVariables.add(it) }
         }
 
-        // Pobieramy wyłącznie węzły będące formalnymi deklaracjami
+        // Get only nodes that are formal declarations
         com.intellij.psi.util.PsiTreeUtil.findChildrenOfType(file, com.github.cplexopl.psi.OplVarDeclaration::class.java).forEach { extractId(it) }
         com.intellij.psi.util.PsiTreeUtil.findChildrenOfType(file, com.github.cplexopl.psi.OplDvarDeclaration::class.java).forEach { extractId(it) }
         com.intellij.psi.util.PsiTreeUtil.findChildrenOfType(file, com.github.cplexopl.psi.OplTupleDeclaration::class.java).forEach { extractId(it) }
 
-        // Dodajemy potwierdzone zmienne do wyników autouzupełniania
+        // Add confirmed variables to autocomplete results
         declaredVariables.forEach { variable ->
             if (!variable.contains("IntellijIdeaRulezzz")) {
                 result.addElement(

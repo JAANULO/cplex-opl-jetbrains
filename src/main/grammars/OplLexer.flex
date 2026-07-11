@@ -7,7 +7,7 @@ import com.intellij.psi.TokenType;
 
 %%
 
-// Dyrektywy JFlex - narzędzia generującego Lexer z tej specyfikacji
+// JFlex directives - tool for generating the Lexer from this specification
 %class OplLexer
 %public
 %implements FlexLexer
@@ -17,7 +17,7 @@ import com.intellij.psi.TokenType;
 %eof{ return;
 %eof}
 
-// Makra - nazwane wyrażenia regularne wielokrotnego użytku
+// Macros - named regular expressions for reuse
 CRLF            = \r\n|\r|\n
 WHITE_SPACE     = [ \t\f]
 ID              = [a-zA-Z_][a-zA-Z0-9_]*
@@ -31,18 +31,18 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 
 %%
 
-// Reguły dopasowania - kolejność ma znaczenie!
-// Lexer sprawdza reguły od góry, bierze pierwszą pasującą.
+// Matching rules - order matters!
+// Lexer checks rules from top down and takes the first match.
 
-// Białe znaki (whitespace) - pomijamy
+// Whitespace - skip
 {WHITE_SPACE}+          { return TokenType.WHITE_SPACE; }
 {CRLF}                  { return TokenType.WHITE_SPACE; }
 
-// Komentarze
+// Comments
 {LINE_COMMENT}          { return OplTypes.LINE_COMMENT; }
 {BLOCK_COMMENT}         { return OplTypes.BLOCK_COMMENT; }
 
-// Słowa kluczowe - MUSZĄ być przed regułą ID
+// Keywords - MUST come before the ID rule
 "CP"                    { return OplTypes.CP; }
 "interval"              { return OplTypes.INTERVAL; }
 "sequence"              { return OplTypes.SEQUENCE; }
@@ -76,15 +76,15 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 "allDifferent"          { return OplTypes.ALLDIFFERENT; }
 "pack"                  { return OplTypes.PACK; }
 
-// Literały
+// Literals
 {STRING}                { return OplTypes.STRING_LITERAL; }
 {FLOAT}                 { return OplTypes.FLOAT_LITERAL; }
 {INTEGER}               { return OplTypes.INTEGER_LITERAL; }
 
-// Identyfikator (zmienna, nazwa)
+// Identifier (variable, name)
 {ID}                    { return OplTypes.ID; }
 
-// Operatory wieloznakowe (Kolejność: najpierw najdłuższe!)
+// Multi-character operators (Order: longest first!)
 "..."                   { return OplTypes.ELLIPSIS; }
 ".."                    { return OplTypes.DOTDOT; }
 "=="                    { return OplTypes.EQEQ; }
@@ -96,7 +96,7 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 "!"                     { return OplTypes.NOT; }
 "%"                     { return OplTypes.MOD; }
 
-// Operatory jednozkakowe
+// Single-character operators
 ";"                     { return OplTypes.SEMICOLON; }
 ":"                     { return OplTypes.COLON; }
 ","                     { return OplTypes.COMMA; }
@@ -115,5 +115,5 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 "("                     { return OplTypes.LPAREN; }
 ")"                     { return OplTypes.RPAREN; }
 
-// Nieznany znak - zwracamy jako błąd
+// Unknown character - return as error
 [^]                     { return TokenType.BAD_CHARACTER; }

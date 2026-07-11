@@ -4,7 +4,7 @@ import com.github.cplexopl.OplFileType
 import com.github.cplexopl.run.OplRunConfiguration
 import com.github.cplexopl.run.OplRunConfigurationType
 import com.intellij.execution.ExecutionManager
-import com.intellij.execution.ExecutionTargetManager // Dodany import
+import com.intellij.execution.ExecutionTargetManager // Added import
 import com.intellij.execution.RunManager
 import com.intellij.execution.executors.DefaultRunExecutor
 import com.intellij.openapi.actionSystem.AnAction
@@ -49,12 +49,12 @@ class RunOplModelAction : AnAction() {
 
         runManager.selectedConfiguration = configSetting
 
-        // Poprawione wywołanie restartRunProfile
+        // Fixed call to restartRunProfile
         ExecutionManager.getInstance(project).restartRunProfile(
             project,
             DefaultRunExecutor.getRunExecutorInstance(),
-            ExecutionTargetManager.getActiveTarget(project), // Poprawiony parametr 3
-            configSetting, // Poprawiony parametr 4 (przekazujemy RunnerAndConfigurationSettings)
+            ExecutionTargetManager.getActiveTarget(project), // Fixed parameter 3
+            configSetting, // Fixed parameter 4 (pass RunnerAndConfigurationSettings)
             null
         )
     }

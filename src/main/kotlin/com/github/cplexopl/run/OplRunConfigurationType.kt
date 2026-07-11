@@ -4,26 +4,26 @@ import com.intellij.execution.configurations.*
 import com.intellij.openapi.project.Project
 import com.intellij.icons.AllIcons
 
-// ConfigurationType = pozycja w liście "Add New Configuration" (+ w dropdown Run)
+// ConfigurationType = entry in "Add New Configuration" list (+ in Run dropdown)
 class OplRunConfigurationType : ConfigurationTypeBase(
-    "OPL_RUN",                          // Unikalny identyfikator
-    "OPL Model",                        // Nazwa wyświetlana
-    "Run IBM CPLEX OPL model",         // Opis
-    AllIcons.RunConfigurations.Application  // Ikona
+    "OPL_RUN",                          // Unique identifier
+    "OPL Model",                        // Displayed name
+    "Run IBM CPLEX OPL model",         // Description
+    AllIcons.RunConfigurations.Application  // Icon
 ) {
     init {
-        // Każdy ConfigurationType musi mieć przynajmniej jedną fabrykę
+        // Each ConfigurationType must have at least one factory
         addFactory(OplConfigurationFactory(this))
     }
 
     companion object {
-        // Singleton - łatwy dostęp do instancji z innych miejsc
+        // Singleton - easy access to instance from other places
         fun getInstance(): OplRunConfigurationType =
             ConfigurationTypeUtil.findConfigurationType(OplRunConfigurationType::class.java)
     }
 }
 
-// ConfigurationFactory = tworzy nowe instancje konfiguracji
+// ConfigurationFactory = creates new configuration instances
 class OplConfigurationFactory(type: ConfigurationType) : ConfigurationFactory(type) {
     override fun getId(): String = "OPL_CONFIGURATION_FACTORY"
 
@@ -34,14 +34,16 @@ class OplConfigurationFactory(type: ConfigurationType) : ConfigurationFactory(ty
     override fun getOptionsClass() = OplRunConfigurationOptions::class.java
 }
 
-// Options = klasa przechowująca ustawienia konfiguracji (serializowana do XML)
-// Serializacja = zamiana obiektu Kotlin na XML do zapisania w pliku .idea/
+// Options = class storing configuration settings (serialized to XML)
+// Serialization = conversion of Kotlin object to XML to save in .idea/ file
 class OplRunConfigurationOptions : RunConfigurationOptions() {
     private val _modelFile = string("").provideDelegate(this, ::modelFile)
     private val _dataFile = string("").provideDelegate(this, ::dataFile)
+    private val _settingsFile = string("").provideDelegate(this, ::settingsFile)
     private val _cplexPath = string("").provideDelegate(this, ::cplexPath)
 
     var modelFile: String? by _modelFile
     var dataFile: String? by _dataFile
+    var settingsFile: String? by _settingsFile
     var cplexPath: String? by _cplexPath
 }

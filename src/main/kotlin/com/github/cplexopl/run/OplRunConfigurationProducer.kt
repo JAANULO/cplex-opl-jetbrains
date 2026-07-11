@@ -7,14 +7,14 @@ import com.intellij.execution.configurations.ConfigurationFactory
 import com.intellij.openapi.util.Ref
 import com.intellij.psi.PsiElement
 
-// RunConfigurationProducer = automatycznie tworzy konfigurację Run
-// gdy użytkownik kliknie prawym przyciskiem na plik .mod → "Run 'model.mod'"
+// RunConfigurationProducer = automatically creates Run configuration
+// when user right-clicks on .mod file → "Run 'model.mod'"
 class OplRunConfigurationProducer : LazyRunConfigurationProducer<OplRunConfiguration>() {
 
     override fun getConfigurationFactory(): ConfigurationFactory =
         OplRunConfigurationType.getInstance().configurationFactories[0]
 
-    // Czy ten producer pasuje do danego elementu PSI (kursora w kodzie)?
+    // Does this producer fit the given PSI element (cursor in code)?
     override fun isConfigurationFromContext(
         configuration: OplRunConfiguration,
         context: ConfigurationContext
@@ -23,7 +23,7 @@ class OplRunConfigurationProducer : LazyRunConfigurationProducer<OplRunConfigura
         return file.fileType == OplFileType && configuration.modelFile == file.path
     }
 
-    // Utwórz konfigurację na podstawie kontekstu (kliknięty plik)
+    // Create configuration based on context (clicked file)
     override fun setupConfigurationFromContext(
         configuration: OplRunConfiguration,
         context: ConfigurationContext,
@@ -35,13 +35,19 @@ class OplRunConfigurationProducer : LazyRunConfigurationProducer<OplRunConfigura
         configuration.modelFile = file.path
         configuration.name = file.nameWithoutExtension
 
-        // Spróbuj automatycznie znaleźć plik .dat o tej samej nazwie
+        // Try to automatically find .dat file with the same name
         val dataFile = file.parent?.findChild("${file.nameWithoutExtension}.dat")
         if (dataFile != null) {
             configuration.dataFile = dataFile.path
         }
 
-        // Wykryj ścieżkę CPLEX
+        // Try to automatically find .ops file with the same name
+        val settingsFile = file.parent?.findChild("${file.nameWithoutExtension}.ops")
+        if (settingsFile != null) {
+            configuration.settingsFile = settingsFile.path
+        }
+
+        // Detect CPLEX path
         val detectedPath = OplRunConfiguration.detectCplexPath()
         if (detectedPath.isNotEmpty()) {
             configuration.cplexPath = detectedPath

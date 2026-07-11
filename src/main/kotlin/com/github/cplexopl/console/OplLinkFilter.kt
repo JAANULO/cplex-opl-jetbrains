@@ -7,14 +7,14 @@ import com.intellij.openapi.vfs.LocalFileSystem
 import java.util.regex.Pattern
 
 class OplLinkFilter(private val project: Project) : Filter {
-    // Wzorzec wyłapujący ścieżkę pliku i linię, np. "C:\test.mod:15" lub "test.mod:15"
+    // Pattern capturing file path and line, e.g. "C:\test.mod:15" or "test.mod:15"
     private val pattern = Pattern.compile("(?<path>[a-zA-Z]:[/\\\\][^:]+\\.mod|[^:]+\\.mod):(?<line>\\d+)")
 
     override fun applyFilter(line: String, entireLength: Int): Filter.Result? {
         val matcher = pattern.matcher(line)
         if (matcher.find()) {
             val filePath = matcher.group("path")
-            val lineNumber = matcher.group("line").toInt() - 1 // IntelliJ liczy od 0
+            val lineNumber = matcher.group("line").toInt() - 1 // IntelliJ counts from 0
 
             val normalizedPath = filePath.replace('\\', '/')
             val virtualFile = LocalFileSystem.getInstance().findFileByPath(normalizedPath)

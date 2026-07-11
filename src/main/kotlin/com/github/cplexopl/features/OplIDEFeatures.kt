@@ -13,14 +13,14 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiNamedElement
 import com.intellij.psi.tree.TokenSet
 
-// 1. Wsparcie dla refaktoryzacji "Rename" (Zmiana Nazwy)
+// 1. Support for refactoring "Rename" (Change Name)
 class OplRefactoringSupportProvider : RefactoringSupportProvider() {
     override fun isMemberInplaceRenameAvailable(element: PsiElement, context: PsiElement?): Boolean {
         return element is OplNamedElement
     }
 }
 
-// 2. Wsparcie dla wyszukiwania wystąpień (Find Usages)
+// 2. Support for searching usages (Find Usages)
 class OplFindUsagesProvider : FindUsagesProvider {
 
     override fun getWordsScanner(): WordsScanner? {

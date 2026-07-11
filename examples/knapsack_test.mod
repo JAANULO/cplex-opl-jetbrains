@@ -1,3 +1,8 @@
+execute {
+  cplex.workmem = 4096;
+  cplex.threads = 2;
+}
+
 // Classical Knapsack Problem
 // Demonstrates array usage, decision variables, and objective function in OPL.
 

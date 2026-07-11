@@ -10,7 +10,7 @@ class OplSettingsComponent {
     val cplexPathField = TextFieldWithBrowseButton()
 
     init {
-        // Okno dialogowe do wyboru pliku wykonywalnego
+        // Dialog window for selecting executable file
         cplexPathField.addBrowseFolderListener(
             null,
             FileChooserDescriptorFactory.createSingleFileOrExecutableAppDescriptor().apply {

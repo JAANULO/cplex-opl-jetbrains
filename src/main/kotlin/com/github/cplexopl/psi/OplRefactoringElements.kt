@@ -8,10 +8,10 @@ import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiNameIdentifierOwner
 import com.github.cplexopl.OplLanguage
 
-// 1. Interfejs do zmiany nazwy
+// 1. Interface for changing name
 interface OplNamedElement : PsiNameIdentifierOwner
 
-// 2. Implementacja dla mixinów z Grammar-Kit
+// 2. Implementation for mixins from Grammar-Kit
 abstract class OplNamedElementImpl(node: ASTNode) : ASTWrapperPsiElement(node), OplNamedElement {
 
     override fun getNameIdentifier(): PsiElement? {
@@ -32,7 +32,7 @@ abstract class OplNamedElementImpl(node: ASTNode) : ASTWrapperPsiElement(node), 
     }
 }
 
-// 3. Fabryka drzewa AST używana przy refaktoryzacji
+// 3. AST tree factory used for refactoring
 object OplElementFactory {
     fun createIdentifier(project: Project, name: String): PsiElement {
         val file = createFile(project, "dvar int $name;")

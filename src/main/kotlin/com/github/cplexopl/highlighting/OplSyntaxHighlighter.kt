@@ -2,7 +2,7 @@ package com.github.cplexopl.highlighting
 
 import com.github.cplexopl.lexer.OplLexer
 import com.github.cplexopl.psi.OplTypes
-import com.intellij.lexer.FlexAdapter // Dodany import
+import com.intellij.lexer.FlexAdapter // Added import
 import com.intellij.lexer.Lexer
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.colors.TextAttributesKey
@@ -25,7 +25,7 @@ object OplHighlighterColors {
 
 class OplSyntaxHighlighter : SyntaxHighlighterBase() {
 
-    // Poprawiona metoda: używamy FlexAdapter i przekazujemy null do OplLexer
+    // Fixed method: use FlexAdapter and pass null to OplLexer
     override fun getHighlightingLexer(): Lexer = FlexAdapter(OplLexer(null))
 
     override fun getTokenHighlights(tokenType: IElementType): Array<TextAttributesKey> {

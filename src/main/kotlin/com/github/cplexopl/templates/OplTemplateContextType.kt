@@ -4,10 +4,10 @@ import com.intellij.codeInsight.template.TemplateContextType
 import com.intellij.psi.PsiFile
 import com.intellij.codeInsight.template.TemplateActionContext
 
-// Nowy, jednoparametrowy konstruktor (zgodny z najnowszym API JetBrains)
+// New, single-parameter constructor (compatible with latest JetBrains API)
 class OplTemplateContextType : TemplateContextType("OPL") {
     override fun isInContext(templateActionContext: TemplateActionContext): Boolean {
-        // Szablony zadziałają tylko w plikach modelu i danych OPL
+        // Templates will work only in OPL model and data files
         val file = templateActionContext.file
         return file.name.endsWith(".mod") || file.name.endsWith(".dat")
     }

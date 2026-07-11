@@ -55,14 +55,14 @@ class OplStructureViewElement(private val element: PsiElement) : StructureViewTr
         val children = mutableListOf<TreeElement>()
 
         if (element is com.intellij.psi.PsiFile) {
-            // Skanujemy drzewo w poszukiwaniu konkretnych typów, omijając węzły-wrappery (np. OplDeclaration)
+            // Scan tree looking for specific types, ignoring wrapper nodes (e.g. OplDeclaration)
             PsiTreeUtil.findChildrenOfType(element, OplVarDeclaration::class.java).forEach { children.add(OplStructureViewElement(it)) }
             PsiTreeUtil.findChildrenOfType(element, OplDvarDeclaration::class.java).forEach { children.add(OplStructureViewElement(it)) }
             PsiTreeUtil.findChildrenOfType(element, OplTupleDeclaration::class.java).forEach { children.add(OplStructureViewElement(it)) }
             PsiTreeUtil.findChildrenOfType(element, OplObjectiveDeclaration::class.java).forEach { children.add(OplStructureViewElement(it)) }
             PsiTreeUtil.findChildrenOfType(element, OplConstraintSection::class.java).forEach { children.add(OplStructureViewElement(it)) }
         } else if (element is OplConstraintSection) {
-            // Wewnątrz sekcji 'subject to' szukamy pojedynczych ograniczeń
+            // Inside 'subject to' section search for individual constraints
             PsiTreeUtil.findChildrenOfType(element, OplConstraintItem::class.java).forEach {
                 children.add(OplStructureViewElement(it))
             }

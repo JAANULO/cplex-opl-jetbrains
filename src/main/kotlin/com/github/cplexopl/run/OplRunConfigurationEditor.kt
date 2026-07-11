@@ -16,11 +16,11 @@ import java.io.File
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 
-// SettingsEditor = panel UI wyświetlany w oknie "Edit Run Configuration"
-// FormBuilder = pomocnik IntelliJ do budowania formularzy (etykieta + pole)
+// SettingsEditor = UI panel displayed in "Edit Run Configuration" window
+// FormBuilder = IntelliJ helper for building forms (label + field)
 class OplRunConfigurationEditor(private val project: Project) : SettingsEditor<OplRunConfiguration>() {
 
-    // Pola formularza - TextFieldWithBrowseButton = pole tekstowe z przyciskiem "..." do wyboru pliku
+    // Form fields - TextFieldWithBrowseButton = text field with "..." button for file selection
     private val modelFileField = TextFieldWithBrowseButton().apply {
         addBrowseFolderListener(
             project,
@@ -39,6 +39,15 @@ class OplRunConfigurationEditor(private val project: Project) : SettingsEditor<O
         )
     }
 
+    private val settingsFileField = TextFieldWithBrowseButton().apply {
+        addBrowseFolderListener(
+            project,
+            FileChooserDescriptorFactory.createSingleFileDescriptor("ops")
+                .withTitle("Select OPL Settings File")
+                .withDescription("Select the .ops settings file (optional)")
+        )
+    }
+
     private val cplexPathField = TextFieldWithBrowseButton().apply {
         addBrowseFolderListener(
             project,
@@ -53,7 +62,7 @@ class OplRunConfigurationEditor(private val project: Project) : SettingsEditor<O
             val foundPath = CplexPathFinder.findDefaultOplrunPath()
             if (foundPath != null) {
                 cplexPathField.text = foundPath
-                OplSettingsState.instance.savedCplexPath = foundPath // Zapis globalny!
+                OplSettingsState.instance.savedCplexPath = foundPath // Global save!
             } else {
                 Messages.showWarningDialog(
                     "Could not automatically find the oplrun executable in default locations.\nPlease select the path manually.",
@@ -68,39 +77,52 @@ class OplRunConfigurationEditor(private val project: Project) : SettingsEditor<O
         add(autoDetectButton, BorderLayout.EAST)
     }
 
-    // Budujemy panel formularza
+    // Build form panel
     private val panel: JPanel = FormBuilder.createFormBuilder()
         .addLabeledComponent("Model file (.mod):", modelFileField)
         .addLabeledComponent("Data file (.dat):", dataFileField)
+        .addLabeledComponent("Settings file (.ops):", settingsFileField)
         .addLabeledComponent("Oplrun path:", pathPanel)
         .addComponentFillVertically(JPanel(), 0)
         .panel
 
     init {
-        // Czysty nasłuchiwacz Java Swing, odporny na zmiany w API JetBrains
+        // Clean Java Swing listener, resilient to changes in JetBrains API
         modelFileField.textField.document.addDocumentListener(object : DocumentListener {
-            private fun autoFillDataFile() {
+            private fun autoFillFiles() {
                 val modPath = modelFileField.text
-                if (modPath.endsWith(".mod") && dataFileField.text.isEmpty()) {
-                    val potentialDatPath = modPath.removeSuffix(".mod") + ".dat"
-                    if (File(potentialDatPath).exists()) {
-                        dataFileField.text = potentialDatPath
+                if (modPath.endsWith(".mod")) {
+                    val base = modPath.removeSuffix(".mod")
+                    
+                    if (dataFileField.text.isEmpty()) {
+                        val potentialDatPath = base + ".dat"
+                        if (File(potentialDatPath).exists()) {
+                            dataFileField.text = potentialDatPath
+                        }
+                    }
+                    
+                    if (settingsFileField.text.isEmpty()) {
+                        val potentialOpsPath = base + ".ops"
+                        if (File(potentialOpsPath).exists()) {
+                            settingsFileField.text = potentialOpsPath
+                        }
                     }
                 }
             }
 
-            override fun insertUpdate(e: DocumentEvent?) = autoFillDataFile()
-            override fun removeUpdate(e: DocumentEvent?) = autoFillDataFile()
-            override fun changedUpdate(e: DocumentEvent?) = autoFillDataFile()
+            override fun insertUpdate(e: DocumentEvent?) = autoFillFiles()
+            override fun removeUpdate(e: DocumentEvent?) = autoFillFiles()
+            override fun changedUpdate(e: DocumentEvent?) = autoFillFiles()
         })
     }
 
     override fun resetEditorFrom(config: OplRunConfiguration) {
-        // Wczytaj wartości z konfiguracji do pól UI
+        // Load values from configuration to UI fields
         modelFileField.text = config.modelFile
         dataFileField.text = config.dataFile
+        settingsFileField.text = config.settingsFile
 
-        // Jeśli lokalna konfiguracja nie ma ścieżki (nowy profil), ładujemy zapisaną globalnie
+        // If local configuration has no path (new profile), load saved globally
         if (config.cplexPath.isEmpty() && OplSettingsState.instance.savedCplexPath.isNotEmpty()) {
             cplexPathField.text = OplSettingsState.instance.savedCplexPath
         } else {
@@ -109,12 +131,13 @@ class OplRunConfigurationEditor(private val project: Project) : SettingsEditor<O
     }
 
     override fun applyEditorTo(config: OplRunConfiguration) {
-        // Zapisz wartości z pól UI do konfiguracji
+        // Save values from UI fields to configuration
         config.modelFile = modelFileField.text
         config.dataFile = dataFileField.text
+        config.settingsFile = settingsFileField.text
         config.cplexPath = cplexPathField.text
 
-        // Przy zatwierdzeniu formularza "Apply", aktualizujemy też ścieżkę globalną
+        // On confirmation of "Apply" form, also update global path
         if (cplexPathField.text.isNotEmpty()) {
             OplSettingsState.instance.savedCplexPath = cplexPathField.text
         }

@@ -3,7 +3,7 @@ package com.github.cplexopl
 import com.intellij.openapi.fileTypes.LanguageFileType
 import javax.swing.Icon
 
-// Typ pliku dla modeli (.mod)
+// File type for models (.mod)
 object OplFileType : LanguageFileType(OplLanguage) {
     override fun getName(): String = "OPL Model File"
     override fun getDescription(): String = "IBM ILOG CPLEX OPL model file"
@@ -11,7 +11,7 @@ object OplFileType : LanguageFileType(OplLanguage) {
     override fun getIcon(): Icon = OplIcons.MOD_FILE
 }
 
-// Typ pliku dla danych (.dat)
+// File type for data (.dat)
 object OplDatFileType : LanguageFileType(OplDatLanguage) {
     override fun getName(): String = "OPL Data File"
     override fun getDescription(): String = "IBM ILOG CPLEX OPL data file"

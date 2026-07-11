@@ -2,8 +2,8 @@ package com.github.cplexopl
 
 import com.intellij.lang.Language
 
-// Language = singleton reprezentujący język programowania w IntelliJ Platform
-// Singleton = jedna globalna instancja (wzorzec projektowy - design pattern)
+// Language = singleton representing a programming language in IntelliJ Platform
+// Singleton = one global instance (design pattern)
 object OplLanguage : Language("OPL") {
     private fun readResolve(): Any = OplLanguage
 }

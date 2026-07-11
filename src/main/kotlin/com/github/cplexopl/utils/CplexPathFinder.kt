@@ -1,4 +1,4 @@
-package com.github.cplexopl.utils // Zmień na swój aktualny pakiet
+package com.github.cplexopl.utils // Change to your actual package
 
 import com.intellij.openapi.util.SystemInfo
 import java.io.File
@@ -6,15 +6,15 @@ import java.io.File
 object CplexPathFinder {
 
     /**
-     * Skanuje domyślne ścieżki instalacyjne w poszukiwaniu silnika CPLEX.
-     * Zwraca bezwzględną ścieżkę do oplrun.exe lub null, jeśli nie znaleziono.
+     * Scans default installation paths looking for CPLEX engine.
+     * Returns absolute path to oplrun.exe or null if not found.
      */
     fun findDefaultOplrunPath(): String? {
         val baseDirs = mutableListOf<String>()
         val relativeBinPath: String
         val executableName: String
 
-        // 1. Ustalenie strategii wyszukiwania na podstawie systemu operacyjnego
+        // 1. Determine search strategy based on operating system
         when {
             SystemInfo.isWindows -> {
                 baseDirs.add("C:\\Program Files\\IBM\\ILOG")
@@ -23,11 +23,11 @@ object CplexPathFinder {
             }
             SystemInfo.isMac -> {
                 baseDirs.add("/Applications/IBM/ILOG")
-                baseDirs.add("/Applications") // Niektórzy instalują bezpośrednio tutaj
+                baseDirs.add("/Applications") // Some users install directly here
                 relativeBinPath = "opl/bin/x86-64_osx"
                 executableName = "oplrun"
             }
-            else -> { // Systemy z rodziny Linux
+            else -> { // Linux family systems
                 baseDirs.add("/opt/ibm/ILOG")
                 baseDirs.add("/opt")
                 relativeBinPath = "opl/bin/x86-64_linux"
@@ -35,21 +35,21 @@ object CplexPathFinder {
             }
         }
 
-        // 2. Przeszukiwanie zdefiniowanych katalogów bazowych
+        // 2. Search through defined base directories
         for (baseDirPath in baseDirs) {
             val baseDir = File(baseDirPath)
             if (!baseDir.exists() || !baseDir.isDirectory) continue
 
-            // 3. Pobranie wszystkich folderów, których nazwa zaczyna się od "CPLEX_Studio"
+            // 3. Get all folders whose name starts with "CPLEX_Studio"
             val studioDirs = baseDir.listFiles { file ->
                 file.isDirectory && file.name.startsWith("CPLEX_Studio")
             } ?: continue
 
-            // 4. Sortowanie malejące - jeśli użytkownik ma zainstalowane kilka wersji,
-            //    chcemy użyć najnowszej (np. 2212 zostanie sprawdzone przed 1210)
+            // 4. Sort descending - if user has multiple versions installed,
+            //    use the newest one (e.g., 2212 will be checked before 1210)
             val sortedDirs = studioDirs.sortedByDescending { it.name }
 
-            // 5. Sprawdzenie, czy wewnątrz folderu wersji fizycznie istnieje plik wykonywalny
+            // 5. Check if executable file physically exists inside version folder
             for (studioDir in sortedDirs) {
                 val oplrunFile = File(studioDir, "$relativeBinPath${File.separator}$executableName")
                 if (oplrunFile.exists() && oplrunFile.canExecute()) {
@@ -58,6 +58,6 @@ object CplexPathFinder {
             }
         }
 
-        return null // Zwraca null, jeśli heurystyka zawiodła
+       return null // Returns null if heuristic failed
     }
 }

@@ -11,10 +11,9 @@ import com.github.cplexopl.psi.*
 
 class OplAnnotator : Annotator {
     override fun annotate(element: PsiElement, holder: AnnotationHolder) {
-        // TARCZA OCHRONNA: Jeśli wystąpi jakikolwiek błąd, wyłapujemy go,
-        // dzięki czemu IDE nigdy więcej nie zawiesi się na "Analyzing"
+        // PROTECTION SHIELD: If any error occurs, catch it, thanks to which IDE never again hangs on "Analyzing"
         try {
-            // --- 1. Walidacja typów (boolean in range) ---
+            // --- 1. Type validation (boolean in range) ---
             if (element is OplDvarDeclaration) {
                 val isBoolean = element.node.findChildByType(OplTypes.BOOLEAN) != null
                 val hasRange = element.node.findChildByType(OplTypes.IN) != null
@@ -26,20 +25,20 @@ class OplAnnotator : Annotator {
                 }
             }
 
-            // --- Inspekcje: Nieliniowość (MIP) ---
+            // --- Inspections: Non-linearity (MIP) ---
             if (element is OplFactor) {
                 val idNode = element.node.findChildByType(OplTypes.ID)
                 if (idNode != null) {
                     val name = idNode.text
                     if (name == "min" || name == "max" || name == "abs") {
-                        holder.newAnnotation(HighlightSeverity.WARNING, "Użycie funkcji nieliniowej '$name' może wydłużyć czas obliczeń (MIP).")
+                        holder.newAnnotation(HighlightSeverity.WARNING, "Using non-linear function '$name' may increase computation time (MIP).")
                             .range(idNode.textRange)
                             .create()
                     }
                 }
             }
 
-            // --- Inspekcje: Walidacja funkcji celu w szeregowaniu (CP) ---
+            // --- Inspections: Validation of objective function in scheduling (CP) ---
             if (element is OplObjectiveDeclaration) {
                 val file = element.containingFile
                 if (file != null) {
@@ -50,7 +49,7 @@ class OplAnnotator : Annotator {
                         val objText = element.text
                         if (!objText.contains("endOf") && !objText.contains("lengthOf") && !objText.contains("startOf") && !objText.contains("startAtEnd")) {
                             val targetRange = element.node.findChildByType(OplTypes.MINIMIZE)?.textRange ?: element.node.findChildByType(OplTypes.MAXIMIZE)?.textRange ?: element.textRange
-                            holder.newAnnotation(HighlightSeverity.WARNING, "Brak funkcji czasu (np. endOf) w funkcji celu przy szeregowaniu.")
+                            holder.newAnnotation(HighlightSeverity.WARNING, "Missing timing function (e.g. endOf) in objective function in scheduling.")
                                 .range(targetRange)
                                 .create()
                         }
@@ -58,9 +57,9 @@ class OplAnnotator : Annotator {
                 }
             }
 
-            // Analizujemy tylko tokeny zmiennych
+            // We analyze only variable tokens
             if (element.node.elementType == OplTypes.ID) {
-                // 0. Omijamy bloki execute (skrypt JS, nie deklaracje OPL)
+                // 0. Skip execute blocks (JS script, not OPL declarations)
                 var p = element.parent
                 while (p != null && p !is com.intellij.psi.PsiFile) {
                     if (p is OplExecuteBlock) return
@@ -70,7 +69,7 @@ class OplAnnotator : Annotator {
                 val name = element.text
                 val parent = element.parent ?: return
 
-                // Zignoruj słowa wbudowane CPLEX oraz globalne funkcje CP (Constraint Programming)
+                // Ignore CPLEX built-in words and global CP (Constraint Programming) functions
                 val builtins = setOf(
                     "abs", "ceil", "floor", "max", "min", "sum", "forall",
                     "pulse", "step", "allDifferent", "pack", "all"
@@ -78,7 +77,7 @@ class OplAnnotator : Annotator {
 
                 if (builtins.contains(name)) return
 
-                // Czy ten ID to miejsce deklaracji zmiennej?
+                // Is this ID a variable declaration location?
                 val isDeclaration = parent is OplDvarDeclaration ||
                         parent is OplVarDeclaration ||
                         parent is OplTupleDeclaration ||
@@ -99,8 +98,8 @@ class OplAnnotator : Annotator {
                     PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java).forEach { registerDeclaration(it) }
                     PsiTreeUtil.findChildrenOfType(file, OplTupleDeclaration::class.java).forEach { registerDeclaration(it) }
 
-                    // Rejestrujemy jako globalne TYLKO etykiety ograniczeń (te z dwukropkiem, np. CapacityConstraint:)
-                    // Pętle forall mają własne iteratory, których NIE WOLNO dodawać do puli globalnej.
+                    // Register as global ONLY constraint labels (those with colon, e.g. CapacityConstraint:)
+                    // Loops forall have their own iterators, which MUST NOT be added to global pool.
                     PsiTreeUtil.findChildrenOfType(file, OplConstraintItem::class.java).forEach {
                         if (it.node.findChildByType(OplTypes.COLON) != null) {
                             registerDeclaration(it)
@@ -110,7 +109,7 @@ class OplAnnotator : Annotator {
                 }
 
                 if (isDeclaration) {
-                    // Sprawdzanie duplikatów
+                    // Checking for duplicates
                     val declarationsList = declaredVariables[name]
                     if (declarationsList != null && declarationsList.size > 1 && declarationsList.indexOf(parent) > 0) {
                         holder.newAnnotation(HighlightSeverity.ERROR, "Variable '$name' is already defined")
@@ -118,7 +117,7 @@ class OplAnnotator : Annotator {
                             .create()
                     }
 
-                    // Sprawdzanie brakującego średnika (tylko dla faktycznych deklaracji zmiennych/typów)
+                    // Checking for missing semicolon (only for actual variable/type declarations)
                     val needsSemicolon = parent is OplDvarDeclaration ||
                             parent is OplVarDeclaration ||
                             parent is OplTupleDeclaration
@@ -138,7 +137,7 @@ class OplAnnotator : Annotator {
 
                 } else {
 
-                    // --- 2. Scope-aware analysis (Zasięg w pętlach i wielokrotnych iteratorach) ---
+                    // --- 2. Scope-aware analysis (Scope in loops and multiple iterators) ---
                     var isLocalVariable = false
                     var currentNode: PsiElement? = element.parent
 
@@ -172,7 +171,7 @@ class OplAnnotator : Annotator {
                 }
             }
         } catch (_: Exception) {
-            // Wygłuszamy krytyczne wyjątki PSI, aby IDE kontynuowało pracę
+            // Suppress critical PSI exceptions so IDE continues to work
         }
     }
 }

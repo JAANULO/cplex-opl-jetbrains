@@ -12,17 +12,17 @@ class OplReference(
 ) : PsiReferenceBase<PsiElement>(element, textRange) {
 
     override fun resolve(): PsiElement? {
-        // ZAWSZE używamy aktywnego widoku z edytora, ignorując pliki na dysku
+        // ALWAYS use the active view from the editor, ignoring files on disk
         val file = element.containingFile ?: return null
         val targetName = variableName.trim()
 
-        // Funkcja celownicza: wyciąga samą literę z bloku deklaracji
+        // Helper function: extracts just the letter from the declaration block
         fun extractTargetToken(node: PsiElement): PsiElement? {
             val ids = node.node.getChildren(null).filter { it.elementType == OplTypes.ID }
             return ids.firstOrNull { it.text == targetName }?.psi
         }
 
-        // Skanujemy po kolei wszystkie typy
+        // We scan through all types in order
         val dvars = PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java)
         for (dvar in dvars) { extractTargetToken(dvar)?.let { return it } }
 

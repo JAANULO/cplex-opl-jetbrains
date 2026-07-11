@@ -9,7 +9,7 @@ import com.intellij.util.ProcessingContext
 
 class OplReferenceContributor : PsiReferenceContributor() {
     override fun registerReferenceProviders(registrar: PsiReferenceRegistrar) {
-        // Nasłuchujemy na OplFactor (czyli na użycia zmiennych w równaniach)
+        // We listen for OplFactor (i.e., usage of variables in equations)
         registrar.registerReferenceProvider(
             PlatformPatterns.psiElement(OplFactor::class.java),
             object : PsiReferenceProvider() {
@@ -19,7 +19,7 @@ class OplReferenceContributor : PsiReferenceContributor() {
 
                     if (idNode != null) {
                         val name = idNode.text
-                        // Obliczamy dokładną pozycję litery wewnątrz równania
+                        // Calculate exact position of the letter inside the equation
                         val startOffset = idNode.startOffset - factor.textRange.startOffset
                         val range = TextRange(startOffset, startOffset + idNode.textLength)
                         return arrayOf(OplReference(factor, range, name))

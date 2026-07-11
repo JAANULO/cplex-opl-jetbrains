@@ -1,22 +1,22 @@
 """
-Skrypt do automatyzacji budowania i testowania pluginu cplex-opl-jetbrains.
+Script to automate building and testing of the cplex-opl-jetbrains plugin.
 
-Uzycie:
-    python scripts/test.py [tryb]
+Usage:
+    python scripts/test.py [mode]
 
-Tryby:
-    generate  - generuje lexer i parser z plikow .flex i .bnf
-    build     - generate + kompilacja Kotlin i Java
-    test      - build + uruchomienie testow JUnit
-    package   - test + budowanie .zip pluginu
-    verify    - package + weryfikacja zgodnosci z IDE
-    full      - wszystkie kroki po kolei
+Modes:
+    generate  - generates lexer and parser from .flex and .bnf files
+    build     - generate + compile Kotlin and Java
+    test      - build + run JUnit tests
+    package   - test + package plugin into .zip
+    verify    - package + verify plugin compatibility with IDEs
+    full      - run all steps sequentially
 
-Przyklad:
+Example:
     python scripts/test.py test
     python scripts/test.py full
 
-UWAGA: runIde jest celowo pominiete - odpal recznie: gradlew.bat runIde (Windows)
+NOTE: runIde is intentionally omitted - run manually: gradlew.bat runIde (Windows)
 """
 
 import subprocess
@@ -29,7 +29,7 @@ if sys.stdout and hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 
-# --- Konfiguracja ---
+# --- Configuration ---
 
 GRADLEW = "gradlew.bat" if platform.system() == "Windows" else "./gradlew"
 
@@ -80,12 +80,12 @@ KROKI = {
 }
 
 
-# --- Pomocnicze funkcje ---
+# --- Helper Functions ---
 
 def filtruj_output(tekst: str) -> str:
     """
-    Filtruje gadatliwy output Gradle do samego sedna.
-    Zostawia linie z bledem, ostrzezeniem, wynikiem testu i podsumowaniem.
+    Filters verbose Gradle output to show only relevant details.
+    Keeps lines with errors, warnings, test results, and build summaries.
     """
     wazne = []
     for linia in tekst.splitlines():
@@ -98,77 +98,77 @@ def filtruj_output(tekst: str) -> str:
             "> Task", "Caused by:",
         ]):
             wazne.append(linia)
-    return "\n".join(wazne) if wazne else tekst[-2000:]  # fallback: ostatnie 2000 znaków
+    return "\n".join(wazne) if wazne else tekst[-2000:]  # fallback: last 2000 characters
 
 
 def sprawdz_zero_testow(tekst: str) -> bool:
-    """Zwraca True jesli Gradle zglosil 0 testow."""
+    """Returns True if Gradle reported 0 tests."""
     return bool(re.search(r"0 tests", tekst)) or "no tests were run" in tekst.lower()
 
 
 def uruchom_krok(komenda: list) -> bool:
-    """Uruchamia jeden krok Gradle. Zwraca True jesli sukces."""
+    """Runs a single Gradle step. Returns True if successful."""
     nazwa = " ".join(komenda)
     print(f"\n{'='*55}")
-    print(f"  KROK: {nazwa}")
+    print(f"  STEP: {nazwa}")
     print(f"{'='*55}")
 
     wynik = subprocess.run(
         komenda,
         capture_output=True,
         text=True,
-        cwd=Path(__file__).parent.parent  # katalog glowny projektu
+        cwd=Path(__file__).parent.parent  # project root directory
     )
 
     output = wynik.stdout + wynik.stderr
     print(filtruj_output(output))
 
-    # Ostrzezenie o braku testow (nie blokuje, ale informuje)
+    # Warning about missing tests (informs, but does not block execution)
     if "test" in komenda and sprawdz_zero_testow(output):
-        print("\n  ⚠️  UWAGA: Nie znaleziono zadnych testow.")
-        print("     Dodaj testy w src/test/kotlin/ dziedziczac po BasePlatformTestCase.")
+        print("\n  ⚠️  WARNING: No tests were found.")
+        print("     Add tests in src/test/kotlin/ inheriting from BasePlatformTestCase.")
 
     if wynik.returncode != 0:
-        print(f"\n  ❌ BLAD w: {nazwa}")
-        print("  Zatrzymuje wykonanie.")
+        print(f"\n  ❌ ERROR in: {nazwa}")
+        print("  Stopping execution.")
         return False
 
     print(f"\n  ✅ OK: {nazwa}")
     return True
 
 
-# --- Glowna logika ---
+# --- Main Logic ---
 
 def main():
     dostepne = list(KROKI.keys())
 
     if len(sys.argv) < 2:
-        print(f"Uzycie: python scripts/test.py [{' | '.join(dostepne)}]")
-        print("\nOpis trybow:")
-        print("  generate  - generuje lexer i parser z .flex i .bnf")
-        print("  build     - generate + kompilacja")
-        print("  test      - build + testy JUnit")
-        print("  package   - test + budowanie .zip")
-        print("  verify    - package + weryfikacja zgodnosci z IDE")
-        print("  full      - wszystkie kroki")
+        print(f"Usage: python scripts/test.py [{' | '.join(dostepne)}]")
+        print("\nMode descriptions:")
+        print("  generate  - generates lexer and parser from .flex and .bnf")
+        print("  build     - generate + compile")
+        print("  test      - build + run JUnit tests")
+        print("  package   - test + build plugin .zip package")
+        print("  verify    - package + verify compatibility with IDEs")
+        print("  full      - all of the above steps")
         sys.exit(0)
 
     tryb = sys.argv[1].lower()
 
     if tryb not in KROKI:
-        print(f"Nieznany tryb: '{tryb}'")
-        print(f"Dostepne: {dostepne}")
+        print(f"Unknown mode: '{tryb}'")
+        print(f"Available: {dostepne}")
         sys.exit(1)
 
     kroki = KROKI[tryb]
-    print(f"\n🚀 Tryb: {tryb.upper()} ({len(kroki)} krokow) | System: {platform.system()}")
+    print(f"\n🚀 Mode: {tryb.upper()} ({len(kroki)} steps) | OS: {platform.system()}")
 
     for komenda in kroki:
         if not uruchom_krok(komenda):
             sys.exit(1)
 
     print(f"\n{'='*55}")
-    print(f"  ✅ WSZYSTKIE KROKI ZAKONCZONE SUKCESEM [{tryb.upper()}]")
+    print(f"  ✅ ALL STEPS COMPLETED SUCCESSFULLY [{tryb.upper()}]")
     print(f"{'='*55}\n")
 
 

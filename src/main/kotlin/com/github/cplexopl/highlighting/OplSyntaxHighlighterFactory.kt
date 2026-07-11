@@ -5,8 +5,8 @@ import com.intellij.openapi.fileTypes.SyntaxHighlighterFactory
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 
-// Factory Pattern = wzorzec projektowy, gdzie jedna klasa tworzy instancje innych klas
-// IntelliJ wymaga Fabryki zamiast bezpośredniego rejestrowania SyntaxHighlightera
+// Factory Pattern = design pattern where one class creates instances of other classes
+// IntelliJ requires Factory instead of direct registration of SyntaxHighlighter
 class OplSyntaxHighlighterFactory : SyntaxHighlighterFactory() {
     override fun getSyntaxHighlighter(project: Project?, virtualFile: VirtualFile?): SyntaxHighlighter {
         return OplSyntaxHighlighter()

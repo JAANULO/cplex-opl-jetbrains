@@ -13,7 +13,7 @@ import com.intellij.openapi.components.Storage
 )
 class OplSettingsState : PersistentStateComponent<OplSettingsState> {
 
-    // Zmienna przechowująca ścieżkę do oplrun.exe na dysku użytkownika
+    // Variable storing path to oplrun.exe on user's disk
     var savedCplexPath: String = ""
 
     override fun getState(): OplSettingsState = this

@@ -1,6 +1,6 @@
 tuple Item {
   int id;
-}
+};
 
 dvar int x;
 var int y;

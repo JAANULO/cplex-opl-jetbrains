@@ -5,13 +5,17 @@ import com.intellij.execution.configurations.*
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessHandlerFactory
 import com.intellij.execution.process.ProcessTerminatedListener
+import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.project.Project
 import java.io.File
+import java.util.UUID
+import javax.xml.parsers.DocumentBuilderFactory
 import com.github.cplexopl.settings.OplSettingsState
 
-// RunConfiguration = konfiguracja uruchomieniowa (to co widzisz w dropdown obok przycisku Run)
-// Implementuje logikę co się stanie po kliknięciu zielonego przycisku ▶
+// RunConfiguration = run configuration (what you see in the dropdown next to the Run button)
+// Implements logic what will happen after clicking the green button ▶
 
 class OplRunConfiguration(
     project: Project,
@@ -29,17 +33,21 @@ class OplRunConfiguration(
         get() = options.dataFile ?: ""
         set(value) { options.dataFile = value }
 
+    var settingsFile: String
+        get() = options.settingsFile ?: ""
+        set(value) { options.settingsFile = value }
+
     var cplexPath: String
         get() {
-            // 1. Priorytet: Ścieżka nadpisana ręcznie w oknie "Edit Configurations..." dla tego konkretnego runa
+            // 1. Priority: Path overridden manually in "Edit Configurations" window for this specific run
             val localPath = options.cplexPath
             if (!localPath.isNullOrEmpty()) return localPath
 
-            // 2. Główna ścieżka: Z globalnych ustawień IDE (Settings -> Tools -> CPLEX OPL)
+            // 2. Main path: From global IDE settings (Settings -> Tools -> CPLEX OPL)
             val globalPath = OplSettingsState.instance.savedCplexPath
             if (globalPath.isNotEmpty()) return globalPath
 
-            // 3. Fallback: Jeśli użytkownik nic nie ustawił, próbuj zgadnąć
+            // 3. Fallback: If user hasn't set anything, try to guess
             return detectCplexPath()
         }
         set(value) { options.cplexPath = value }
@@ -49,9 +57,31 @@ class OplRunConfiguration(
     override fun checkConfiguration() {
         if (modelFile.isEmpty()) throw RuntimeConfigurationError("Model file (.mod) not specified")
         if (!File(modelFile).exists()) throw RuntimeConfigurationError("Model file does not exist: $modelFile")
+        
+        if (dataFile.isNotEmpty() && !File(dataFile).exists()) {
+            throw RuntimeConfigurationError("Data file does not exist: $dataFile")
+        }
+        
+        if (settingsFile.isNotEmpty() && !File(settingsFile).exists()) {
+            throw RuntimeConfigurationError("Settings file (.ops) does not exist: $settingsFile")
+        }
+        
         if (cplexPath.isEmpty()) throw RuntimeConfigurationError(
             "CPLEX installation not found. Set path globally in: File -> Settings -> Tools -> CPLEX OPL"
         )
+    }
+
+    fun createCommandLine(tempModelFile: File): GeneralCommandLine {
+        return GeneralCommandLine().apply {
+            exePath = cplexPath
+            addParameter(tempModelFile.absolutePath)
+            if (dataFile.isNotEmpty()) {
+                addParameter(dataFile)
+            }
+            val modelParentDir = File(modelFile).parentFile ?: File(".")
+            workDirectory = modelParentDir
+            withEnvironment(System.getenv())
+        }
     }
 
     override fun getState(executor: Executor, environment: ExecutionEnvironment): RunProfileState {
@@ -59,11 +89,59 @@ class OplRunConfiguration(
     }
 
     companion object {
-        // Automatyczne wykrywanie ścieżki CPLEX na różnych systemach operacyjnych
+        fun generateExecuteBlock(settingsFilePath: String): String {
+            if (settingsFilePath.isEmpty()) return ""
+            val settingsFile = File(settingsFilePath)
+            if (!settingsFile.exists()) return ""
+
+            return try {
+                val factory = DocumentBuilderFactory.newInstance()
+                val builder = factory.newDocumentBuilder()
+                val doc = builder.parse(settingsFile)
+                
+                val result = StringBuilder()
+                result.appendLine("// TEMP FILE GENERATED AUTOMATICALLY BY CPLEX OPL JETBRAINS PLUGIN. SAFE TO REMOVE.")
+                result.appendLine("execute {")
+                
+                val settings = doc.getElementsByTagName("setting")
+                for (i in 0 until settings.length) {
+                    val element = settings.item(i)
+                    val name = element.attributes.getNamedItem("name")?.nodeValue ?: continue
+                    val value = element.attributes.getNamedItem("value")?.nodeValue ?: continue
+                    
+                    val decodedValue = decodeXmlEntities(value)
+                    
+                    val isNumericOrBoolean = decodedValue.toDoubleOrNull() != null || 
+                                             decodedValue.toLongOrNull() != null || 
+                                             decodedValue == "true" || 
+                                             decodedValue == "false"
+                    
+                    val escapedValue = decodedValue.replace("\"", "\\\"")
+                    val formattedValue = if (isNumericOrBoolean) escapedValue else "\"$escapedValue\""
+                    result.appendLine("  cplex.$name = $formattedValue;")
+                }
+                result.appendLine("}")
+                result.append("\n")
+                result.toString()
+            } catch (e: Exception) {
+                ""
+            }
+        }
+        
+        private fun decodeXmlEntities(value: String): String {
+            return value
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")
+                .replace("&apos;", "'")
+                .replace("&quot;", "\"")
+                .replace("&amp;", "&")
+        }
+
+        // Automatic detection of CPLEX path on various operating systems
         fun detectCplexPath(): String {
             val os = System.getProperty("os.name").lowercase()
 
-            // 1. Najpierw sprawdzamy systemową zmienną środowiskową instalatora IBM
+            // 1. First check system environment variable of IBM installer
             val envDir = System.getenv("CPLEX_STUDIO_DIR")
             if (!envDir.isNullOrEmpty()) {
                 val envPath = when {
@@ -74,7 +152,7 @@ class OplRunConfiguration(
                 if (File(envPath).exists()) return envPath
             }
 
-            // 2. Jeśli zmiennej brak, sprawdzamy typowe ścieżki instalacji
+            // 2. If variable is missing, check typical installation paths
             val candidates = when {
                 os.contains("windows") -> listOf(
                     "C:\\Program Files\\IBM\\ILOG\\CPLEX_Studio2211\\opl\\bin\\x64_win64\\oplrun.exe",
@@ -97,32 +175,49 @@ class OplRunConfiguration(
     }
 }
 
-// RunProfileState = klasa wykonująca faktyczny proces (uruchamia oplrun jako subprocess)
+// RunProfileState = class executing actual process (runs oplrun as subprocess)
 class OplRunState(
     environment: ExecutionEnvironment,
     private val config: OplRunConfiguration
 ) : CommandLineState(environment) {
 
     override fun startProcess(): OSProcessHandler {
-        // GeneralCommandLine = klasa budująca komendę systemową
-        val commandLine = GeneralCommandLine().apply {
-            exePath = config.cplexPath
-            // oplrun przyjmuje: oplrun model.mod [data.dat]
-            addParameter(config.modelFile)
-            if (config.dataFile.isNotEmpty()) {
-                addParameter(config.dataFile)
-            }
-            // Ustaw katalog roboczy na folder pliku modelu
-            workDirectory = File(config.modelFile).parentFile
-            // Przekaż środowisko systemowe (ważne dla licencji CPLEX)
-            withEnvironment(System.getenv())
-        }
+        try {
+            val originalModel = File(config.modelFile)
+            val tempFileSuffix = "_temp_${UUID.randomUUID()}_${originalModel.name}"
+            val tempModelFile = File(originalModel.parentFile, tempFileSuffix)
 
-        val handler = ProcessHandlerFactory.getInstance()
-            .createColoredProcessHandler(commandLine)
-        
-        // Automatycznie wypisz kod wyjścia w konsoli
-        ProcessTerminatedListener.attach(handler)
-        return handler
+            try {
+                val executeBlock = OplRunConfiguration.generateExecuteBlock(config.settingsFile)
+                val originalContent = originalModel.readText(Charsets.UTF_8)
+                tempModelFile.writeText(executeBlock + originalContent, Charsets.UTF_8)
+            } catch (e: Exception) {
+                if (tempModelFile.exists()) {
+                    tempModelFile.delete()
+                }
+                throw RuntimeConfigurationException("Failed to prepare model file: ${e.message}")
+            }
+
+            val commandLine = config.createCommandLine(tempModelFile)
+            val handler = ProcessHandlerFactory.getInstance()
+                .createColoredProcessHandler(commandLine)
+
+            handler.addProcessListener(object : ProcessAdapter() {
+                override fun processTerminated(event: ProcessEvent) {
+                    if (tempModelFile.exists()) {
+                        try {
+                            tempModelFile.delete()
+                        } catch (e: Exception) {
+                            // Ignore errors when removing temporary file
+                        }
+                    }
+                }
+            })
+            
+            ProcessTerminatedListener.attach(handler)
+            return handler
+        } catch (e: Exception) {
+            throw RuntimeConfigurationException("Failed to start OPL process: ${e.message}")
+        }
     }
 }

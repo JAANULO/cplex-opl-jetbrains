@@ -1,30 +1,30 @@
 using cp;
 
-// Definicje typów i danych
+// Type and data definitions
 range Tasks = 1..4;
 int Duration[Tasks] = ...;
 
-// Zmienne przedziałowe - określają zadanie w czasie
+// Interval variables - represent tasks over time
 dvar interval Task[t in Tasks] size Duration[t];
 
-// Sekwencja zadań na jednej maszynie (brak nakładania się)
+// Sequence of tasks on a single machine (no overlap)
 dvar sequence Machine in all(t in Tasks) Task[t];
 
-// Minimalizacja całkowitego czasu zakończenia wszystkich zadań (Makespan)
+// Minimize makespan (total completion time of all tasks)
 minimize max(t in Tasks) endOf(Task[t]);
 
 subject to {
-  // Zadania nie mogą nakładać się w czasie na maszynie
+  // Tasks cannot overlap in time on the machine
   noOverlap(Machine);
   
-  // Przykładowe ograniczenie kolejności: zadanie 1 musi zakończyć się przed rozpoczęciem zadania 3
+  // Example precedence constraint: Task 1 must finish before Task 3 starts
   OrderConstraint:
     endBeforeStart(Task[1], Task[3]);
 }
 
 execute DISPLAY {
-  writeln("=== WYNIKI SZEREGOWANIA CP ===");
+  writeln("=== CP SCHEDULING RESULTS ===");
   for(var t in Tasks) {
-    writeln("Zadanie ", t, " -> Start: ", Task[t].start, ", Koniec: ", Task[t].end, ", Czas trwania: ", Task[t].size);
+    writeln("Task ", t, " -> Start: ", Task[t].start, ", End: ", Task[t].end, ", Duration: ", Task[t].size);
   }
 }

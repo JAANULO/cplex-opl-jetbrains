@@ -29,7 +29,7 @@ class OplBlock(
         val parentType = parent.elementType
         val elementType = myNode.elementType
 
-        // 1. Elementy przylegające do lewej (klamry, nawiasy zamykające blok)
+        // 1. Elements left-aligned (braces, closing brackets of block)
         if (elementType == OplTypes.LBRACE ||
             elementType == OplTypes.RBRACE ||
             elementType == OplTypes.LBRACKET ||
@@ -41,15 +41,15 @@ class OplBlock(
             return Indent.getNoneIndent()
         }
 
-        // 2. Wcięcia dla głównych bloków (ograniczenia, skrypty)
+        // 2. Indentation for main blocks (constraints, scripts)
         if (parentType == OplTypes.CONSTRAINT_SECTION ||
             parentType == OplTypes.EXECUTE_BODY) {
             return Indent.getNormalIndent()
         }
 
-        // 3. Obsługa zagnieżdżeń w pętlach forall i blokach warunkowych
+        // 3. Handling nesting in forall loops and conditional blocks
         if (parentType == OplTypes.CONSTRAINT_ITEM) {
-            // Wcinamy tylko zagnieżdżone elementy wewnątrz forall
+            // Indent only nested elements inside forall
             if (elementType == OplTypes.CONSTRAINT_ITEM) {
                 return Indent.getNormalIndent()
             }
@@ -61,7 +61,7 @@ class OplBlock(
 
     override fun getChildAttributes(newChildIndex: Int): ChildAttributes {
         val elementType = myNode.elementType
-        // Enter automatycznie nadaje odpowiedni poziom wcięć
+        // Enter automatically provides appropriate indentation level
         if (elementType == OplTypes.CONSTRAINT_SECTION ||
             elementType == OplTypes.CONSTRAINT_ITEM ||
             elementType == OplTypes.EXECUTE_BODY) {

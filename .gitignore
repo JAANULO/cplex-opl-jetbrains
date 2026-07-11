@@ -5,3 +5,8 @@
 .kotlin
 .qodana
 build
+.vscode/
+#src/main/gen/
+out/
+.vscode
+.env

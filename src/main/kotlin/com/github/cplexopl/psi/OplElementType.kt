@@ -4,6 +4,6 @@ import com.github.cplexopl.OplLanguage
 import com.intellij.psi.tree.IElementType
 
 /**
- * Klasa reprezentująca typy elementów strukturalnych (węzły drzewa AST) dla języka OPL.
+ * Class representing structural element types (AST nodes) for the OPL language.
  */
 class OplElementType(debugName: String) : IElementType(debugName, OplLanguage)

@@ -12,7 +12,7 @@
   tokenTypeClass="com.github.cplexopl.psi.OplTokenType"
 
   tokens=[
-    // Słowa kluczowe (keywords) - zarezerwowane słowa języka OPL
+    // Keywords - reserved words of the OPL language
     USING       = 'using'
     CP          = 'cp'
     INTERVAL    = 'interval'
@@ -46,7 +46,7 @@
     ALLDIFFERENT= 'allDifferent'
     PACK        = 'pack'
 
-    // Operatory
+    // Operators
     SEMICOLON   = ';'
     COLON       = ':'
     COMMA       = ','
@@ -75,8 +75,8 @@
     LPAREN      = '('
     RPAREN      = ')'
 
-    // Typy tokenów z wyrażeniami regularnymi (regex)
-    // Regex to wzorzec opisujący format tekstu, np. [0-9]+ = jedna lub więcej cyfr
+    // Token types with regular expressions (regex)
+    // Regex is a pattern describing text format, e.g. [0-9]+ = one or more digits
     LINE_COMMENT  = 'regexp://[^\r\n]*'
     BLOCK_COMMENT = 'regexp:/\*([^*]|\*(?!/))*\*/'
     STRING_LITERAL = 'regexp:"([^"\\]|\\.)*"'
@@ -86,11 +86,11 @@
   ]
 }
 
-// Root rule: plik OPL to sekwencja deklaracji
+// Root rule: an OPL file is a sequence of declarations
 oplFile ::= item_*
 private item_ ::= declaration | SEMICOLON
 
-// Deklaracja może być różnych typów
+// Declaration can be of various types
 declaration ::= varDeclaration
               | dvarDeclaration
               | objectiveDeclaration
@@ -100,7 +100,7 @@ declaration ::= varDeclaration
               | includeDeclaration
               | usingDeclaration
 
-// Deklaracja zmiennej danych (obsługuje tablice, wielokropki i zakresy)
+// Data variable declaration (supports arrays, ellipses, and ranges)
 varDeclaration ::= (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (LBRACKET expression RBRACKET)* (EQ (ELLIPSIS | expression))? SEMICOLON { 
   pin=2 
   recoverWhile=statement_recover 
@@ -108,10 +108,10 @@ varDeclaration ::= (INT | FLOAT | BOOLEAN | STRING | RANGE) ID (LBRACKET express
   mixin="com.github.cplexopl.psi.OplNamedElementImpl"
 }
 
-// Deklaracja zmiennej decyzyjnej (obsługuje tablice)
+// Using declaration (enables CP engine)
 usingDeclaration ::= USING CP SEMICOLON { pin=1 recoverWhile=statement_recover }
 
-// Deklaracja zmiennej decyzyjnej (obsługuje tablice)
+// Decision variable declaration (supports arrays)
 dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE) ID (LBRACKET expression RBRACKET)* (IN rangeExpression)? SEMICOLON { 
   pin=1 
   recoverWhile=statement_recover 
@@ -119,32 +119,32 @@ dvarDeclaration ::= DVAR (INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE) ID (LBRAC
   mixin="com.github.cplexopl.psi.OplNamedElementImpl"
 }
 
-// Funkcja celu - to co minimalizujemy/maksymalizujemy
+// Objective function - what we minimize/maximize
 objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON { pin=1 recoverWhile=statement_recover }
 
-// Sekcja ograniczeń
+// Constraint section
 constraintSection ::= SUBJECT TO LBRACE constraintItem* RBRACE { pin=1 }
 
-// Definicja iteratora dla pętli i sum (np. i in 1..9 : x != 0)
+// Iterator definition for loops and sums (e.g. i in 1..9 : x != 0)
 oplIterator ::= ID IN expression (COLON constraintExpression)?
 
-// Zabezpieczenie przed konfliktami: opcjonalna etykieta (prywatna, by nie psuć Annotatora)
+// Conflict guard: optional label (private to avoid breaking Annotator)
 private label ::= ID COLON
 
 constraintItem ::= label? constraintExpression SEMICOLON
                  | FORALL LPAREN oplIterator (COMMA oplIterator)* RPAREN LBRACE constraintItem* RBRACE
                  | FORALL LPAREN oplIterator (COMMA oplIterator)* RPAREN constraintItem
 
-// Ukryta reguła pomocnicza: ograniczenie może (ale nie musi) mieć operator relacyjny
+// Hidden helper rule: constraint may (but need not) have a relational operator
 private constraintExpression ::= expression ((LE | LT | GT | GE | EQ | EQEQ | NEQ) expression)?
 
-// Blok execute - kod skryptowy IBM Script (JavaScript-like)
+// Execute block - IBM Script code (JavaScript-like)
 executeBlock ::= EXECUTE ID? executeBody { pin=1 recoverWhile=statement_recover }
 executeBody ::= LBRACE executeItem* RBRACE
 private executeItem ::= executeBody | executeToken
 private executeToken ::= ID | INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | LPAREN | RPAREN | LBRACKET | RBRACKET | PLUS | MINUS | STAR | SLASH | EQ | EQEQ | NEQ | LT | LE | GT | GE | SEMICOLON | COMMA | DOT | DOTDOT | ELLIPSIS | COLON | INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | DEXPR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT_TO | INCLUDE | EXECUTE | FORALL | EXISTS | IN | TO | IF | ELSE | THEN | USING | CP | INTERVAL | SEQUENCE | WITH | ASSERT | SUM | ALL | PULSE | STEP | ALLDIFFERENT | PACK | ANDAND | OROR | NOT | MOD
 
-// Deklaracja krotki (struct-like type)
+// Tuple declaration (struct-like type)
 tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON { 
   pin=1 
   recoverWhile=statement_recover 
@@ -153,18 +153,18 @@ tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON {
 }
 tupleField ::= (INT | FLOAT | STRING | ID) ID SEMICOLON { pin=2 }
 
-// Include innego pliku
+// Include another file
 includeDeclaration ::= INCLUDE STRING_LITERAL SEMICOLON { pin=1 }
 
-// Wyrażenia (uproszczone)
-// Zakresy (Ranges) - pozwala parserowi zrozumieć zapis np. 1..NbItems
+// Expressions (simplified)
+// Ranges - allows the parser to understand notation like 1..NbItems
 rangeExpression ::= additiveExpression DOTDOT additiveExpression
 
 expression ::= rangeExpression | additiveExpression
 private additiveExpression ::= term ((PLUS | MINUS) term)*
 term ::= factor ((STAR | SLASH) factor)*
 
-// Rozszerzony factor: obsługuje sumy, pętle all, funkcje CP, tablice, liczby i zmienne
+// Extended factor: supports sums, all loops, CP functions, arrays, numbers and variables
 factor ::= (PLUS | MINUS) factor
          | (SUM | ALL) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
          | (ID | ALLDIFFERENT | PACK | PULSE | STEP) ( LPAREN (expression (COMMA expression)*)? RPAREN )? (LBRACKET expression RBRACKET)*
@@ -174,5 +174,5 @@ factor ::= (PLUS | MINUS) factor
          | LBRACKET (expression (COMMA expression)*)? RBRACKET
          | LPAREN expression RPAREN
 
-// Reguła odzyskiwania: "Pomijaj wszystko, dopóki nie natrafisz na początek nowej deklaracji lub średnik"
+// Recovery rule: "Skip everything until a new declaration start or semicolon"
 private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | USING | SEMICOLON | RBRACE)
