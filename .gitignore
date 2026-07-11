@@ -1,12 +1,20 @@
+# macOS
 .DS_Store
-.gradle
-.idea
-.intellijPlatform
-.kotlin
-.qodana
-build
-.vscode/
-#src/main/gen/
+
+# Gradle & Build
+.gradle/
+build/
 out/
-.vscode
+
+# Kotlin & IntelliJ Platform
+.kotlin/
+.idea/
+.intellijPlatform/
+.qodana/
+
+# Generated sources
+src/main/gen/
+
+# IDEs & Environment
+.vscode/
 .env
