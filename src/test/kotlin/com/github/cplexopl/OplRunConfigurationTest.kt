@@ -19,20 +19,24 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
         val factory = configurationType.configurationFactories[0]
         val configuration = factory.createTemplateConfiguration(project) as OplRunConfiguration
         
-        configuration.modelFile = "C:\\projects\\model.mod"
-        configuration.dataFile = "C:\\projects\\data.dat"
-        configuration.settingsFile = "C:\\projects\\settings.ops"
-        configuration.cplexPath = "C:\\cplex\\bin\\oplrun.exe"
+        val isWindows = com.intellij.openapi.util.SystemInfo.isWindows
+        val baseDir = if (isWindows) "C:\\projects\\" else "/projects/"
+        val cplexExe = if (isWindows) "C:\\cplex\\bin\\oplrun.exe" else "/cplex/bin/oplrun"
 
-        val tempFile = java.io.File("C:\\projects\\_temp_model.mod")
+        configuration.modelFile = "${baseDir}model.mod"
+        configuration.dataFile = "${baseDir}data.dat"
+        configuration.settingsFile = "${baseDir}settings.ops"
+        configuration.cplexPath = cplexExe
+
+        val tempFile = java.io.File("${baseDir}_temp_model.mod")
         val commandLine = configuration.createCommandLine(tempFile)
         
-        assertEquals("C:\\cplex\\bin\\oplrun.exe", commandLine.exePath)
+        assertEquals(cplexExe, commandLine.exePath)
         val parameters = commandLine.parametersList.list
         
         assertEquals(2, parameters.size)
-        assertEquals("C:\\projects\\_temp_model.mod", parameters[0])
-        assertEquals("C:\\projects\\data.dat", parameters[1])
+        assertEquals(java.io.File("${baseDir}_temp_model.mod").absolutePath, parameters[0])
+        assertEquals("${baseDir}data.dat", parameters[1])
     }
 
     fun testGenerateExecuteBlock() {
