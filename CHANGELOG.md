@@ -4,6 +4,11 @@
 
 ## [Unreleased]
 
+### Added
+- **Python Integration:** Added `Generate Python Runner` action to create executable `doopl` scripts for `.mod` files.
+- **Python Integration:** Added autocompletion support for `doopl`/`docplex` functions inside Python files.
+- **Python Integration:** Added an interactive notification action to install the `doopl` library automatically via PIP.
+
 ## [1.4.5] - 2026-07-12
 
 ### Fixed

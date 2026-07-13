@@ -5,7 +5,7 @@ import com.intellij.execution.configurations.*
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessHandlerFactory
 import com.intellij.execution.process.ProcessTerminatedListener
-import com.intellij.execution.process.ProcessAdapter
+import com.intellij.execution.process.ProcessListener
 import com.intellij.execution.process.ProcessEvent
 import com.intellij.execution.runners.ExecutionEnvironment
 import com.intellij.openapi.project.Project
@@ -202,7 +202,7 @@ class OplRunState(
             val handler = ProcessHandlerFactory.getInstance()
                 .createColoredProcessHandler(commandLine)
 
-            handler.addProcessListener(object : ProcessAdapter() {
+            handler.addProcessListener(object : ProcessListener {
                 override fun processTerminated(event: ProcessEvent) {
                     if (tempModelFile.exists()) {
                         try {
