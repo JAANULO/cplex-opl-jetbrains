@@ -1,16 +1,8 @@
-# CPLEX-Plugin
+# CPLEX OPL Support for JetBrains IDEs
 
-Profesjonalna wtyczka do obsługi języka IBM ILOG CPLEX OPL w środowisku IntelliJ IDEA. 
-Zapewnia kolorowanie składni, inteligentne podpowiedzi oraz integrację z silnikiem solvera.
+Native support for IBM ILOG CPLEX Optimization Programming Language (OPL) in IntelliJ IDEA, PyCharm, and other JetBrains IDEs.
 
-[🇬🇧 English](#english) | [🇵🇱 Polski](#polski)
-
-<p>Provides native support for IBM ILOG CPLEX Optimization Programming Language (OPL) in JetBrains IDEs.</p>
-<ul>
-  <li>Syntax highlighting and code completion for OPL</li>
-  <li>Run configuration for local oplrun solver with .mod/.dat auto-pairing</li>
-  <li>Clickable solver errors in console, structure view, templates, and formatter</li>
-</ul>
+[🇬🇧 English Version](#english) | [🇵🇱 Wersja Polska](#polski)
 ---
 
 <h2 id="english">🇬🇧 English</h2>
@@ -25,11 +17,12 @@ Plugin adding native support for IBM ILOG CPLEX Optimization Programming Languag
 * **Path Support:** Manual `oplrun` path setup plus auto-detect button for default install locations.
 * **Console Navigation:** Clickable error links (for `.mod`) in run console.
 * **Structure View:** Side panel listing declarations, objective, and constraints.
-* **Editor Utilities:** Live templates, commenter (`Ctrl+/`), brace matcher, and basic code formatter.
+* **Code Analysis & Inspections:** Real-time semantic validation including scope-aware variable resolution, type checking, missing semicolons, and advanced non-linearity detection (`min`, `max`, `abs`) for MIP models.
+* **Editor Utilities:** Live templates, commenter (`Ctrl+/`), brace matcher, and smart code formatter.
 * **Refactoring:** Rename refactoring (`Shift+F6`) and Find Usages support.
 
-### Examples & Models Portfolio
-Looking for OPL models to test the plugin or learn the language? Check out our [CPLEX OPL Examples Repository](https://github.com/JAANULO/cplex-opl-examples) for a collection of well-documented optimization models.
+### Examples
+A collection of OPL models used as testing references for this plugin can be found in the [cplex-opl-examples](https://github.com/JAANULO/cplex-opl-examples) repository.
 
 ### Installation (Manual Install)
 Before the plugin reaches the official JetBrains Marketplace, you can install it manually:
@@ -56,11 +49,12 @@ Wtyczka dodająca natywne wsparcie dla języka IBM ILOG CPLEX Optimization Progr
 * **Obsługa ścieżki:** Ręczne wskazanie `oplrun` oraz przycisk auto-detekcji domyślnych lokalizacji.
 * **Nawigacja błędów:** Klikalne linki błędów solvera (dla `.mod`) w konsoli uruchomienia.
 * **Structure View:** Boczne drzewo elementów modelu (deklaracje, cel, ograniczenia).
-* **Narzędzia edytora:** Live templates, komentowanie (`Ctrl+/`), pary nawiasów i podstawowy formatter.
+* **Analiza Semantyczna i Inspekcje:** Walidacja kodu w locie (m.in. zasięgi zmiennych, zgodność typów, brakujące średniki) oraz zaawansowane ostrzeżenia przed nieliniowością solvera (`min`, `max`, `abs`) w modelach MIP.
+* **Narzędzia edytora:** Live templates, komentowanie (`Ctrl+/`), pary nawiasów i inteligentny formatter.
 * **Refaktoryzacja:** Zmiana nazwy (`Shift+F6`) we wszystkich plikach projektu oraz wyszukiwanie użyć (Find Usages).
 
-### Przykłady i Portfolio Modeli
-Szukasz modeli OPL do przetestowania wtyczki lub nauki języka? Zajrzyj do naszego [Repozytorium Przykładów CPLEX OPL](https://github.com/JAANULO/cplex-opl-examples), gdzie znajdziesz kolekcję dobrze udokumentowanych problemów optymalizacyjnych.
+### Przykłady
+Kolekcja modeli referencyjnych i testowych znajduje się w repozytorium [cplex-opl-examples](https://github.com/JAANULO/cplex-opl-examples).
 
 ### Instalacja (Instalacja Ręczna)
 Zanim wtyczka trafi do oficjalnego sklepu JetBrains Marketplace, możesz ją zainstalować ręcznie:
