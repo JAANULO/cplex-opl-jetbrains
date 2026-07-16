@@ -28,6 +28,9 @@ Plugin adding native support for IBM ILOG CPLEX Optimization Programming Languag
 * **Editor Utilities:** Live templates, commenter (`Ctrl+/`), brace matcher, and basic code formatter.
 * **Refactoring:** Rename refactoring (`Shift+F6`) and Find Usages support.
 
+### Examples & Models Portfolio
+Looking for OPL models to test the plugin or learn the language? Check out our [CPLEX OPL Examples Repository](https://github.com/JAANULO/cplex-opl-examples) for a collection of well-documented optimization models.
+
 ### Installation (Manual Install)
 Before the plugin reaches the official JetBrains Marketplace, you can install it manually:
 1. Go to the [Releases](../../releases) tab on GitHub and download the latest `.zip` package.
@@ -55,6 +58,9 @@ Wtyczka dodająca natywne wsparcie dla języka IBM ILOG CPLEX Optimization Progr
 * **Structure View:** Boczne drzewo elementów modelu (deklaracje, cel, ograniczenia).
 * **Narzędzia edytora:** Live templates, komentowanie (`Ctrl+/`), pary nawiasów i podstawowy formatter.
 * **Refaktoryzacja:** Zmiana nazwy (`Shift+F6`) we wszystkich plikach projektu oraz wyszukiwanie użyć (Find Usages).
+
+### Przykłady i Portfolio Modeli
+Szukasz modeli OPL do przetestowania wtyczki lub nauki języka? Zajrzyj do naszego [Repozytorium Przykładów CPLEX OPL](https://github.com/JAANULO/cplex-opl-examples), gdzie znajdziesz kolekcję dobrze udokumentowanych problemów optymalizacyjnych.
 
 ### Instalacja (Instalacja Ręczna)
 Zanim wtyczka trafi do oficjalnego sklepu JetBrains Marketplace, możesz ją zainstalować ręcznie:
