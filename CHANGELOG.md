@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 
+## [1.4.6] - 2026-07-19
 ### Added
 - **Python Integration:** Added `Generate Python Runner` action to create executable `doopl` scripts for `.mod` files.
 - **Python Integration:** Added autocompletion support for `doopl`/`docplex` functions inside Python files.
@@ -94,7 +95,9 @@
 - Updated `README.md` feature lists (EN/PL) to match current implementation.
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
 
-[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.4...HEAD
+[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.6...HEAD
+[1.4.6]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.5...1.4.6
+[1.4.5]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.4...1.4.5
 [1.4.4]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.2...1.4.4
 [1.4.2]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.1...1.4.2
 [1.4.1]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.0...1.4.1
