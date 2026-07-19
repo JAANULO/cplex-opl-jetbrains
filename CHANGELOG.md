@@ -5,7 +5,9 @@
 ## [Unreleased]
 
 ## [1.4.6] - 2026-07-19
+
 ### Added
+
 - **Python Integration:** Added `Generate Python Runner` action to create executable `doopl` scripts for `.mod` files.
 - **Python Integration:** Added autocompletion support for `doopl`/`docplex` functions inside Python files.
 - **Python Integration:** Added an interactive notification action to install the `doopl` library automatically via PIP.
@@ -13,11 +15,13 @@
 ## [1.4.5] - 2026-07-12
 
 ### Fixed
+
 - **Testing:** Fixed path assertion issue in `testCommandLineConstruction` when running on Unix-based OS (GitHub Actions CI/CD).
 
 ## [1.4.4] - 2026-07-09
 
 ### Added
+
 - **Testing:** Implemented comprehensive automated test suite (Unit Tests, Parsing, Highlighting, Completion, Formatting, Commenter) using IntelliJ Platform Test Framework.
 - **IDE Features:** Implemented `Find Usages` for OPL variables and parameters.
 - **IDE Features:** Added `Rename Refactoring` (Shift+F6) support for variables, tuples, and constraints.
@@ -25,26 +29,32 @@
 - **Examples:** Created a new `examples/` directory containing sample models (MIP knapsack, CP job-shop scheduling) and a self-contained English demo model (`knapsack_demo.mod`) for JetBrains Marketplace.
 
 ### Changed
+
 - **API Modernization:** Migrated action classes (`RunOplModelAction`, `OplCreateFileAction`) to `ActionUpdateThread.BGT` to prevent UI freezes.
 - **Architectural Cleanup (Light Services):** Migrated `OplSettingsState` to a modern JetBrains Light Service (`@Service`) to improve IDE startup time and dynamic loading support.
 - **Language Parser:** Split the compound token `subject to` into two distinct tokens (`SUBJECT` and `TO`). This ensures proper spacing and indentation tolerance (e.g. multiple spaces or newlines) and resolves syntax parsing failures.
 
 ### Fixed
+
 - **Qodana & Settings:** Translated settings strings to English and corrected path exclusions for generated parser/lexer files to resolve Qodana warnings.
 - **Performance:** Optimized `OplAnnotator` variable scope checks using `CachedValuesManager` to cache declarations, reducing complexity from $O(N^2)$ to $O(N)$ and preventing UI lags on large `.mod` files.
 - **Windows Support:** Standardized file path separators in `OplLinkFilter` to ensure clickable console links work correctly on Windows systems.
+
 ## [1.4.2] - 2026-05-02
 
 ### Changed
+
 - **Compatibility:** Lowered minimum required IDE version to 2024.3 (build 243) to support older IDE installations.
 
 ### Fixed
+
 - **Formatter:** Fixed indentation logic in `OplBlock` to correctly indent nested structures within constraint blocks.
 - **Annotator:** Fixed false positive "Undefined variable" errors for multiple iterators in loops (e.g., `forall(i, j in ...)`).
 
 ## [1.4.1] - 2026-05-02
 
 ### Fixed
+
 - **PyCharm Compatibility:** Added missing `com.intellij.modules.lang` dependency to `plugin.xml` to fix installation issues in PyCharm and other JetBrains IDEs.
 - **File Icons:** Added `icon=` attributes to `fileType` definitions in `plugin.xml` to enforce rendering of dedicated SVG icons for `.mod` and `.dat` files.
 
