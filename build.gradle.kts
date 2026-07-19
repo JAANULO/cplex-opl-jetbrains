@@ -1,7 +1,6 @@
 import org.jetbrains.changelog.Changelog
 import org.jetbrains.changelog.markdownToHTML
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
-import org.jetbrains.intellij.platform.gradle.IntelliJPlatformType
 
 plugins {
     id("java")
@@ -95,9 +94,10 @@ intellijPlatform {
             // because recommended() downloads ~6 IDEs (including Ultimate ~3 GB each),
             // which exhausts the GitHub Actions runner disk (~14 GB) and causes a tar extraction error.
             // sinceBuild = 243, so we verify from 2024.3 onwards.
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2024.3.7.1")
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.1.7.1")
-            ide(IntelliJPlatformType.IntellijIdeaCommunity, "2025.2.6.1")
+            // IC = IntelliJ IDEA Community Edition product code
+            create("IC", "2024.3.7.1")
+            create("IC", "2025.1.7.1")
+            create("IC", "2025.2.6.1")
         }
     }
 }
