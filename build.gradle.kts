@@ -119,15 +119,15 @@ kover {
 tasks {
     named<org.jetbrains.grammarkit.tasks.GenerateLexerTask>("generateLexer") {
         sourceFile.set(layout.projectDirectory.file("src/main/grammars/OplLexer.flex"))
-        // Powrót do nowszej nazwy i typu Directory
+        // Revert to the newer name and Directory type
         targetOutputDir.set(layout.projectDirectory.dir("src/main/gen/com/github/cplexopl/lexer"))
-        // targetClass usunięty - wtyczka odczyta go z pliku .flex
+        // targetClass removed - the plugin will read it from the .flex file
         purgeOldFiles.set(true)
     }
 
     named<org.jetbrains.grammarkit.tasks.GenerateParserTask>("generateParser") {
         sourceFile.set(layout.projectDirectory.file("src/main/grammars/OplGrammar.bnf"))
-        // Powrót do nowszej nazwy i typu Directory
+        // Revert to the newer name and Directory type
         targetRootOutputDir.set(layout.projectDirectory.dir("src/main/gen"))
         pathToParser.set("com/github/cplexopl/parser/OplParser.java")
         pathToPsiRoot.set("com/github/cplexopl/psi")
@@ -150,7 +150,7 @@ tasks {
         dependsOn(patchChangelog)
     }
 }
-// Wyłączenie zadań instrumentacji (zarówno dla kodu jak i testów) z powodu błędu z MS JDK
+// Disable instrumentation tasks (for both code and tests) due to an MS JDK bug
 tasks.matching { it.name == "instrumentCode" || it.name == "instrumentTestCode" }.configureEach {
     enabled = false
 }
