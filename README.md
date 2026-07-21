@@ -24,8 +24,12 @@ Plugin adding native support for IBM ILOG CPLEX Optimization Programming Languag
 ### Examples
 A collection of OPL models used as testing references for this plugin can be found in the [cplex-opl-examples](https://github.com/JAANULO/cplex-opl-examples) repository.
 
-### Installation (Manual Install)
-Before the plugin reaches the official JetBrains Marketplace, you can install it manually:
+### Installation
+
+**Recommended:** Install directly from JetBrains Marketplace:
+`Settings/Preferences` > `Plugins` > `Marketplace` > search "CPLEX OPL" > `Install`.
+
+**Manual install** (e.g. to test a pre-release build):
 1. Go to the [Releases](../../releases) tab on GitHub and download the latest `.zip` package.
 2. Open your IDE (e.g., IntelliJ IDEA, PyCharm).
 3. Navigate to <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd>.
@@ -56,8 +60,12 @@ Wtyczka dodająca natywne wsparcie dla języka IBM ILOG CPLEX Optimization Progr
 ### Przykłady
 Kolekcja modeli referencyjnych i testowych znajduje się w repozytorium [cplex-opl-examples](https://github.com/JAANULO/cplex-opl-examples).
 
-### Instalacja (Instalacja Ręczna)
-Zanim wtyczka trafi do oficjalnego sklepu JetBrains Marketplace, możesz ją zainstalować ręcznie:
+### Instalacja
+
+**Zalecane:** Zainstaluj bezpośrednio z JetBrains Marketplace:
+`Settings/Preferences` > `Plugins` > `Marketplace` > wpisz "CPLEX OPL" > `Install`.
+
+**Instalacja ręczna** (np. do testowania buildów przed wydaniem):
 1. Przejdź do zakładki [Releases](../../releases) na GitHubie i pobierz najnowszą paczkę `.zip`.
 2. Otwórz swoje środowisko (np. IntelliJ IDEA, PyCharm).
 3. Wejdź w <kbd>Settings/Preferences</kbd> > <kbd>Plugins</kbd>.

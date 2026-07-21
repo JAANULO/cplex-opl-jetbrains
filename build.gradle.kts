@@ -56,7 +56,7 @@ intellijPlatform {
             name = providers.gradleProperty("pluginVendor")
         }
 
-        description.set("CPLEX OPL language support for IntelliJ IDEA. Professional plugin for supporting the IBM ILOG CPLEX OPL language. Provides syntax highlighting, commenter support, and brace matching.")
+        description.set("Native support for IBM ILOG CPLEX OPL in JetBrains IDEs: syntax highlighting, code completion, and a built-in oplrun runner.")
 
         val changelog = project.changelog
         changeNotes = providers.gradleProperty("pluginVersion").map { pluginVersion ->
