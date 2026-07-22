@@ -3,7 +3,7 @@ tuple Item {
 };
 
 dvar int x;
-var int y;
+int y;
 
 minimize x + y;
 

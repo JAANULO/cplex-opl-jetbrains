@@ -59,6 +59,13 @@ class OplAnnotator : Annotator {
 
             // We analyze only variable tokens
             if (element.node.elementType == OplTypes.ID) {
+                // Ignore properties after DOT (e.g. i.weight)
+                var prev = element.node.treePrev
+                while(prev != null && prev.elementType == com.intellij.psi.TokenType.WHITE_SPACE) {
+                    prev = prev.treePrev
+                }
+                if (prev?.elementType == OplTypes.DOT) return
+
                 // 0. Skip execute blocks (JS script, not OPL declarations)
                 var p = element.parent
                 while (p != null && p !is com.intellij.psi.PsiFile) {
@@ -81,6 +88,7 @@ class OplAnnotator : Annotator {
                 val isDeclaration = parent is OplDvarDeclaration ||
                         parent is OplVarDeclaration ||
                         parent is OplTupleDeclaration ||
+                        parent is OplTupleField ||
                         parent is OplConstraintItem ||
                         (parent is OplFactor && parent.node.findChildByType(OplTypes.SUM) != null)
 
@@ -88,7 +96,12 @@ class OplAnnotator : Annotator {
                 val declaredVariables = CachedValuesManager.getCachedValue(file) {
                     val map = mutableMapOf<String, MutableList<PsiElement>>()
                     fun registerDeclaration(declarationNode: PsiElement) {
-                        val idNode = declarationNode.node.findChildByType(OplTypes.ID)
+                        val idNodes = declarationNode.node.getChildren(null).filter { it.elementType == OplTypes.ID }
+                        val idNode = if (declarationNode is OplTupleDeclaration || declarationNode is OplConstraintItem) {
+                            idNodes.firstOrNull()
+                        } else {
+                            idNodes.lastOrNull() // For var/dvar, the last direct ID is the variable name (skipping typeRef)
+                        }
                         if (idNode != null) {
                             map.computeIfAbsent(idNode.text) { mutableListOf() }.add(declarationNode)
                         }
@@ -119,8 +132,7 @@ class OplAnnotator : Annotator {
 
                     // Checking for missing semicolon (only for actual variable/type declarations)
                     val needsSemicolon = parent is OplDvarDeclaration ||
-                            parent is OplVarDeclaration ||
-                            parent is OplTupleDeclaration
+                            parent is OplVarDeclaration
 
                     if (needsSemicolon) {
                         var lastChild = parent.node.lastChildNode

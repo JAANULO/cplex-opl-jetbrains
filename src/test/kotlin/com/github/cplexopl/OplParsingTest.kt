@@ -18,4 +18,8 @@ class OplParsingTest : ParsingTestCase("parsing", "mod", OplParserDefinition()) 
     fun testComplexModel() {
         doTest(true)
     }
+
+    fun testKnapsackModel() {
+        doTest(true)
+    }
 }

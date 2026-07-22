@@ -67,6 +67,7 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 "dvar"                  { return OplTypes.DVAR; }
 "dexpr"                 { return OplTypes.DEXPR; }
 "execute"               { return OplTypes.EXECUTE; }
+"main"                  { return OplTypes.MAIN; }
 "include"               { return OplTypes.INCLUDE; }
 "assert"                { return OplTypes.ASSERT; }
 "sum"                   { return OplTypes.SUM; }

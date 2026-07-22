@@ -15,16 +15,21 @@ class OplReferenceContributor : PsiReferenceContributor() {
             object : PsiReferenceProvider() {
                 override fun getReferencesByElement(element: PsiElement, context: ProcessingContext): Array<PsiReference> {
                     val factor = element as OplFactor
-                    val idNode = factor.node.findChildByType(OplTypes.ID)
+                    val references = mutableListOf<PsiReference>()
 
-                    if (idNode != null) {
-                        val name = idNode.text
-                        // Calculate exact position of the letter inside the equation
-                        val startOffset = idNode.startOffset - factor.textRange.startOffset
-                        val range = TextRange(startOffset, startOffset + idNode.textLength)
-                        return arrayOf(OplReference(factor, range, name))
+                    var childNode = factor.node.firstChildNode
+                    while (childNode != null) {
+                        if (childNode.elementType == OplTypes.ID) {
+                            val name = childNode.text
+                            // Calculate exact position of the letter inside the equation
+                            val startOffset = childNode.startOffset - factor.textRange.startOffset
+                            val range = TextRange(startOffset, startOffset + childNode.textLength)
+                            references.add(OplReference(factor, range, name))
+                        }
+                        childNode = childNode.treeNext
                     }
-                    return PsiReference.EMPTY_ARRAY
+
+                    return references.toTypedArray()
                 }
             }
         )

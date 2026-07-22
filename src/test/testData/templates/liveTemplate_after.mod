@@ -14,9 +14,9 @@ sum(i in R) x[i];
 
 // === CONSTRAINTS ===
 subject to {
-    forall(i in R) {
-        ct_constraint:
-        x[i] >= 0;
-    }
+forall(i in R) {
+ct_constraint:
+x[i] >= 0;
 }
-<caret>
+}
+

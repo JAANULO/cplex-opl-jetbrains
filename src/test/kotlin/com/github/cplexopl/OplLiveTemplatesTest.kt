@@ -13,6 +13,9 @@ class OplLiveTemplatesTest : BasePlatformTestCase() {
         repeat(5) {
             myFixture.type("\t")
         }
+        com.intellij.openapi.command.WriteCommandAction.runWriteCommandAction(project) {
+            com.intellij.psi.codeStyle.CodeStyleManager.getInstance(project).reformat(myFixture.file)
+        }
         myFixture.checkResultByFile("liveTemplate_after.mod")
     }
 }

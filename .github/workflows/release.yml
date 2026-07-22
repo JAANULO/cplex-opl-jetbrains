@@ -102,8 +102,10 @@ jobs:
       # Trigger regression tests in the companion repository
       - name: Trigger regression tests in examples-tests repo
         run: |
+          PLATFORM_VERSION=$(grep -E '^platformVersion\s*=' gradle.properties | cut -d'=' -f2 | tr -d ' ' | tr -d '\r')
+          
           curl -X POST \
             -H "Authorization: token ${{ secrets.CROSS_REPO_DISPATCH_TOKEN }}" \
             -H "Accept: application/vnd.github+json" \
             https://api.github.com/repos/JAANULO/cplex-opl-examples/dispatches \
-            -d '{"event_type":"plugin_released","client_payload":{"version":"${{ github.ref_name }}"}}'
+            -d "{\"event_type\":\"plugin_released\",\"client_payload\":{\"version\":\"${{ github.ref_name }}\", \"platform_version\":\"$PLATFORM_VERSION\"}}"
