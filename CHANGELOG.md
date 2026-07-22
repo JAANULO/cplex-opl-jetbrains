@@ -4,6 +4,17 @@
 
 ## [Unreleased]
 
+### Added
+- **Language Parser:** Added `main` keyword and `main { ... }` block syntax parsing support.
+
+### Changed
+- **Language Parser:** Relaxed tuple declaration requirements (semicolon is now optional).
+
+### Fixed
+- **Annotator:** Fixed false positive "Missing semicolon" and "Undefined variable" errors for tuple fields and property access (e.g. `i.weight`).
+- **Annotator:** Fixed false positive "Variable is already defined" errors caused by improper resolution of nested type names.
+- **Testing:** Fixed LiveTemplates formatting flattening in automated tests.
+
 ## [1.4.6] - 2026-07-19
 ### Added
 - **Python Integration:** Added `Generate Python Runner` action to create executable `doopl` scripts for `.mod` files.
