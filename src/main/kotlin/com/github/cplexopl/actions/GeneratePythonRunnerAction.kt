@@ -64,7 +64,7 @@ class GeneratePythonRunnerAction : AnAction() {
                         com.intellij.notification.NotificationAction.createSimpleExpiring("Install doopl") {
                             try {
                                 com.intellij.execution.configurations.GeneralCommandLine("pip", "install", "doopl").createProcess()
-                                Messages.showInfoMessage(project, "doopl installation started in background.", "Installation")
+                                Messages.showInfoMessage(project, "Installation of doopl started in the background.", "Installation")
                             } catch (e: Exception) {
                                 Messages.showErrorDialog(project, "Failed to start pip: ${e.message}", "Error")
                             }
