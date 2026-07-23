@@ -6,6 +6,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.psi.util.CachedValuesManager
+import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.lang.annotation.HighlightSeverity
 import com.github.cplexopl.psi.*
 
@@ -42,8 +43,11 @@ class OplAnnotator : Annotator {
             if (element is OplObjectiveDeclaration) {
                 val file = element.containingFile
                 if (file != null) {
-                    val hasInterval = PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java).any {
-                        it.node.findChildByType(OplTypes.INTERVAL) != null || it.node.findChildByType(OplTypes.SEQUENCE) != null
+                    val hasInterval = CachedValuesManager.getCachedValue(file) {
+                        val found = PsiTreeUtil.findChildrenOfType(file, OplDvarDeclaration::class.java).any {
+                            it.node.findChildByType(OplTypes.INTERVAL) != null || it.node.findChildByType(OplTypes.SEQUENCE) != null
+                        }
+                        CachedValueProvider.Result.create(found, PsiModificationTracker.MODIFICATION_COUNT)
                     }
                     if (hasInterval) {
                         val objText = element.text
@@ -118,7 +122,7 @@ class OplAnnotator : Annotator {
                             registerDeclaration(it)
                         }
                     }
-                    CachedValueProvider.Result.create(map, file)
+                    CachedValueProvider.Result.create(map, PsiModificationTracker.MODIFICATION_COUNT)
                 }
 
                 if (isDeclaration) {

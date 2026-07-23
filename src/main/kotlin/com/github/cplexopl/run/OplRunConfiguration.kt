@@ -185,7 +185,9 @@ class OplRunState(
         try {
             val originalModel = File(config.modelFile)
             val tempFileSuffix = "_temp_${UUID.randomUUID()}_${originalModel.name}"
-            val tempModelFile = File(originalModel.parentFile, tempFileSuffix)
+            val tempDir = File(System.getProperty("java.io.tmpdir"))
+            val tempModelFile = File(tempDir, tempFileSuffix)
+            tempModelFile.deleteOnExit()
 
             try {
                 val executeBlock = OplRunConfiguration.generateExecuteBlock(config.settingsFile)
