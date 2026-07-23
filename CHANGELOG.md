@@ -9,11 +9,17 @@
 
 ### Changed
 - **Language Parser:** Relaxed tuple declaration requirements (semicolon is now optional).
+- **Testing:** Consolidated `testData/` directories. Tiny test files for code completion, formatting, commenter, live templates, references, and structure view were inlined directly into Kotlin test classes, reducing repository clutter for cross-device development.
+- **Testing:** Consolidated all highlighting tests into a single `highlighting_tests.mod` file.
+- **Run Configuration:** Changed temp model file creation logic to use the system temp directory (`%TMP%` / `java.io.tmpdir`) instead of creating temp files directly inside the project directory.
 
 ### Fixed
 - **Annotator:** Fixed false positive "Missing semicolon" and "Undefined variable" errors for tuple fields and property access (e.g. `i.weight`).
 - **Annotator:** Fixed false positive "Variable is already defined" errors caused by improper resolution of nested type names.
 - **Testing:** Fixed LiveTemplates formatting flattening in automated tests.
+- **Performance:** Optimized `OplAnnotator` to run more efficiently by using `PsiModificationTracker.MODIFICATION_COUNT` for caching and caching the `hasInterval` check to prevent repetitive heavy file-traversal on every inspection run.
+- **Performance:** Moved pip dependency installation execution in `GeneratePythonRunnerAction` to a background pooled thread to prevent UI freezes.
+- **Git Tracking:** Removed the generated `gen/` directory from Git tracking and added `gen/` to `.gitignore`.
 
 ## [1.4.6] - 2026-07-19
 ### Added

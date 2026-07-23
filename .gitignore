@@ -15,6 +15,7 @@ bin/
 
 # Generated sources
 src/main/gen/
+gen/
 
 # IDEs & Environment
 .vscode/
