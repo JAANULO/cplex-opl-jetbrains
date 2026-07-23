@@ -5,14 +5,9 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class OplCommenterTest : BasePlatformTestCase() {
 
-    override fun getTestDataPath(): String = "src/test/testData/features"
-
     fun testCommentAction() {
-        myFixture.configureByFile("commenterAction.mod")
+        myFixture.configureByText(OplFileType, "<selection>dvar int x;\ndvar int y;</selection>\n")
         myFixture.performEditorAction(com.intellij.openapi.actionSystem.IdeActions.ACTION_COMMENT_LINE)
-        println("COMMENTER_OUTPUT_BEGIN")
-        println(myFixture.file.text)
-        println("COMMENTER_OUTPUT_END")
-        myFixture.checkResultByFile("commenterAction_after.mod")
+        myFixture.checkResult("//<selection>dvar int x;\n//dvar int y;</selection>\n")
     }
 }

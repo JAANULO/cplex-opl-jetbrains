@@ -4,10 +4,8 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class OplReferenceTest : BasePlatformTestCase() {
 
-    override fun getTestDataPath(): String = "src/test/testData/reference"
-
     fun testReferenceResolution() {
-        myFixture.configureByFile("reference.mod")
+        myFixture.configureByText(OplFileType, "dvar int x;\nminimize <caret>x;\n")
         val element = myFixture.file.findElementAt(myFixture.caretOffset)
         assertNotNull("No element at caret", element)
 

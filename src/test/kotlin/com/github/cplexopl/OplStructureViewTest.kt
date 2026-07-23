@@ -4,10 +4,24 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class OplStructureViewTest : BasePlatformTestCase() {
 
-    override fun getTestDataPath(): String = "src/test/testData/structure"
-
     fun testStructureView() {
-        myFixture.configureByFile("structure.mod")
+        myFixture.configureByText(
+            OplFileType,
+            """
+            tuple Item {
+              int id;
+            };
+            
+            dvar int x;
+            int y;
+            
+            minimize x + y;
+            
+            subject to {
+              ct1: x <= 10;
+            }
+            """.trimIndent()
+        )
         myFixture.testStructureView { structureViewComponent ->
             val tree = structureViewComponent.tree
             val root = tree.model.root as javax.swing.tree.DefaultMutableTreeNode

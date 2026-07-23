@@ -6,16 +6,39 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class OplFormattingTest : BasePlatformTestCase() {
 
-    override fun getTestDataPath(): String = "src/test/testData/formatter"
-
     fun testBasicFormatting() {
-        myFixture.configureByFile("formattingBefore.mod")
+        myFixture.configureByText(
+            OplFileType,
+            """
+            subject to{
+            x>=0;
+            forall(i in R)
+            {
+            y[i] <= 10;
+            }
+            }
+            
+            execute{
+            writeln("Hello");
+            }
+            """.trimIndent()
+        )
         WriteCommandAction.runWriteCommandAction(project) {
             CodeStyleManager.getInstance(project).reformat(myFixture.file)
         }
-        println("FORMATTING_OUTPUT_BEGIN")
-        println(myFixture.file.text)
-        println("FORMATTING_OUTPUT_END")
-        myFixture.checkResultByFile("formattingAfter.mod")
+        myFixture.checkResult(
+            """
+            subject to {
+                x >= 0;
+                forall(i in R) {
+                    y[i] <= 10;
+                }
+            }
+            
+            execute {
+                writeln("Hello");
+            }
+            """.trimIndent()
+        )
     }
 }

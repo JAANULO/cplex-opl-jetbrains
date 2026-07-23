@@ -4,10 +4,8 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class OplCompletionTest : BasePlatformTestCase() {
 
-    override fun getTestDataPath(): String = "src/test/testData/completion"
-
     fun testKeywordCompletion() {
-        myFixture.configureByFile("keywordCompletion.mod")
+        myFixture.configureByText(OplFileType, "// Oczekujemy autouzupełniania tutaj\n<caret>")
         myFixture.completeBasic()
         val strings = myFixture.lookupElementStrings
         assertNotNull("No completion results (null)", strings)
@@ -16,7 +14,15 @@ class OplCompletionTest : BasePlatformTestCase() {
     }
 
     fun testContextualCompletion() {
-        myFixture.configureByFile("contextualCompletion.mod")
+        myFixture.configureByText(
+            OplFileType,
+            """
+                dvar int myVar1 in 1..10;
+                dvar boolean myVar2;
+                
+                minimize my<caret>
+            """.trimIndent()
+        )
         myFixture.completeBasic()
         val strings = myFixture.lookupElementStrings
         assertNotNull("No completion results", strings)
