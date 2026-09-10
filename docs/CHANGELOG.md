@@ -4,8 +4,10 @@
 
 ## [Unreleased]
 
+## [1.4.9.6] - 2026-09-10
+
 ### Fixed
-- **Compatibility:** Zastąpiono przestarzałe API (`SystemInfo.getOsNameAndVersion`) oraz wewnętrzne API (`PluginManagerCore.getPlugin`) w celu spełnienia wymogów JetBrains Plugin Verifier.
+- **Compatibility:** Replaced deprecated API (`SystemInfo.getOsNameAndVersion`) and internal API (`PluginManagerCore.getPlugin`) to comply with JetBrains Plugin Verifier requirements.
 
 ## [1.4.9.5] - 2026-09-05
 
