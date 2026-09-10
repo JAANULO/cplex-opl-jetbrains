@@ -4,6 +4,9 @@
 
 ## [Unreleased]
 
+### Fixed
+- **Compatibility:** Zastąpiono przestarzałe API (`SystemInfo.getOsNameAndVersion`) oraz wewnętrzne API (`PluginManagerCore.getPlugin`) w celu spełnienia wymogów JetBrains Plugin Verifier.
+
 ## [1.4.9.5] - 2026-09-05
 
 ### Added
