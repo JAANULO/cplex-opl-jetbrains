@@ -17,8 +17,9 @@ import java.io.File
 import java.util.UUID
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
-import javax.xml.parsers.DocumentBuilderFactory
 import com.github.cplexopl.settings.OplSettingsState
+import com.github.cplexopl.settings.OplSettingsParser
+import com.intellij.openapi.util.io.FileUtil
 
 // RunConfiguration = run configuration (what you see in the dropdown next to the Run button)
 // Implements logic what will happen after clicking the green button ▶
@@ -191,61 +192,7 @@ class OplRunConfiguration(
     }
 
     companion object {
-        fun generateExecuteBlock(settingsFilePath: String): String {
-            if (settingsFilePath.isEmpty()) return ""
-            val settingsFile = File(settingsFilePath)
-            if (!settingsFile.exists()) return ""
-
-            return try {
-                val factory = DocumentBuilderFactory.newInstance()
-                factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
-                factory.setFeature("http://xml.org/sax/features/external-general-entities", false)
-                factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false)
-                factory.isXIncludeAware = false
-                factory.isExpandEntityReferences = false
-                val builder = factory.newDocumentBuilder()
-                val doc = builder.parse(settingsFile)
-                
-                val result = StringBuilder()
-                result.appendLine(com.github.cplexopl.OplBundle.message("error.run.tempFileComment"))
-                result.appendLine("execute {")
-                
-                val settings = doc.getElementsByTagName("setting")
-                for (i in 0 until settings.length) {
-                    val element = settings.item(i)
-                    val name = element.attributes.getNamedItem("name")?.nodeValue ?: continue
-                    val value = element.attributes.getNamedItem("value")?.nodeValue ?: continue
-                    
-                    val decodedValue = decodeXmlEntities(value)
-                    
-                    val isNumericOrBoolean = decodedValue.toDoubleOrNull() != null || 
-                                             decodedValue.toLongOrNull() != null || 
-                                             decodedValue == "true" || 
-                                             decodedValue == "false"
-                    
-                    val escapedValue = decodedValue
-                        .replace("\\", "\\\\")
-                        .replace("\"", "\\\"")
-                    val formattedValue = if (isNumericOrBoolean) escapedValue else "\"${escapedValue}\""
-                    result.appendLine("  cplex.${name} = ${formattedValue};")
-                }
-                result.appendLine("}")
-                result.append("\n")
-                result.toString()
-            } catch (e: Exception) {
-                ""
-            }
-        }
-        
-        private fun decodeXmlEntities(value: String): String {
-            return value
-                .replace("&lt;", "<")
-                .replace("&gt;", ">")
-                .replace("&apos;", "'")
-                .replace("&quot;", "\"")
-                .replace("&amp;", "&")
-        }
-
+        // XML Settings parser moved to com.github.cplexopl.settings.OplSettingsParser
     }
 }
 
@@ -257,18 +204,10 @@ class OplRunState(
     override fun startProcess(): OSProcessHandler {
         try {
             val originalModel = File(config.modelFile)
-            val tempFileSuffix = "_temp_${UUID.randomUUID()}_${originalModel.name}"
-            val tempDir = File(System.getProperty("java.io.tmpdir"))
-            val tempModelFile = File(tempDir, tempFileSuffix)
-            tempModelFile.createNewFile()
-            tempModelFile.setReadable(false, false)
-            tempModelFile.setReadable(true, true)
-            tempModelFile.setWritable(false, false)
-            tempModelFile.setWritable(true, true)
-            tempModelFile.deleteOnExit()
+            val tempModelFile = FileUtil.createTempFile("run_", "_${originalModel.name}", true)
 
             try {
-                val executeBlock = OplRunConfiguration.generateExecuteBlock(config.settingsFile)
+                val executeBlock = OplSettingsParser.generateExecuteBlock(config.settingsFile)
                 val originalContent = originalModel.readText(Charsets.UTF_8)
                 tempModelFile.writeText(executeBlock + originalContent, Charsets.UTF_8)
             } catch (e: Exception) {

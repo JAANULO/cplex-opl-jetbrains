@@ -2,6 +2,7 @@ package com.github.cplexopl
 
 import com.github.cplexopl.run.OplRunConfiguration
 import com.github.cplexopl.run.OplRunConfigurationType
+import com.github.cplexopl.settings.OplSettingsParser
 import com.intellij.execution.configurations.ConfigurationTypeUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.io.File
@@ -53,7 +54,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
                 </settings>
             """.trimIndent(), Charsets.UTF_8)
 
-            val executeBlock = OplRunConfiguration.generateExecuteBlock(tempOpsFile.absolutePath)
+            val executeBlock = OplSettingsParser.generateExecuteBlock(tempOpsFile.absolutePath)
             
             assertTrue("Blok execute nie zawiera workmem", executeBlock.contains("cplex.workmem = 4096;"))
             assertTrue("Blok execute nie zawiera threads", executeBlock.contains("cplex.threads = true;"))
@@ -77,7 +78,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
                 </settings>
             """.trimIndent(), Charsets.UTF_8)
 
-            val executeBlock = OplRunConfiguration.generateExecuteBlock(tempOpsFile.absolutePath)
+            val executeBlock = OplSettingsParser.generateExecuteBlock(tempOpsFile.absolutePath)
             
             assertTrue("Ampersand nie został zdekodowany prawidłowo", executeBlock.contains("cplex.path = \"file&name.txt\";"))
             assertTrue("Znaki cudzysłowu nie zostały zdekodowane prawidłowo", executeBlock.contains("cplex.quote = \"\\\"test\\\"\";"))
@@ -100,7 +101,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
                 </settings>
             """.trimIndent(), Charsets.UTF_8)
 
-            val executeBlock = OplRunConfiguration.generateExecuteBlock(tempOpsFile.absolutePath)
+            val executeBlock = OplSettingsParser.generateExecuteBlock(tempOpsFile.absolutePath)
             
             assertTrue("Blok execute nie powinien zostać poprawnie sparsowany z wstrzyknięciem zewnętrznej encji (XXE)", executeBlock.isEmpty())
         } finally {
