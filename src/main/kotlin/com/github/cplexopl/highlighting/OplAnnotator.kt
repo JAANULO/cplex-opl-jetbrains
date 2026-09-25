@@ -33,13 +33,22 @@ class OplAnnotator : Annotator {
             val parentIo = java.io.File(vFile.path).parentFile
             if (parentIo != null) candidates.add(java.io.File(parentIo, relPath))
         }
+        val project = currentFile.project
+        if (!com.intellij.openapi.project.DumbService.isDumb(project)) {
+            val files = com.intellij.psi.search.FilenameIndex.getVirtualFilesByName(
+                relPath, 
+                com.intellij.psi.search.GlobalSearchScope.projectScope(project)
+            )
+            if (files.isNotEmpty()) {
+                val psi = currentFile.manager.findFile(files.first())
+                if (psi != null) return psi
+            }
+        }
+
         val testDataDir = System.getProperty("testData.dir")
         if (!testDataDir.isNullOrBlank()) {
             val tdFile = java.io.File(testDataDir)
             candidates.add(java.io.File(tdFile, relPath))
-            if (tdFile.exists()) {
-                tdFile.walkTopDown().maxDepth(3).filter { it.name == relPath }.forEach { candidates.add(it) }
-            }
         }
 
         for (cand in candidates) {
