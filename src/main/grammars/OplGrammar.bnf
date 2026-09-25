@@ -11,6 +11,9 @@
   elementTypeClass="com.github.cplexopl.psi.OplElementType"
   tokenTypeClass="com.github.cplexopl.psi.OplTokenType"
 
+  extends(".*_expr")=expression
+  extends("factor")=expression
+
   tokens=[
     // Keywords - reserved words of the OPL language
     USING       = 'using'
@@ -229,20 +232,31 @@ tupleField ::= KEY? typeRef ID (LBRACKET expression RBRACKET)* SEMICOLON { pin=2
 // Include another file
 includeDeclaration ::= INCLUDE STRING_LITERAL SEMICOLON { pin=1 }
 
-// Expressions (simplified)
-expression ::= implicationExpression
-private implicationExpression ::= logicalOrExpression (IMPLIES logicalOrExpression)*
-private logicalOrExpression ::= logicalAndExpression (OROR logicalAndExpression)*
-private logicalAndExpression ::= ternaryExpression (ANDAND ternaryExpression)*
-private ternaryExpression ::= relationalExpression (QUESTION expression COLON expression)?
-private relationalExpression ::= rangeExpression ((LE | LT | GT | GE | EQ | EQEQ | NEQ | IN) rangeExpression)*
-private rangeExpression ::= additiveExpression (DOTDOT additiveExpression)?
-private additiveExpression ::= term ((PLUS | MINUS) term)*
-term ::= factor ((STAR | SLASH) factor)*
+// Expressions (Pratt Parser optimized)
+expression ::= 
+    implication_expr
+  | or_expr
+  | and_expr
+  | ternary_expr
+  | relational_expr
+  | range_expr
+  | add_expr
+  | mul_expr
+  | prefix_expr
+  | factor
+
+implication_expr ::= expression IMPLIES expression
+or_expr          ::= expression OROR expression
+and_expr         ::= expression ANDAND expression
+ternary_expr     ::= expression QUESTION expression COLON expression
+relational_expr  ::= expression (LE | LT | GT | GE | EQ | EQEQ | NEQ | IN) expression
+range_expr       ::= expression DOTDOT expression
+add_expr         ::= expression (PLUS | MINUS) expression
+mul_expr         ::= expression (STAR | SLASH) expression
+prefix_expr      ::= (PLUS | MINUS) expression
 
 // Extended factor: supports sums, all loops, CP functions, arrays, numbers and variables
-factor ::= (PLUS | MINUS) factor
-         | (SUM | ALL | MINIMIZE | MAXIMIZE | ID) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
+factor ::= (SUM | ALL | MINIMIZE | MAXIMIZE | ID) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
          | (ID | ALLDIFFERENT | PACK | PULSE | STEP) ( LPAREN (expression (COMMA expression)*)? RPAREN )? ( (DOT ID) | (LBRACKET expression RBRACKET) )*
          | INTEGER_LITERAL
          | FLOAT_LITERAL
