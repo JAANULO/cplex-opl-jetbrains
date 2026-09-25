@@ -25,4 +25,6 @@ gen/
 src/test/reports/
 .env
 
+/scratch
+
 # Trigger verification 11 [test]
