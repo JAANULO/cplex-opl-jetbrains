@@ -14,6 +14,10 @@
 ### Fixed
 - **Console Filters:** Re-engineered path extraction in `OplLinkFilter` to natively support Windows and Unix paths containing spaces, preventing broken hyperlinks in logs.
 
+### Performance
+- **Language Parser:** Drastically optimized syntax parsing performance by replacing manual deep left-recursion with native Grammar-Kit Pratt Parser logic (`extends = expression`). This prevents UI freezes and `StackOverflowError`s when evaluating highly nested mathematical constraints.
+- **Testing:** Added robust, automated performance regression test (`OplParserPerformanceTest`) enforcing a sub-1000ms SLA for evaluating massive ASTs.
+
 ### Security
 - **Temporary Files:** Mitigated local data exposure risks by migrating to JetBrains `FileUtil.createTempFile()` for secure execution file generation.
 - **Injection Prevention:** Added strict regex validation for XML property keys in `OplSettingsParser` to prevent arbitrary OPL script injection.

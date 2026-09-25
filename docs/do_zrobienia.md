@@ -138,8 +138,10 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `TODO` Wygenerowanie i dodanie certyfikatów oraz klucza prywatnego do podpisywania wtyczki (`CERTIFICATE_CHAIN`, `PRIVATE_KEY`, `PRIVATE_KEY_PASSWORD`) w GitHub Secrets
 
 
-### 6.2 Stabilność i kompatybilność
+### 6.2 Stabilność i wydajność (Performance)
 - `DONE` Testy jednostkowe (IntelliJ Platform Test Framework)
+- `DONE` Automatyczne testy wydajnościowe (Performance Tests) chroniące przed regresją czasową przy parsowaniu drzewa.
+- `DONE` **Optymalizacja Parsera (Pratt Parser):** Przebudowa rekurencyjnych wyrażeń matematycznych w `OplGrammar.bnf`, eliminująca ryzyko `StackOverflowError` i zmniejszająca czas parsowania gigantycznych obciążeń do ułamków sekund.
 - `PARTIAL` Obsługa błędów runtime
 
 ### 6.3 Ekspansja poza środowiska JetBrains (Wizja długoterminowa)
