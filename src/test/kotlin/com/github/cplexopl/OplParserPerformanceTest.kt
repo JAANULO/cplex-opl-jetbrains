@@ -8,8 +8,8 @@ import kotlin.system.measureTimeMillis
 class OplParserPerformanceTest : BasePlatformTestCase() {
 
     fun testPrattParserExpressionPerformance() {
-        // Generujemy potężne równanie z tysiącami operacji arytmetycznych,
-        // co na starej gramatyce zabiłoby procesor głęboką rekurencją.
+        // Generate a massive equation with thousands of arithmetic operations,
+        // which on the old grammar would kill the CPU with deep recursion.
         val numElements = 5000 
         val sb = java.lang.StringBuilder()
         sb.append("subject to {\n")
@@ -22,18 +22,18 @@ class OplParserPerformanceTest : BasePlatformTestCase() {
 
         val code = sb.toString()
         
-        // Zwykły pomiar czasu (tylko parsowanie drzewa AST, bez pełnego Annotatora)
+        // Standard timing test (AST parsing only, without full Annotator)
         val time = measureTimeMillis {
             myFixture.configureByText("parser_perf.mod", code)
             PsiDocumentManager.getInstance(project).commitAllDocuments()
         }
         
-        println("Czas parsowania $numElements elementów po optymalizacji Pratt Parser: $time ms")
+        println("Parsing time for $numElements elements after Pratt Parser optimization: $time ms")
         
-        // Automatyczny test z progiem czasu (np. max 1000 ms)
+        // Automatic timeout test (e.g., max 1000 ms)
         val timeLimit = 1000L
         assertTrue(
-            "Parsowanie wyrażenia zajęło zbyt dużo czasu ($time ms). Limit to $timeLimit ms.",
+            "Expression parsing took too long ($time ms). Limit is $timeLimit ms.",
             time < timeLimit
         )
     }

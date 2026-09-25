@@ -5,7 +5,7 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 class OplCompletionTest : BasePlatformTestCase() {
 
     fun testKeywordCompletion() {
-        myFixture.configureByText(OplFileType, "// Oczekujemy autouzupełniania tutaj\n<caret>")
+        myFixture.configureByText(OplFileType, "// Expecting autocompletion here\n<caret>")
         myFixture.completeBasic()
         val strings = myFixture.lookupElementStrings
         assertNotNull("No completion results (null)", strings)

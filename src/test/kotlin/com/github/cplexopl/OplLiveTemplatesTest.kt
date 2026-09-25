@@ -7,7 +7,7 @@ class OplLiveTemplatesTest : BasePlatformTestCase() {
     fun testModelTemplate() {
         myFixture.configureByText(OplFileType, "model<caret>")
         myFixture.type("\t") // Trigger expansion
-        // Przejdź tabulatorami przez wszystkie 5 zmiennych szablonu (NAME, DESCRIPTION, N, CTNAME, CONSTRAINT), aby zakończyć sesję szablonu
+        // Step through all 5 template variables (NAME, DESCRIPTION, N, CTNAME, CONSTRAINT) using Tab to finish the template session
         repeat(5) {
             myFixture.type("\t")
         }
