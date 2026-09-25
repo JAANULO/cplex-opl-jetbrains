@@ -51,6 +51,40 @@
     PACK        = 'pack'
     SIZE        = 'size'
 
+    SHEETCONNECTION = 'SheetConnection'
+    SHEETREAD = 'SheetRead'
+    SHEETWRITE = 'SheetWrite'
+    DBCONNECTION = 'DBConnection'
+    DBREAD = 'DBRead'
+    DBEXECUTE = 'DBExecute'
+    DBUPDATE = 'DBUpdate'
+    CUMULFUNCTION = 'cumulFunction'
+    STATEFUNCTION = 'stateFunction'
+    STEPFUNCTION = 'stepFunction'
+    INFINITY = 'infinity'
+    MAXINT = 'maxint'
+    TEMPLATE = 'template'
+    PREPARE = 'prepare'
+    INVOKE = 'invoke'
+    ORDERED = 'ordered'
+    SORTED = 'sorted'
+    REVERSED = 'reversed'
+    SYMDIFF = 'symdiff'
+    OPTIONAL = 'optional'
+    FROM = 'from'
+    INTENSITY = 'intensity'
+    TYPES = 'types'
+    STEPWISE = 'stepwise'
+    DIV = 'div'
+    INTER = 'inter'
+    UNION = 'union'
+    DIFF = 'diff'
+    PROD = 'prod'
+    AND = 'and'
+    OR = 'or'
+    TRUE = 'true'
+    FALSE = 'false'
+
     // Operators
     SEMICOLON   = ';'
     COLON       = ':'
@@ -116,7 +150,7 @@ declaration ::= piecewiseDeclaration
               | assertDeclaration
 
 // Generalized types (basic, tuples, or sets of them)
-private baseType ::= (INT | FLOAT) PLUS? | INT_PLUS | FLOAT_PLUS | BOOLEAN | STRING | RANGE
+private baseType ::= (INT | FLOAT) PLUS? | INT_PLUS | FLOAT_PLUS | BOOLEAN | STRING | RANGE | SHEETCONNECTION | DBCONNECTION | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION | PWLFUNCTION
 private typeRef ::= baseType | ID | LBRACE (baseType | ID) RBRACE
 
 // Top-level assert declaration
@@ -143,7 +177,7 @@ varDeclaration ::= typeRef ID (LBRACKET expression RBRACKET)* (EQ (ELLIPSIS | ex
 usingDeclaration ::= USING CP SEMICOLON { pin=1 recoverWhile=statement_recover }
 
 // Decision variable declaration (supports arrays, intervals, sequences, sign restrictions and CP clauses)
-dvarDeclaration ::= DVAR ((INT | FLOAT) PLUS? | INT_PLUS | FLOAT_PLUS | BOOLEAN | INTERVAL | SEQUENCE) ID (LBRACKET (oplIterator | expression) RBRACKET)* ( (IN ALL | IN | SIZE | ID) (LPAREN oplIterator (COMMA oplIterator)* RPAREN)? expression )* SEMICOLON { 
+dvarDeclaration ::= DVAR ((INT | FLOAT) PLUS? | INT_PLUS | FLOAT_PLUS | BOOLEAN | INTERVAL | SEQUENCE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION) ID (LBRACKET (oplIterator | expression) RBRACKET)* ( (IN ALL | IN | SIZE | ID) (LPAREN oplIterator (COMMA oplIterator)* RPAREN)? expression )* SEMICOLON { 
   pin=1 
   recoverWhile=statement_recover 
   implements="com.github.cplexopl.psi.OplNamedElement"
@@ -181,7 +215,7 @@ constraintItem ::= label? expression SEMICOLON
 executeBlock ::= (EXECUTE | MAIN) ID? executeBody { pin=1 recoverWhile=statement_recover }
 executeBody ::= LBRACE executeItem* RBRACE
 private executeItem ::= executeBody | executeToken
-private executeToken ::= ID | INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | LPAREN | RPAREN | LBRACKET | RBRACKET | PLUS | MINUS | STAR | SLASH | EQ | EQEQ | NEQ | LT | LE | GT | GE | SEMICOLON | COMMA | DOT | DOTDOT | ELLIPSIS | COLON | QUESTION | INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | DEXPR | TUPLE | KEY | MINIMIZE | MAXIMIZE | SUBJECT | TO | INCLUDE | EXECUTE | MAIN | FORALL | EXISTS | IN | IF | ELSE | THEN | USING | CP | INTERVAL | SEQUENCE | WITH | ASSERT | SUM | ALL | PULSE | STEP | ALLDIFFERENT | PACK | SIZE | ANDAND | OROR | NOT | MOD | IMPLIES | PIECEWISE | PIPE | ARROW
+private executeToken ::= ID | INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | LPAREN | RPAREN | LBRACKET | RBRACKET | PLUS | MINUS | STAR | SLASH | EQ | EQEQ | NEQ | LT | LE | GT | GE | SEMICOLON | COMMA | DOT | DOTDOT | ELLIPSIS | COLON | QUESTION | INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | DEXPR | TUPLE | KEY | MINIMIZE | MAXIMIZE | SUBJECT | TO | INCLUDE | EXECUTE | MAIN | FORALL | EXISTS | IN | IF | ELSE | THEN | USING | CP | INTERVAL | SEQUENCE | WITH | ASSERT | SUM | ALL | PULSE | STEP | ALLDIFFERENT | PACK | SIZE | ANDAND | OROR | NOT | MOD | IMPLIES | PIECEWISE | PIPE | ARROW | SHEETCONNECTION | SHEETREAD | SHEETWRITE | DBCONNECTION | DBREAD | DBEXECUTE | DBUPDATE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION | INFINITY | MAXINT | TEMPLATE | PREPARE | INVOKE | ORDERED | SORTED | REVERSED | SYMDIFF | OPTIONAL | FROM | INTENSITY | TYPES | STEPWISE | DIV | INTER | UNION | DIFF | PROD | AND | OR | TRUE | FALSE
 
 // Tuple declaration (struct-like type)
 tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON? { 
@@ -213,6 +247,10 @@ factor ::= (PLUS | MINUS) factor
          | INTEGER_LITERAL
          | FLOAT_LITERAL
          | STRING_LITERAL
+         | TRUE
+         | FALSE
+         | INFINITY
+         | MAXINT
          | LBRACKET (expression (COMMA expression)*)? RBRACKET
          | LPAREN expression RPAREN
          | LT expression (COMMA expression)* GT
@@ -221,4 +259,4 @@ factor ::= (PLUS | MINUS) factor
          | PIECEWISE LBRACE (expression (ARROW | IMPLIES) expression SEMICOLON)* expression RBRACE (LPAREN expression (COMMA expression)* RPAREN)?
 
 // Recovery rule: "Skip everything until a new declaration start or semicolon"
-private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | STRING | RANGE | DVAR | DEXPR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | MAIN | USING | LBRACE | ID | SEMICOLON | RBRACE | ASSERT | PIECEWISE | PWLFUNCTION)
+private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION | STRING | RANGE | DVAR | DEXPR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | MAIN | USING | LBRACE | ID | SEMICOLON | RBRACE | ASSERT | PIECEWISE | PWLFUNCTION)

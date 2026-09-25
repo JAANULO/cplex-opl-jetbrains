@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+### Added
+- **Language Parser:** Added syntax parsing support for over 30 missing OPL keywords, including Constraint Programming (CP) functions (`cumulFunction`, `stateFunction`), external IO connectors (`SheetConnection`, `DBConnection`), and numerical constants (`infinity`, `maxint`).
 ## [1.4.9.6] - 2026-09-10
 
 ### Fixed

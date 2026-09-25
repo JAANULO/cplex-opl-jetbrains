@@ -9,4 +9,8 @@ class OplHighlightingTest : BasePlatformTestCase() {
     fun testHighlightingFeatures() {
         myFixture.testHighlighting(true, true, true, "highlighting_tests.mod")
     }
+
+    fun testKeywords() {
+        myFixture.testHighlighting(true, true, true, "keywords.mod")
+    }
 }
