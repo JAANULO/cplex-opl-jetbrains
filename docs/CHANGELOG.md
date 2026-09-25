@@ -6,6 +6,18 @@
 
 ### Added
 - **Language Parser:** Added syntax parsing support for over 30 missing OPL keywords, including Constraint Programming (CP) functions (`cumulFunction`, `stateFunction`), external IO connectors (`SheetConnection`, `DBConnection`), and numerical constants (`infinity`, `maxint`).
+
+### Changed
+- **Architecture:** Extracted XML settings parsing logic from `OplRunConfiguration` into a dedicated `OplSettingsParser` service (SRP).
+- **Code Highlighting:** Replaced synchronous filesystem scanning in `OplAnnotator` with IntelliJ's native `FilenameIndex`, drastically improving IDE responsiveness.
+
+### Fixed
+- **Console Filters:** Re-engineered path extraction in `OplLinkFilter` to natively support Windows and Unix paths containing spaces, preventing broken hyperlinks in logs.
+
+### Security
+- **Temporary Files:** Mitigated local data exposure risks by migrating to JetBrains `FileUtil.createTempFile()` for secure execution file generation.
+- **Injection Prevention:** Added strict regex validation for XML property keys in `OplSettingsParser` to prevent arbitrary OPL script injection.
+
 ## [1.4.9.6] - 2026-09-10
 
 ### Fixed
