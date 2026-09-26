@@ -11,8 +11,8 @@
   elementTypeClass="com.github.cplexopl.psi.OplElementType"
   tokenTypeClass="com.github.cplexopl.psi.OplTokenType"
 
-  extends(".*_expr")=expression
-  extends("factor")=expression
+  extends(".*_expr")=pratt_expr
+  extends("factor")=pratt_expr
 
   tokens=[
     // Keywords - reserved words of the OPL language
@@ -233,27 +233,24 @@ tupleField ::= KEY? typeRef ID (LBRACKET expression RBRACKET)* SEMICOLON { pin=2
 includeDeclaration ::= INCLUDE STRING_LITERAL SEMICOLON { pin=1 }
 
 // Expressions (Pratt Parser optimized)
-expression ::= 
-    implication_expr
-  | or_expr
-  | and_expr
-  | ternary_expr
-  | relational_expr
-  | range_expr
+expression ::= implication_expr
+implication_expr ::= or_expr (IMPLIES or_expr)*
+or_expr ::= and_expr (OROR and_expr)*
+and_expr ::= ternary_expr (ANDAND ternary_expr)*
+ternary_expr ::= relational_expr (QUESTION relational_expr COLON relational_expr)*
+relational_expr ::= pratt_expr ((LE | LT | GT | GE | EQ | EQEQ | NEQ | IN) pratt_expr)*
+
+pratt_expr ::= 
+    range_expr
   | add_expr
   | mul_expr
   | prefix_expr
   | factor
 
-implication_expr ::= expression IMPLIES expression
-or_expr          ::= expression OROR expression
-and_expr         ::= expression ANDAND expression
-ternary_expr     ::= expression QUESTION expression COLON expression
-relational_expr  ::= expression (LE | LT | GT | GE | EQ | EQEQ | NEQ | IN) expression
-range_expr       ::= expression DOTDOT expression
-add_expr         ::= expression (PLUS | MINUS) expression
-mul_expr         ::= expression (STAR | SLASH) expression
-prefix_expr      ::= (PLUS | MINUS) expression
+range_expr       ::= pratt_expr DOTDOT pratt_expr
+add_expr         ::= pratt_expr (PLUS | MINUS) pratt_expr
+mul_expr         ::= pratt_expr (STAR | SLASH) pratt_expr
+prefix_expr      ::= (PLUS | MINUS) pratt_expr
 
 // Extended factor: supports sums, all loops, CP functions, arrays, numbers and variables
 factor ::= (SUM | ALL | MINIMIZE | MAXIMIZE | ID) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
@@ -274,3 +271,4 @@ factor ::= (SUM | ALL | MINIMIZE | MAXIMIZE | ID) LPAREN oplIterator (COMMA oplI
 
 // Recovery rule: "Skip everything until a new declaration start or semicolon"
 private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION | STRING | RANGE | DVAR | DEXPR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | MAIN | USING | LBRACE | ID | SEMICOLON | RBRACE | ASSERT | PIECEWISE | PWLFUNCTION)
+
