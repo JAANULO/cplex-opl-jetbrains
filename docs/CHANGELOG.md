@@ -4,7 +4,12 @@
 
 ## [Unreleased]
 
-## [1.4.9.7] - 2026-09-25
+
+## [1.4.9.7] - 2026-09-29
+
+### Testing
+
+- **Include Resolution:** Added `IncludeTest` to verify that `include "file.mod";` statements correctly resolve paths in the IntelliJ Virtual File System.
 
 ### Added
 
