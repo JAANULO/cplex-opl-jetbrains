@@ -22,6 +22,7 @@ import org.junit.runners.Suite
     OplCompletionTest::class,
     CplexPathFinderTest::class,
     OplParserPerformanceTest::class,
-    DebugParserTest::class
+    DebugParserTest::class,
+    IncludeTest::class
 )
 class OplTestSuite
