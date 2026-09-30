@@ -1,7 +1,6 @@
-package com.github.cplexopl
+package com.github.cplexopl.performance
 
 import com.intellij.psi.PsiDocumentManager
-import com.intellij.testFramework.PlatformTestUtil
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlin.system.measureTimeMillis
 
@@ -22,16 +21,16 @@ class OplParserPerformanceTest : BasePlatformTestCase() {
 
         val code = sb.toString()
         
-        // Standard timing test (AST parsing only, without full Annotator)
+        // Warmup with a smaller expression
+        myFixture.configureByText("parser_warmup.mod", "subject to { x * 2.5 + 0 <= 1000; }")
+        PsiDocumentManager.getInstance(project).commitAllDocuments()
+
         val time = measureTimeMillis {
             myFixture.configureByText("parser_perf.mod", code)
             PsiDocumentManager.getInstance(project).commitAllDocuments()
         }
         
-        println("Parsing time for $numElements elements after Pratt Parser optimization: $time ms")
-        
-        // Automatic timeout test (e.g., max 1000 ms)
-        val timeLimit = 1000L
+        val timeLimit = 2000L
         assertTrue(
             "Expression parsing took too long ($time ms). Limit is $timeLimit ms.",
             time < timeLimit

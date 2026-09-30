@@ -1,5 +1,7 @@
-package com.github.cplexopl
+package com.github.cplexopl.performance
 
+import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.psi.PsiDocumentManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import kotlin.system.measureTimeMillis
 
@@ -31,16 +33,18 @@ class OplAnnotatorPerformanceTest : BasePlatformTestCase() {
         myFixture.doHighlighting()
         
         val time = measureTimeMillis {
-            // we have to modify the file slightly to clear caches and trigger re-highlighting
-            com.intellij.openapi.command.WriteCommandAction.runWriteCommandAction(project) {
+            // Modify file slightly to clear caches and trigger re-highlighting
+            WriteCommandAction.runWriteCommandAction(project) {
                 myFixture.editor.document.insertString(0, " ")
             }
-            com.intellij.psi.PsiDocumentManager.getInstance(project).commitAllDocuments()
+            PsiDocumentManager.getInstance(project).commitAllDocuments()
             myFixture.doHighlighting()
         }
         
-        println("Annotator execution time for $numVariables variables in loops: $time ms")
-        // Just print, no strict assertion because time depends on the machine.
-        // It's just for benchmark purposes.
+        val timeLimit = 6000L
+        assertTrue(
+            "Annotator execution took too long ($time ms). Limit is $timeLimit ms.",
+            time < timeLimit
+        )
     }
 }

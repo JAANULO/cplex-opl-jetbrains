@@ -1,5 +1,6 @@
-package com.github.cplexopl
+package com.github.cplexopl.completion
 
+import com.github.cplexopl.OplFileType
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class OplCompletionTest : BasePlatformTestCase() {

@@ -1,8 +1,10 @@
-package com.github.cplexopl
+package com.github.cplexopl.reference
 
+import com.intellij.lang.annotation.HighlightSeverity
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
-class IncludeTest : BasePlatformTestCase() {
+class OplIncludeTest : BasePlatformTestCase() {
+
     fun testIncludeResolution() {
         val modCode = """
             include "params.mod";
@@ -13,15 +15,13 @@ class IncludeTest : BasePlatformTestCase() {
             int y = 5;
         """.trimIndent()
         
-        // create both in the same directory
+        // Create both files in the same directory
         myFixture.addFileToProject("testdir/params.mod", paramsCode)
         val file = myFixture.addFileToProject("testdir/model.mod", modCode)
         myFixture.configureFromExistingVirtualFile(file.virtualFile)
         
         val highlights = myFixture.doHighlighting()
-        val errors = highlights.filter { it.severity == com.intellij.lang.annotation.HighlightSeverity.ERROR }
-        
-        println("Errors: " + errors.map { it.description })
-        assertEmpty(errors)
+        val errors = highlights.filter { it.severity == HighlightSeverity.ERROR }
+        assertEmpty("Nie powinno być błędów rozwiązania include", errors)
     }
 }

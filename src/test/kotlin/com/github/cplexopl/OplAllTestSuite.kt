@@ -8,6 +8,9 @@ import com.github.cplexopl.formatter.OplFormattingTest
 import com.github.cplexopl.highlighting.OplHighlightingTest
 import com.github.cplexopl.parser.OplParsingTest
 import com.github.cplexopl.parser.OplPiecewiseParsingTest
+import com.github.cplexopl.performance.OplAnnotatorPerformanceTest
+import com.github.cplexopl.performance.OplConsoleFilterPerformanceTest
+import com.github.cplexopl.performance.OplParserPerformanceTest
 import com.github.cplexopl.reference.OplIncludeTest
 import com.github.cplexopl.reference.OplReferenceTest
 import com.github.cplexopl.run.OplPathTranslatorTest
@@ -38,6 +41,9 @@ import org.junit.runners.Suite
     OplIncludeTest::class,
     OplErrorReportSubmitterTest::class,
     OplPathTranslatorTest::class,
-    OplRunConfigurationIntegrationTest::class
+    OplRunConfigurationIntegrationTest::class,
+    OplParserPerformanceTest::class,
+    OplConsoleFilterPerformanceTest::class,
+    OplAnnotatorPerformanceTest::class
 )
-class OplTestSuite
+class OplAllTestSuite

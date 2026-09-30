@@ -1,5 +1,6 @@
-package com.github.cplexopl
+package com.github.cplexopl.formatter
 
+import com.github.cplexopl.OplFileType
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.psi.codeStyle.CodeStyleManager
 import com.intellij.testFramework.fixtures.BasePlatformTestCase

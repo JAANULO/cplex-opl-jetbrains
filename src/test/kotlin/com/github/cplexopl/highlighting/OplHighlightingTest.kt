@@ -1,4 +1,4 @@
-package com.github.cplexopl
+package com.github.cplexopl.highlighting
 
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 

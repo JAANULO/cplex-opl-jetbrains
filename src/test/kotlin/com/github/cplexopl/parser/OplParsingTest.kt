@@ -1,6 +1,5 @@
-package com.github.cplexopl
+package com.github.cplexopl.parser
 
-import com.github.cplexopl.parser.OplParserDefinition
 import com.intellij.testFramework.ParsingTestCase
 
 class OplParsingTest : ParsingTestCase("parsing", "mod", OplParserDefinition()) {

@@ -23,6 +23,7 @@ import subprocess
 import sys
 import platform
 import re
+import json
 from pathlib import Path
 from datetime import datetime
 
@@ -47,6 +48,12 @@ STEPS = {
     "test": [
         [GRADLEW, "test", "--info"],
     ],
+    "perf": [
+        [GRADLEW, "test", "-Psuite=perf", "--info"],
+    ],
+    "test:all": [
+        [GRADLEW, "test", "-Psuite=all", "--info"],
+    ],
     "package": [
         [GRADLEW, "buildPlugin"],
     ],
@@ -59,7 +66,7 @@ STEPS = {
     # test runs FIRST so a failing test suite is reported before spending time
     # packaging/verifying the plugin (fail fast, cheaper feedback loop).
     "full": [
-        [GRADLEW, "test", "--info"],
+        [GRADLEW, "test", "-Psuite=all", "--info"],
         [GRADLEW, "buildPlugin"],
         [GRADLEW, "verifyPlugin"],
     ],
@@ -114,6 +121,33 @@ def save_full_log(name: str, output: str) -> Path:
     return log_path
 
 
+def print_test_summary_report():
+    """Finds the most recent test summary JSON in src/test/reports and displays a concise execution summary."""
+    reports_dir = PROJECT_ROOT / "src" / "test" / "reports"
+    if not reports_dir.exists():
+        return
+    json_files = sorted(reports_dir.glob("test-summary-*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    if not json_files:
+        return
+    latest_report = json_files[0]
+    try:
+        data = json.loads(latest_report.read_text(encoding="utf-8"))
+        total = data.get("totalTests", 0)
+        passed = data.get("successfulTests", 0)
+        failed = data.get("failedTests", 0)
+        skipped = data.get("skippedTests", 0)
+        duration_ms = data.get("durationMs", 0)
+        duration_s = duration_ms / 1000.0
+
+        status_symbol = "✅" if failed == 0 else "❌"
+        print(f"\n{status_symbol} Test Execution Summary:")
+        print(f"    Duration: {duration_s:.2f} s ({duration_ms} ms)")
+        print(f"    Total Tests: {total} (Passed: {passed}, Failed: {failed}, Skipped: {skipped})")
+        print(f"    JSON Report: {latest_report.resolve()}")
+    except Exception:
+        pass
+
+
 def run_step(command: list) -> bool:
     """Runs a single Gradle step. Returns True if successful."""
     name = " ".join(command)
@@ -134,11 +168,11 @@ def run_step(command: list) -> bool:
     log_path = save_full_log(name, output)
 
     print(filter_output(output))
-    print(f"\n  📄 Pełny log zapisany: {log_path}")
+    print(f"\n   Pełny log zapisany: {log_path}")
 
     # Warning about missing tests (informs, but does not block execution)
     if "test" in command and check_zero_tests(output):
-        print("\n  ⚠️  WARNING: No tests were found.")
+        print("\n    WARNING: No tests were found.")
         print("     Add tests in src/test/kotlin/ inheriting from BasePlatformTestCase.")
 
     if result.returncode != 0:
@@ -161,11 +195,13 @@ def main():
         print("\nMode descriptions:")
         print("  generate  - generates lexer and parser from .flex and .bnf")
         print("  build     - generate + compile")
-        print("  test      - build + run JUnit tests")
+        print("  test      - build + run fast Unit & Platform tests")
+        print("  perf      - run Performance and stress tests")
+        print("  test:all  - run all tests (Unit, Platform and Performance)")
         print("  coverage  - generate HTML coverage report (Kover)")
         print("  package   - test + build plugin .zip package")
         print("  verify    - package + verify compatibility with IDEs")
-        print("  full      - test first, then package + verify (fail fast)")
+        print("  full      - all tests first, then package + verify (fail fast)")
         sys.exit(0)
 
     mode = sys.argv[1].lower()
@@ -181,6 +217,9 @@ def main():
     for command in steps:
         if not run_step(command):
             sys.exit(1)
+
+    if mode in ("test", "perf", "test:all", "full"):
+        print_test_summary_report()
 
     print(f"\n{'='*55}")
     print(f"  ✅ ALL STEPS COMPLETED SUCCESSFULLY [{mode.upper()}]")

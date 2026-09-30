@@ -181,10 +181,6 @@ tasks.withType<Test> {
         maxHeapSize = if (totalRamGb >= 16) "2g" else "1g"
     }
 
-    filter {
-        includeTestsMatching("com.github.cplexopl.OplTestSuite")
-    }
-
     val testDetails = Collections.synchronizedList(mutableListOf<Map<String, Any>>())
     val pluginVer = providers.gradleProperty("pluginVersion").get()
     val reportsDir = layout.projectDirectory.dir("src/test/reports").asFile
@@ -212,8 +208,13 @@ tasks.withType<Test> {
 
                 val totalDuration = result.endTime - result.startTime
                 val currentOsBean = ManagementFactory.getOperatingSystemMXBean()
-                val testsJson = testDetails.joinToString(",\n                  ") { test ->
-                    """{"name": "${test["name"]}", "className": "${test["className"]}", "result": "${test["resultType"]}", "durationMs": ${test["durationMs"]}}"""
+                val testsJson = testDetails.joinToString(",\n    ") { test ->
+                    val rawClass = test["className"] as String
+                    val simpleClass = rawClass.substringAfterLast('.')
+                    val name = test["name"] as String
+                    val res = test["resultType"] as String
+                    val dur = test["durationMs"]
+                    """["$simpleClass", "$name", "$res", $dur]"""
                 }
                 val summaryJson = """
                 {
@@ -230,6 +231,7 @@ tasks.withType<Test> {
                     "arch": "${currentOsBean.arch}",
                     "availableProcessors": ${currentOsBean.availableProcessors}
                   },
+                  "columns": ["class", "method", "result", "durationMs"],
                   "tests": [
                     $testsJson
                   ]
@@ -244,4 +246,16 @@ tasks.withType<Test> {
 
     testLogging { showStandardStreams = true }
     systemProperty("idea.tests.overwrite.data", "true")
+}
+
+val suiteName = providers.gradleProperty("suite").orNull ?: "unit"
+
+tasks.named<Test>("test") {
+    filter {
+        when (suiteName.lowercase()) {
+            "perf", "performance" -> includeTestsMatching("com.github.cplexopl.OplPerformanceTestSuite")
+            "all" -> includeTestsMatching("com.github.cplexopl.OplAllTestSuite")
+            else -> includeTestsMatching("com.github.cplexopl.OplTestSuite")
+        }
+    }
 }

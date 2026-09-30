@@ -1,9 +1,10 @@
-package com.github.cplexopl
+package com.github.cplexopl.run
 
-import com.github.cplexopl.run.OplRunConfiguration
-import com.github.cplexopl.run.OplRunConfigurationType
+import com.github.cplexopl.OplBundle
 import com.github.cplexopl.settings.OplSettingsParser
+import com.intellij.execution.actions.ConfigurationContext
 import com.intellij.execution.configurations.ConfigurationTypeUtil
+import com.intellij.openapi.util.SystemInfo
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import java.io.File
 
@@ -12,7 +13,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
     fun testRunConfigurationRegistration() {
         val configurationType = ConfigurationTypeUtil.findConfigurationType(OplRunConfigurationType::class.java)
         assertNotNull("OplRunConfigurationType nie zostało poprawnie zarejestrowane", configurationType)
-        assertEquals(com.github.cplexopl.OplBundle.message("runConfig.type.displayName"), configurationType.displayName)
+        assertEquals(OplBundle.message("runConfig.type.displayName"), configurationType.displayName)
     }
 
     fun testCommandLineConstruction() {
@@ -20,7 +21,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
         val factory = configurationType.configurationFactories[0]
         val configuration = factory.createTemplateConfiguration(project) as OplRunConfiguration
         
-        val isWindows = com.intellij.openapi.util.SystemInfo.isWindows
+        val isWindows = SystemInfo.isWindows
         val baseDir = if (isWindows) "C:\\projects\\" else "/projects/"
         val cplexExe = if (isWindows) "C:\\cplex\\bin\\oplrun.exe" else "/cplex/bin/oplrun"
 
@@ -29,19 +30,19 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
         configuration.settingsFile = "${baseDir}settings.ops"
         configuration.cplexPath = cplexExe
 
-        val tempFile = java.io.File("${baseDir}_temp_model.mod")
+        val tempFile = File("${baseDir}_temp_model.mod")
         val commandLine = configuration.createCommandLine(tempFile)
         
         assertEquals(cplexExe, commandLine.exePath)
         val parameters = commandLine.parametersList.list
         
         assertEquals(2, parameters.size)
-        assertEquals(java.io.File("${baseDir}_temp_model.mod").absolutePath, parameters[0])
+        assertEquals(File("${baseDir}_temp_model.mod").absolutePath, parameters[0])
         assertEquals("${baseDir}data.dat", parameters[1])
     }
 
     fun testGenerateExecuteBlock() {
-        val tempOpsFile = java.io.File.createTempFile("test_settings", ".ops")
+        val tempOpsFile = File.createTempFile("test_settings", ".ops")
         try {
             tempOpsFile.writeText("""
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -65,7 +66,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
     }
     
     fun testGenerateExecuteBlockWithAmpersand() {
-        val tempOpsFile = java.io.File.createTempFile("test_settings_amp", ".ops")
+        val tempOpsFile = File.createTempFile("test_settings_amp", ".ops")
         try {
             tempOpsFile.writeText("""
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -89,7 +90,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
     }
     
     fun testGenerateExecuteBlockXxeProtection() {
-        val tempOpsFile = java.io.File.createTempFile("test_settings_xxe", ".ops")
+        val tempOpsFile = File.createTempFile("test_settings_xxe", ".ops")
         try {
             tempOpsFile.writeText("""
                 <?xml version="1.0" encoding="UTF-8"?>
@@ -117,7 +118,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
         configuration.modelFile = "model.mod"
         configuration.cplexPath = "C:\\cplex\\bin\\oplrun.exe"
 
-        val tempFile = java.io.File("_temp_model.mod")
+        val tempFile = File("_temp_model.mod")
         val commandLine = configuration.createCommandLine(tempFile)
         
         assertNotNull("workDirectory nie powinien być null", commandLine.workDirectory)
@@ -141,7 +142,7 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
             fail("checkConfiguration() powinien rzucić wyjątek dla brakującego data file")
         } catch (e: Exception) {
             assertTrue("Wiadomość o błędzie powinna zawierać odpowiedni tekst z Bundle", 
-                e.message?.contains(com.github.cplexopl.OplBundle.message("error.run.dataNotFound", configuration.dataFile)) == true)
+                e.message?.contains(OplBundle.message("error.run.dataNotFound", configuration.dataFile)) == true)
         } finally {
             modelFile.delete()
             tempDir.delete()
@@ -152,8 +153,8 @@ class OplRunConfigurationTest : BasePlatformTestCase() {
         val psiFile = myFixture.configureByText("model.mod", "dvar int x;")
         myFixture.addFileToProject("data.dat", "x = 1;")
         
-        val context = com.intellij.execution.actions.ConfigurationContext(psiFile)
-        val producer = com.github.cplexopl.run.OplRunConfigurationProducer()
+        val context = ConfigurationContext(psiFile)
+        val producer = OplRunConfigurationProducer()
         val configuration = producer.createConfigurationFromContext(context)?.configuration as? OplRunConfiguration
         
         assertNotNull("Configuration powinna zostać utworzona", configuration)

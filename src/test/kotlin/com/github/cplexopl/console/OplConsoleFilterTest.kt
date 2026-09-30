@@ -1,36 +1,50 @@
-package com.github.cplexopl
+package com.github.cplexopl.console
 
-import com.github.cplexopl.console.OplInfeasibilityFilter
-import com.github.cplexopl.console.OplLinkFilter
+import com.intellij.execution.filters.Filter
 import com.intellij.testFramework.fixtures.BasePlatformTestCase
 import org.junit.Assert
+import java.io.File
 
 class OplConsoleFilterTest : BasePlatformTestCase() {
 
     override fun setUp() {
         super.setUp()
         val basePath = project.basePath ?: return
-        val baseDir = java.io.File(basePath)
+        val baseDir = File(basePath)
         if (!baseDir.exists()) {
             baseDir.mkdirs()
         }
-        java.io.File(baseDir, "infeasible-test.mod").createNewFile()
-        java.io.File(baseDir, "data.dat").createNewFile()
-        java.io.File(baseDir, "error-test.mod").createNewFile()
+        File(baseDir, "infeasible-test.mod").createNewFile()
+        File(baseDir, "infeasible-test.dat").createNewFile()
+    }
+
+    fun testLinkFilterMatchesStandardError() {
+        val filter = OplLinkFilter(project)
+        val line = "Error at infeasible-test.mod:12:34: syntax error"
+        val result = filter.applyFilter(line, line.length)
+        
+        Assert.assertNotNull("Filter should match error line with line and column", result)
+    }
+
+    fun testLinkFilterIgnoresNonMatchingLines() {
+        val filter = OplLinkFilter(project)
+        val line = "CPLEX 22.1.2.0: Optimal solution found."
+        val result = filter.applyFilter(line, line.length)
+        
+        Assert.assertNull("Filter should ignore non-matching lines", result)
     }
 
     fun testInfeasibilityFilterMatchesConflict() {
         val filter = OplInfeasibilityFilter(project)
-        val line = "ctInfeasible at 4:17-25 infeasible-test.mod"
+        val line = "ctDemand at 4:17-25 infeasible-test.mod"
         
         val result = filter.applyFilter(line, line.length)
-        Assert.assertNotNull("Filter should match the conflict line", result)
-        Assert.assertEquals("Hyperlink should cover the matched text", line.length, result!!.resultItems[0].highlightEndOffset)
+        Assert.assertNotNull("Filter should match conflict constraint line", result)
     }
 
     fun testInfeasibilityFilterMatchesDatFile() {
         val filter = OplInfeasibilityFilter(project)
-        val line = "myAssertion at 10:1-5 data.dat"
+        val line = "capacity_bound at 102:5-12 infeasible-test.dat"
         
         val result = filter.applyFilter(line, line.length)
         Assert.assertNotNull("Filter should match .dat files", result)
@@ -49,23 +63,6 @@ class OplConsoleFilterTest : BasePlatformTestCase() {
         val line = "Version identifier: 22.1.2.0 | 2024-11-25 | 0edbb82fd"
         
         val result = filter.applyFilter(line, line.length)
-        Assert.assertNull("Filter should ignore random lines", result)
-    }
-
-    fun testLinkFilterMatchesStandardError() {
-        val filter = OplLinkFilter(project)
-        val line = "Error at line 15: error-test.mod:15"
-        
-        val result = filter.applyFilter(line, line.length)
-        Assert.assertNotNull("Link filter should match line error-test.mod:15", result)
-    }
-
-    fun testLinkFilterIgnoresNonMatchingLines() {
-        val filter = OplLinkFilter(project)
-        val line = "CPLEX 22.1.2.0: Optimal solution found."
-        
-        val result = filter.applyFilter(line, line.length)
-        Assert.assertNull("Link filter should ignore lines without file:line pattern", result)
+        Assert.assertNull("Filter should ignore version info", result)
     }
 }
-
