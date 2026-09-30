@@ -48,7 +48,7 @@ Ogromny nacisk położyliśmy na polepszenie tzw. "Developer Experience" przy sz
   * Inteligentne powiadomienie (Balloon): Po 5. pomyślnym uruchomieniu modelu wtyczka dyskretnie wyświetla powiadomienie z prośbą o ocenę na JetBrains Marketplace.
 
 ## Podsumowanie stanu technicznego
-Wszystkie nowo-wdrożone systemy – w tym parsowanie konsoli z filtrem `OplInfeasibilityFilter`, silnik watchdoga, wykrywanie plików `data.dat`, raportowanie błędów `OplErrorReportSubmitter` oraz budowanie dynamicznych komend CLI – posiadają napisane testy jednostkowe (`OplConsoleFilterTest.kt`, `OplRunConfigurationTest.kt`, `OplErrorReportSubmitterTest.kt`). Komenda weryfikująca cały build przeszła pomyślnie.
+Wszystkie systemy – w tym parsowanie konsoli z filtrem `OplInfeasibilityFilter`, silnik watchdoga, wykrywanie plików `.dat`, raportowanie błędów `OplErrorReportSubmitter`, obsługa środowisk WSL/Docker oraz budowanie dynamicznych komend CLI – posiadają pełne pokrycie testami jednostkowymi, platformowymi i wydajnościowymi. 
 
-Pliki są zapisane w kodzie źródłowym, a cały plugin jest połączony i skompilowany.
-Możesz być spokojny - praca wykonana podczas naszych ostatnich sesji nie zginęła.
+Architektura testowa w `src/test/kotlin/com/github/cplexopl/` została zorganizowana w strukturze *Package Mirroring* i podzielona na dedykowane suity (`OplTestSuite`, `OplPerformanceTestSuite`, `OplAllTestSuite`), a cały proces budowania i weryfikacji jest zarządzany przez skrypt `scripts/test.py`. Wszystkie testy przechodzą w 100% pomyślnie.
+

@@ -139,10 +139,11 @@ Bez tego plugin nie spełnia swojego głównego celu.
 
 
 ### 6.2 Stabilność i wydajność (Performance)
-- `DONE` Testy jednostkowe (IntelliJ Platform Test Framework)
-- `DONE` Automatyczne testy wydajnościowe (Performance Tests) chroniące przed regresją czasową przy parsowaniu drzewa.
-- `DONE` **Optymalizacja Parsera (Pratt Parser):** Przebudowa rekurencyjnych wyrażeń matematycznych w `OplGrammar.bnf`, eliminująca ryzyko `StackOverflowError` i zmniejszająca czas parsowania gigantycznych obciążeń do ułamków sekund.
-- `PARTIAL` Obsługa błędów runtime
+- `DONE` Testy jednostkowe i platformowe (IntelliJ Platform Test Framework)
+- `DONE` Automatyczne testy wydajnościowe (Performance Tests) oparte o `PlatformTestUtil.startPerformanceTest` chroniące przed regresją czasową.
+- `DONE` **Architektura Testów i Package Mirroring:** Podział testów na wyspecjalizowane suity (`OplTestSuite`, `OplPerformanceTestSuite`, `OplAllTestSuite`), pełne odzwierciedlenie struktury pakietów `src/main/`, obsługa trybów `test`, `perf`, `test:all` w `scripts/test.py` oraz ujednolicone, tabelaryczne raporty JSON.
+- `DONE` **Optymalizacja Parsera (Pratt Parser):** Przebudowa rekurencyjnych wyrażeń matematycznych w `OplGrammar.bnf`, eliminująca ryzyko `StackOverflowError` i zmniejszająca czas parsowania obciążeń do ułamków sekund.
+- `PARTIAL` Obsługa błędów runtime (integracja `OplErrorReportSubmitter`, ochrona XXE, filtry Infeasibility w konsoli)
 
 ### 6.3 Ekspansja poza środowiska JetBrains (Wizja długoterminowa)
 - `TODO` **Language Server Protocol (LSP):** Stworzenie niezależnego serwera językowego opartego na obecnej logice lexera i parsera. Umożliwi to udostępnienie funkcji OPL (autouzupełnianie, błędy) w VS Code, Neovim, Sublime Text i innych edytorach wspierających LSP.

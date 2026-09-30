@@ -1,87 +1,98 @@
 # Raport Pokrycia Testami (Test Coverage) dla Pluginu CPLEX OPL
 
-Poniższy raport stanowi analizę architektury testowej projektu, dzieląc zaimplementowane funkcjonalności na te weryfikowane przez wbudowane **testy jednostkowe (zautomatyzowane w Pluginie)** oraz te wymagające środowiska **poligonu doświadczalnego** z repozytorium zewnętrznego (`cplex-opl-examples`).
+Poniższy raport stanowi analizę architektury testowej projektu, dzieląc zaimplementowane funkcjonalności na te weryfikowane przez wbudowane **testy jednostkowe i platformowe (zautomatyzowane w Pluginie)** oraz te wymagające środowiska **poligonu doświadczalnego** z repozytorium zewnętrznego (`cplex-opl-examples`).
 
 ---
 
 ## 1. Wsparcie Językowe (Edytor kodu)
-**Pokrycie zautomatyzowane: ~100%** | **Lokalizacja testów: Wewnętrzne testy Pluginu**
+**Pokrycie zautomatyzowane: ~100%** | **Lokalizacja testów: Wewnętrzne testy Pluginu (`src/test/kotlin/com/github/cplexopl/`)**
 
-Ta sekcja jest w pełni i bezpośrednio chroniona przez zautomatyzowane ramy testowe (Test Framework) wbudowane w IntelliJ Platform. Jakakolwiek zmiana w gramatyce, która psuje kompatybilność wsteczną, zostanie natychmiast wychwycona podczas buildu pluginu.
-Każda główna funkcja posiada dedykowaną klasę testową w folderze `src/test/kotlin/com/github/cplexopl/`:
-* **Parsowanie i Lexer** (`OplParsingTest.kt`) – weryfikuje poprawne budowanie drzew składniowych AST z kodu źródłowego.
-* **Formatowanie i Komentowanie** (`OplFormattingTest.kt`, `OplCommenterTest.kt`) – zapobiega psuciu wcięć kodu.
-* **Widok struktury i Szablony** (`OplStructureViewTest.kt`, `OplLiveTemplatesTest.kt`) – gwarantuje, że podgląd plików i szybkie skróty tekstowe ładują się prawidłowo.
-* **Nawigacja (Referencje)** (`OplReferenceTest.kt`) – testuje przechodzenie do definicji metod i zmiennych.
-* **Podświetlanie i Analiza Semantyczna** (`OplHighlightingTest.kt`, `OplAnnotatorPerformanceTest.kt`) – zapobiega degradacji wydajności podczas analizowania kodu.
+Ta sekcja jest w pełni i bezpośrednio chroniona przez zautomatyzowane ramy testowe (*IntelliJ Platform Test Framework*). Jakakolwiek zmiana w gramatyce, która psuje kompatybilność wsteczną, zostaje natychmiast wychwycona podczas buildu pluginu.
+Klasy testowe zorganizowane są w strukturze *Package Mirroring*, odpowiadającej pakietom w `src/main/`:
+* **Parsowanie i Lexer** (`parser/OplParsingTest.kt`, `parser/OplPiecewiseParsingTest.kt`) – weryfikuje poprawne budowanie drzew składniowych AST z kodu źródłowego oraz obsługę funkcji kawałkami (piecewise).
+* **Formatowanie i Komentowanie** (`formatter/OplFormattingTest.kt`, `features/OplCommenterTest.kt`) – zapobiega psuciu wcięć kodu i komentowania linii/bloków.
+* **Widok struktury i Szablony** (`structure/OplStructureViewTest.kt`, `templates/OplLiveTemplatesTest.kt`) – gwarantuje, że podgląd plików (Structure View) i szybkie skróty tekstowe (Live Templates) ładują się prawidłowo.
+* **Nawigacja i Dołączanie plików** (`reference/OplReferenceTest.kt`, `reference/OplIncludeTest.kt`) – testuje przechodzenie do definicji metod i zmiennych oraz dyrektywy `include`.
+* **Podświetlanie i Analiza Semantyczna** (`highlighting/OplHighlightingTest.kt`) – weryfikuje poprawność lekserów i annotatorów podświetlania składni.
+* **Autouzupełnianie kodu** (`completion/OplCompletionTest.kt`) – testuje autouzupełnianie słów kluczowych oraz zmiennych kontekstowych z drzewa PSI.
+
+---
 
 ## 2. Uruchamianie (Run Configurations)
-**Pokrycie zautomatyzowane: ~80%, Weryfikacja manualna: 20%**
+**Pokrycie zautomatyzowane: ~85%, Weryfikacja manualna: 15%**
 
-* **Parsowanie ustawień `.ops`** | **Lokalizacja testów: Wewnętrzne testy Pluginu** 
-  Przetestowane niezwykle rygorystycznie w pliku `OplRunConfigurationTest.kt`. Istnieją testy izolowane sprawdzające poprawne dekodowanie symboli specjalnych (np. `&amp;`), a także dedykowane zabezpieczenie wyłapujące ataki `XXE` (wstrzykiwanie wrogich encji zewnętrznych XML). 
-* **Auto-wiązanie plików i walidacja** | **Lokalizacja testów: Wewnętrzne testy Pluginu** 
-  Logika pilnująca spójności rzuca odpowiednie wyjątki w środowisku testowym (weryfikacja w `OplRunConfigurationTest.kt`, np. gdy załączono nieistniejący plik z danymi).
-* **Watchdog / Timeout i przekazywanie Flag CLI** | **Lokalizacja testów: Zewnętrzne repozytorium `cplex-opl-examples`** 
-  Modułów interakcji z natywnym systemem operacyjnym (zabijanie procesu `oplrun` z użyciem platformowego watchdoga) nie da się wiarygodnie zmockować w teście jednostkowym. Funkcjonalność ta jest przeznaczona do weryfikacji manualnej w locie. Testowana jest z użyciem eksperymentalnych, nieskończenie liczących się modeli matematycznych pobieranych z zewnętrznego repozytorium `cplex-opl-examples`.
-
-* **Auto-wykrywanie instalacji CPLEX** (`CplexPathFinderTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
-  W pełni przetestowane z użyciem tymczasowych struktur folderów (`TemporaryFolder`), sprawdzające wybór najwyższej wersji CPLEX oraz obsługę zmiennej środowiskowej `CPLEX_STUDIO_DIR` dla różnych systemów operacyjnych.
-* **Ustawienia Globalne IDE** (`OplSettingsTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
+* **Parsowanie ustawień `.ops` i ochrona XXE** (`run/OplRunConfigurationTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu** 
+  Przetestowane rygorystycznie w pliku `OplRunConfigurationTest.kt`. Sprawdza dekodowanie symboli specjalnych (np. `&amp;`), a także dedykowane zabezpieczenie wyłapujące ataki `XXE` (wstrzykiwanie encji zewnętrznych XML).
+* **Środowiska WSL i Docker oraz translacja ścieżek** (`run/OplPathTranslatorTest.kt`, `run/OplRunConfigurationIntegrationTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
+  Weryfikuje poprawne budowanie komend CLI dla `LOCAL`, `WSL` (`wsl.exe`) oraz kontenerów `DOCKER`, w tym automatyczną translację ścieżek Windows (`C:\...`) na format linuksowy (`/mnt/c/...` lub `/workspace/...`).
+* **Auto-wiązanie plików i walidacja** (`run/OplRunConfigurationTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu** 
+  Logika pilnująca spójności rzuca odpowiednie wyjątki w środowisku testowym (np. gdy załączono nieistniejący plik z danymi).
+* **Auto-wykrywanie instalacji CPLEX** (`utils/CplexPathFinderTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
+  W pełni przetestowane z użyciem tymczasowych struktur folderów (`TemporaryFolder`), sprawdzające wybór najwyższej wersji CPLEX oraz obsługę zmiennej środowiskowej `CPLEX_STUDIO_DIR` dla Windows i Linux.
+* **Ustawienia Globalne IDE** (`settings/OplSettingsTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
   Przetestowane w oparciu o `BasePlatformTestCase`. Weryfikuje cykl życia `OplSettingsConfigurable`, utrwalanie stanu `OplSettingsState` oraz działanie metody `isModified()`.
+* **Watchdog / Timeout i przekazywanie Flag CLI** | **Lokalizacja testów: Zewnętrzne repozytorium `cplex-opl-examples`** 
+  Moduły bezpośredniej interakcji z procesem solvera są dodatkowo weryfikowane w boju z użyciem modeli testowych z zewnętrznego repozytorium `cplex-opl-examples`.
 
-## 3. Konsola, Logi i Debugowanie
+---
+
+## 3. Konsola, Logi, Błędy i Wydajność
 **Pokrycie zautomatyzowane: 98%, Weryfikacja manualna: 2%**
 
-* **Filtry Konsoli i Rozwiązywanie Ścieżek (Infeasibility, Link Parser & OplFileResolver)** | **Lokalizacja testów: Wewnętrzne testy Pluginu** 
-  Przeprowadzane w klasie `OplConsoleFilterTest.kt`. Sprawdzają poprawne mapowanie ścieżek plików tymczasowych (`_temp_...`) do workspace, podświetlanie ograniczeń sprzecznych oraz linkowanie błędów w `.mod` i `.dat`.
-* **Automatyczne Raportowanie Błędów (`OplErrorReportSubmitterTest.kt`)** | **Lokalizacja testów: Wewnętrzne testy Pluginu**
-  Weryfikuje poprawność działania integrowania wyjątków pluginu z formularzem zgłoszeń na GitHubie.
-* **Testy Wydajnościowe Filtrów Logów** (`OplConsoleFilterPerformanceTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
-  Przetwarza 100 000 linii logów konsolowych z użyciem pamięci podręcznej `OplFileResolver`, chroniąc IDE przed zawieszeniem i weryfikując wydajność wyrażeń regularnych (oparte na `measureTimeMillis`).
-* **Proaktywne wskazówki (`<<< no solution`)** | **Lokalizacja testów: Zewnętrzne repozytorium `cplex-opl-examples`** 
-  Elementy dynamicznie wstrzykiwane bezpośrednio do interfejsu logów IDE podczas wykonania (żółty tekst) poddawane są weryfikacji w locie. Do zmuszenia solvera do zrzucenia konkretnego błędu w warunkach polowych używany jest specjalny model testowy `infeasible-test.mod`, utrzymywany w repozytorium zewnętrznym `cplex-opl-examples`.
+* **Filtry Konsoli i Rozwiązywanie Ścieżek** (`console/OplConsoleFilterTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu** 
+  Sprawdzają mapowanie ścieżek plików tymczasowych do workspace, podświetlanie ograniczeń sprzecznych (*infeasibility*) oraz linkowanie błędów w `.mod` i `.dat`.
+* **Automatyczne Raportowanie Błędów** (`error/OplErrorReportSubmitterTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
+  Weryfikuje integrację wyjątków pluginu z formularzem zgłoszeń issue na GitHubie.
+* **Dedykowany Zestaw Testów Wydajnościowych** (`performance/`) | **Lokalizacja testów: `OplPerformanceTestSuite`**
+  - `performance/OplParserPerformanceTest.kt` – benchmark parsowania skomplikowanych wyrażeń matematycznych (Pratt Parser) oparty na `PlatformTestUtil.startPerformanceTest`.
+  - `performance/OplConsoleFilterPerformanceTest.kt` – filtrowanie 100 000 linii logów konsolowych oraz ochrona przed *Catastrophic Backtracking* na gigantycznych liniach.
+  - `performance/OplAnnotatorPerformanceTest.kt` – wydajność analizy semantycznej dużych plików modeli.
 
 ---
 
-## 4. Obszary weryfikowane manualnie
-**Weryfikacja integracyjna i manualna**
+## 4. Architektura Testów i Podział Suit
 
-Moduły wymagające fizycznej interakcji ze środowiskiem użytkownika lub bibliotekami zewnętrznymi poddawane są testom manualnym:
+Aby zapewnić szybki cykl deweloperski (*Fast Feedback Loop*), testy zostały rozdzielone na odrębne zestawy uruchomieniowe (Suites):
 
-* **Generowanie skryptów Python (`GeneratePythonRunnerAction`)**: Konwersja modeli `.mod` na uruchamialne skrypty `doopl`. Weryfikacja poprawności kodu generowanego pliku `.py` oraz powiadomień rynkowych odbywa się w locie.
+| Zestaw Testowy | Klasa Suity | Liczba Testów | Średni Czas | Przeznaczenie |
+| :--- | :--- | :--- | :--- | :--- |
+| **Szybkie testy (Unit / Platform)** | `OplTestSuite` | 40 testów (17 klas) | **~19 s** | Domyślny tryb lokalny (`python scripts/test.py test`) |
+| **Testy wydajnościowe (Perf)** | `OplPerformanceTestSuite` | 4 testy (3 klasy) | **~21 s** | Benchmarki i stress-testy (`python scripts/test.py perf` / CI tag `[perf]`) |
+| **Pełna agregacja (All)** | `OplAllTestSuite` | 44 testy (20 klas) | **~26 s** | Przed commitem i release (`python scripts/test.py test:all` / `full`) |
 
 ---
 
+## 5. Raportowanie i Metryki (Format JSON)
 
----
+Po każdym uruchomieniu testów generowany jest ujednolicony, zwięzły raport w katalogu `src/test/reports/test-summary-<data>.json` z tabelaryczną strukturą wyników:
 
-## 5. Wyniki Optymalizacji Wydajności i Benchmarków Gradle
+```json
+{
+  "timestamp": "2026-09-30 19:22:28 (Europe/Warsaw)",
+  "pluginVersion": "1.4.9.7",
+  "result": "SUCCESS",
+  "totalTests": 44,
+  "successfulTests": 44,
+  "failedTests": 0,
+  "skippedTests": 0,
+  "durationMs": 26383,
+  "environment": {
+    "os": "Windows 10",
+    "arch": "amd64",
+    "availableProcessors": 16
+  },
+  "columns": ["class", "method", "result", "durationMs"],
+  "tests": [
+    ["OplParsingTest", "testSimpleModel", "SUCCESS", 1261],
+    ...
+  ]
+}
+```
 
-W celu maksymalnego wykorzystania potencjału wielordzeniowego sprzętu dewelopera (**Intel Core i7-11700F, 16 procesorów logicznych, 32 GB RAM**) oraz uniezależnienia od architektury CI/CD wprowadzono dynamiczne zarządzanie znoszeniem widelców testowych (`maxParallelForks`), pamięcią Heap (`-Xmx`) oraz inkrementalnym buforowaniem GrammarKit.
-
-### Tabela porównawcza czasów wykonania (Benchmark)
-
-| Scenariusz / Repozytorium | Przed Optymalizacją (Baseline) | Po Optymalizacji | Wynik / Zysk |
-| :--- | :--- | :--- | :--- |
-| **Plugin (`OplTestSuite` - Cold Start)** | 33.67 s | **10.81 s** | **~67.9% przyspieszenia (33.7s -> 10.8s)** |
-| **Plugin (`buildPlugin` - Inkrementalny Build)** | 48.00 s | **9.00 s** | **~81.2% przyspieszenia (48s -> 9s)** |
-| **Examples (`cplex-opl-examples`) - Cold Start** | 49.49 s | **42.45 s** | **~14.2% przyspieszenia** |
-| **Examples (`cplex-opl-examples`) - Warm Run** | 38.68 s | **37.79 s** | **~2.3% przyspieszenia** |
-| **Wykonanie suity w IDE (IDE Test Runner)** | ~33.7 s (Gradle) | **~1-2 s (IDE)** | **~95% przyspieszenia** |
-
-### Kluczowe ulepszenia architektoniczne:
-1. **Suita Zbiorcza (`OplTestSuite.kt` - Opcja D):** Połączenie 14 klas testowych wtyczki w jedną suitę sprawia, że bezgłowa instancja IntelliJ podnosi się **tylko 1 raz dla wszystkich testów**, co skróciło czas uruchomienia z **33.7 s do 10.8 s**.
-2. **Asercja Wydajnościowa Filtrów (`OplConsoleFilterPerformanceTest` - Opcja B):** Wdrożenie automatycznej kontroli progu wydajności (100k linii przefiltrowanych poniżej 5 sekund) zabezpieczające przed regresją filtrów logów CPLEX.
-3. **Dynamiczna wielowątkowość i kontrola pamięci:** Skrypty `build.gradle.kts` wyliczają dostępną pamięć RAM oraz wątki logiczne, zapobiegając błędym Out-Of-Memory (OOM) oraz zablokowaniom plików VFS na Windowsie.
-4. **Inkrementalność GrammarKit:** Zadania `generateLexer` i `generateParser` wykorzystują status `UP-TO-DATE`, co skróciło czas przebudowania paczki pluginu z **48 s do 9 s**.
-5. **Ujednolicenie konfiguracji w `cplex-opl-examples`:** Włączenie równoległej kompilacji modułów (`org.gradle.parallel=true`), buforowania budowania (`org.gradle.caching=true`) oraz nowoczesnego kolektora śmieci `-XX:+UseG1GC`.
+Skrypt `scripts/test.py` automatycznie parsuje powyższy raport i drukuje czytelne podsumowanie metryk w terminalu.
 
 ---
 
 ## Podsumowanie i Wnioski
-Architektura wtyczki cechuje się bardzo wysoką **dojrzałością inżynierską**. Prawie wszystkie kluczowe moduły (edytor, konfiguracje uruchomieniowe, wyszukiwarka ścieżek, ustawienia, filtry logów) posiadają automatyczne testy jednostkowe.
-
-1. **Testy wewnętrzne Pluginu (`src/test/kotlin/...`)**: Zabezpieczają systemy statyczne i strukturalne (język, parser, ustawienia konfiguracji, autodetekcję, filtry logów i testy wydajnościowe).
-2. **Repozytorium `cplex-opl-examples`**: Pełni rolę zewnętrznego **poligonu doświadczalnego** dla testów integracyjnych (E2E) z udziałem żywego silnika CPLEX `oplrun`.
-
+1. **Wewnętrzne testy Pluginu (`src/test/kotlin/...`)**: Zabezpieczają 100% logiki statycznej, gramatyki, analizy semantycznej, konfiguracji uruchomieniowych (Local/WSL/Docker), filtrów konsoli oraz regresji wydajnościowych.
+2. **Repozytorium `cplex-opl-examples`**: Pełni rolę zewnętrznego poligonu integracyjnego dla manualnych testów E2E z żywym silnikiem CPLEX `oplrun`.

@@ -12,10 +12,10 @@ Plugin adding native support for IBM ILOG CPLEX Optimization Programming Languag
 ### Features
 * **Syntax Highlighting:** Keyword, model structure, and operator highlighting for `.mod` files.
 * **Code Completion:** Basic keyword and built-in function completion.
-* **Run Integration:** Built-in run configuration (`Run Opl Model`) for direct `oplrun` execution from the editor.
+* **Run Integration:** Built-in run configuration (`Run Opl Model`) supporting **Local**, **WSL**, and **Docker** execution environments with automatic path translation.
 * **Auto-Pairing:** Automatic `.dat` pairing when a matching file name exists.
 * **Path Support:** Manual `oplrun` path setup plus auto-detect button for default install locations.
-* **Console Navigation:** Clickable error links (for `.mod`) in run console.
+* **Console Navigation:** Clickable error links (for `.mod` and `.dat`) and infeasibility hints in run console.
 * **Structure View:** Side panel listing declarations, objective, and constraints.
 * **Code Analysis & Inspections:** Real-time semantic validation including scope-aware variable resolution, type checking, missing semicolons, and advanced non-linearity detection (`min`, `max`, `abs`) for MIP models.
 * **Editor Utilities:** Live templates, commenter (`Ctrl+/`), brace matcher, and smart code formatter.
@@ -37,7 +37,7 @@ A collection of OPL models used as testing references for this plugin can be fou
 5. Select the downloaded `.zip` file and restart the IDE.
 
 ### Requirements
-A local installation of **IBM ILOG CPLEX Studio** is required for Run Configuration execution. You can set `oplrun` manually in Run Configuration or use auto-detect from common install paths.
+An installation of **IBM ILOG CPLEX Studio** (for Local or WSL execution) or a Docker image with `oplrun` is required for Run Configuration execution. You can set `oplrun` manually in Run Configuration or use auto-detect from common install paths.
 
 ---
 
@@ -48,10 +48,10 @@ Wtyczka dodająca natywne wsparcie dla języka IBM ILOG CPLEX Optimization Progr
 ### Funkcje
 * **Kolorowanie składni:** Podświetlanie słów kluczowych, struktury modelu oraz operatorów dla plików `.mod`.
 * **Code Completion:** Podstawowe autouzupełnianie słów kluczowych i funkcji wbudowanych.
-* **Integracja uruchamiania:** Wbudowana konfiguracja `Run Opl Model`, wywołująca lokalny `oplrun` bezpośrednio z IDE.
+* **Integracja uruchamiania:** Wbudowana konfiguracja `Run Opl Model` z obsługą środowisk **Lokalnego**, **WSL** oraz kontenerów **Docker** z automatyczną translacją ścieżek.
 * **Auto-parowanie plików:** Automatyczne podpinanie `.dat`, gdy istnieje plik o tej samej nazwie.
 * **Obsługa ścieżki:** Ręczne wskazanie `oplrun` oraz przycisk auto-detekcji domyślnych lokalizacji.
-* **Nawigacja błędów:** Klikalne linki błędów solvera (dla `.mod`) w konsoli uruchomienia.
+* **Nawigacja błędów:** Klikalne linki błędów solvera (dla `.mod` i `.dat`) oraz inteligentne wskazówki przy modelach sprzecznych (*infeasible*).
 * **Structure View:** Boczne drzewo elementów modelu (deklaracje, cel, ograniczenia).
 * **Analiza Semantyczna i Inspekcje:** Walidacja kodu w locie (m.in. zasięgi zmiennych, zgodność typów, brakujące średniki) oraz zaawansowane ostrzeżenia przed nieliniowością solvera (`min`, `max`, `abs`) w modelach MIP.
 * **Narzędzia edytora:** Live templates, komentowanie (`Ctrl+/`), pary nawiasów i inteligentny formatter.
@@ -73,4 +73,4 @@ Kolekcja modeli referencyjnych i testowych znajduje się w repozytorium [cplex-o
 5. Wskaż pobrany plik `.zip` i zrestartuj IDE.
 
 ### Wymagania
-Do działania Run Configuration wymagana jest lokalna instalacja **IBM ILOG CPLEX Studio**. Ścieżkę do `oplrun` (lub `oplrun.exe` na Windows) można wskazać ręcznie albo wykryć automatycznie dla typowych lokalizacji.
+Do działania Run Configuration wymagana jest instalacja **IBM ILOG CPLEX Studio** (dla uruchomień lokalnych lub w WSL) bądź obraz Docker zawierający solver `oplrun`. Ścieżkę do `oplrun` można wskazać ręcznie albo wykryć automatycznie dla typowych lokalizacji.
