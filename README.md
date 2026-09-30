@@ -10,12 +10,13 @@ Native support for IBM ILOG CPLEX Optimization Programming Language (OPL) in Int
 Plugin adding native support for IBM ILOG CPLEX Optimization Programming Language (OPL) in JetBrains environments (IntelliJ IDEA, PyCharm, etc.).
 
 ### Features
+* **File Types & Icons:** Full support and dedicated SVG icons for models (`.mod`), data (`.dat`), and settings (`.ops`) files, including "New OPL File" templates.
 * **Syntax Highlighting:** Keyword, model structure, and operator highlighting for `.mod` files.
 * **Code Completion:** Basic keyword and built-in function completion.
-* **Run Integration:** Built-in run configuration (`Run Opl Model`) supporting **Local**, **WSL**, and **Docker** execution environments with automatic path translation.
-* **Auto-Pairing:** Automatic `.dat` pairing when a matching file name exists.
+* **Run Integration:** Built-in run configuration (`Run Opl Model`) supporting **Local**, **WSL**, and **Docker** execution environments with automatic path translation and `.ops` XML settings parsing.
+* **Auto-Pairing:** Automatic `.dat` and `.ops` pairing when matching file names exist.
 * **Path Support:** Manual `oplrun` path setup plus auto-detect button for default install locations.
-* **Console Navigation:** Clickable error links (for `.mod` and `.dat`) and infeasibility hints in run console.
+* **Console Navigation:** Clickable error links (for `.mod`, `.dat`, `.ops`) and infeasibility hints in run console.
 * **Structure View:** Side panel listing declarations, objective, and constraints.
 * **Code Analysis & Inspections:** Real-time semantic validation including scope-aware variable resolution, type checking, missing semicolons, and advanced non-linearity detection (`min`, `max`, `abs`) for MIP models.
 * **Editor Utilities:** Live templates, commenter (`Ctrl+/`), brace matcher, and smart code formatter.
@@ -46,12 +47,13 @@ An installation of **IBM ILOG CPLEX Studio** (for Local or WSL execution) or a D
 Wtyczka dodająca natywne wsparcie dla języka IBM ILOG CPLEX Optimization Programming Language (OPL) w środowiskach JetBrains (IntelliJ IDEA, PyCharm, itp.).
 
 ### Funkcje
+* **Typy plików i ikony:** Pełna obsługa oraz dedykowane ikony SVG dla plików modeli (`.mod`), danych (`.dat`) oraz ustawień (`.ops`), wraz z szablonami tworzenia plików w menu *Nowy -> OPL File*.
 * **Kolorowanie składni:** Podświetlanie słów kluczowych, struktury modelu oraz operatorów dla plików `.mod`.
 * **Code Completion:** Podstawowe autouzupełnianie słów kluczowych i funkcji wbudowanych.
-* **Integracja uruchamiania:** Wbudowana konfiguracja `Run Opl Model` z obsługą środowisk **Lokalnego**, **WSL** oraz kontenerów **Docker** z automatyczną translacją ścieżek.
-* **Auto-parowanie plików:** Automatyczne podpinanie `.dat`, gdy istnieje plik o tej samej nazwie.
+* **Integracja uruchamiania:** Wbudowana konfiguracja `Run Opl Model` z obsługą środowisk **Lokalnego**, **WSL** oraz kontenerów **Docker** z automatyczną translacją ścieżek oraz parsowaniem ustawień XML (`.ops`).
+* **Auto-parowanie plików:** Automatyczne podpinanie `.dat` i `.ops`, gdy istnieją pliki o powiązanej nazwie.
 * **Obsługa ścieżki:** Ręczne wskazanie `oplrun` oraz przycisk auto-detekcji domyślnych lokalizacji.
-* **Nawigacja błędów:** Klikalne linki błędów solvera (dla `.mod` i `.dat`) oraz inteligentne wskazówki przy modelach sprzecznych (*infeasible*).
+* **Nawigacja błędów:** Klikalne linki błędów solvera (dla `.mod`, `.dat`, `.ops`) oraz inteligentne wskazówki przy modelach sprzecznych (*infeasible*).
 * **Structure View:** Boczne drzewo elementów modelu (deklaracje, cel, ograniczenia).
 * **Analiza Semantyczna i Inspekcje:** Walidacja kodu w locie (m.in. zasięgi zmiennych, zgodność typów, brakujące średniki) oraz zaawansowane ostrzeżenia przed nieliniowością solvera (`min`, `max`, `abs`) w modelach MIP.
 * **Narzędzia edytora:** Live templates, komentowanie (`Ctrl+/`), pary nawiasów i inteligentny formatter.

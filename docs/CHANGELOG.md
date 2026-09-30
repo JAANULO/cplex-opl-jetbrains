@@ -2,13 +2,16 @@
 
 # CPLEX-Plugin Changelog
 
-## [Unreleased]
+### Added
+
+- **File Types & Icons:** Added dedicated `OplOpsFileType` registration and custom SVG icon (`oplOps.svg`) for CPLEX OPL settings files (`.ops`).
+- **File Templates:** Added `OplSettings` file template and integrated *Settings file (.ops)* creation into the `New -> OPL File` action dialog.
 
 ### Testing
 
 - **Test Suite Architecture & Optimization:** Reorganized tests into fast unit/platform suite (`OplTestSuite`), dedicated stress/performance suite (`OplPerformanceTestSuite`), and full aggregation suite (`OplAllTestSuite`).
 - **Performance Testing & CLI:** Standardized performance benchmarks using `PlatformTestUtil.startPerformanceTest`, added dedicated `perf` and `test:all` modes to `scripts/test.py`, and optimized JSON test reports to a compact tabular schema with environment metadata.
-- **Test Coverage:** Added previously unlinked test classes (`OplPathTranslatorTest`, `OplErrorReportSubmitterTest`, `OplRunConfigurationIntegrationTest`) to the active test suite.
+- **Test Coverage:** Added `OplFileTypeTest` to verify file type registrations and icons, and added previously unlinked test classes (`OplPathTranslatorTest`, `OplErrorReportSubmitterTest`, `OplRunConfigurationIntegrationTest`) to the active test suite.
 
 
 ## [1.4.9.7] - 2026-09-29

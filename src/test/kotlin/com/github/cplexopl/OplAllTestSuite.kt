@@ -42,6 +42,7 @@ import org.junit.runners.Suite
     OplErrorReportSubmitterTest::class,
     OplPathTranslatorTest::class,
     OplRunConfigurationIntegrationTest::class,
+    OplFileTypeTest::class,
     OplParserPerformanceTest::class,
     OplConsoleFilterPerformanceTest::class,
     OplAnnotatorPerformanceTest::class

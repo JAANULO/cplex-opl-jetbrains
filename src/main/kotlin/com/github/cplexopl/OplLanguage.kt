@@ -11,3 +11,7 @@ object OplLanguage : Language("OPL") {
 object OplDatLanguage : Language("OPLDat") {
     private fun readResolve(): Any = OplDatLanguage
 }
+
+object OplOpsLanguage : Language("OPLOps") {
+    private fun readResolve(): Any = OplOpsLanguage
+}

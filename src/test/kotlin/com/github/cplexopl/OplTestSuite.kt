@@ -38,6 +38,7 @@ import org.junit.runners.Suite
     OplIncludeTest::class,
     OplErrorReportSubmitterTest::class,
     OplPathTranslatorTest::class,
-    OplRunConfigurationIntegrationTest::class
+    OplRunConfigurationIntegrationTest::class,
+    OplFileTypeTest::class
 )
 class OplTestSuite

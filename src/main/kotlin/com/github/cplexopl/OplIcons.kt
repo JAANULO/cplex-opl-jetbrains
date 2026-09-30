@@ -10,4 +10,7 @@ object OplIcons {
 
     @JvmField
     val DAT_FILE = IconLoader.getIcon("/icons/oplDat.svg", OplIcons::class.java)
+
+    @JvmField
+    val OPS_FILE = IconLoader.getIcon("/icons/oplOps.svg", OplIcons::class.java)
 }

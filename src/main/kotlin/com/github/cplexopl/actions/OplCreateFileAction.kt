@@ -6,6 +6,7 @@ import com.intellij.openapi.project.Project
 import com.intellij.psi.PsiDirectory
 import com.github.cplexopl.OplFileType
 import com.github.cplexopl.OplDatFileType
+import com.github.cplexopl.OplOpsFileType
 
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 
@@ -15,6 +16,7 @@ class OplCreateFileAction : CreateFileFromTemplateAction("OPL File", "Creates a 
         builder.setTitle("New OPL File")
             .addKind("Model file (.mod)", OplFileType.icon, "OplModel")
             .addKind("Data file (.dat)", OplDatFileType.icon, "OplData")
+            .addKind("Settings file (.ops)", OplOpsFileType.icon, "OplSettings")
     }
 
     override fun getActionName(directory: PsiDirectory, newName: String, templateName: String): String {

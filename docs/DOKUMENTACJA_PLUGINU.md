@@ -6,9 +6,10 @@ Niniejszy dokument podsumowuje wszystkie zaimplementowane dotychczas funkcjonaln
 
 ---
 
-## 1. Wsparcie Językowe (Edytor kodu)
+## 1. Wsparcie Językowe i Pliki (Edytor kodu)
 Plugin dodaje pełnoprawną obsługę plików z rozszerzeniami `.mod`, `.dat` oraz `.ops`.
 
+* **Typy plików i ikony**: Każdy z formatów (`.mod` – model, `.dat` – dane, `.ops` – ustawienia) posiada własny zarejestrowany `FileType`, dedykowaną ikonę SVG oraz szablon w menu *New -> OPL File*.
 * **Podświetlanie Składni (Syntax Highlighting)**: Słowa kluczowe OPL, typy danych (`int`, `float`, `dvar`), komentarze i ciągi znaków posiadają własne kolory spójne z używanym motywem IDE. Zaimplementowano specjalny Lexer (plik `opl.flex`).
 * **Autouzupełnianie (Code Completion)**: Edytor podpowiada kluczowe słowa strukturalne języka podczas pisania (np. `maximize`, `minimize`, `subject to`, typy zmiennych).
 * **Formatowanie Kodu (Code Formatter)**: Zaimplementowano automatyczne wcięcia (indentację) kodu zgodnie z regułami języka (np. zawartość w klamrach `{ ... }` jest automatycznie wyrównywana).

@@ -18,3 +18,11 @@ object OplDatFileType : LanguageFileType(OplDatLanguage) {
     override fun getDefaultExtension(): String = "dat"
     override fun getIcon(): Icon = OplIcons.DAT_FILE
 }
+
+// File type for settings (.ops)
+object OplOpsFileType : LanguageFileType(OplOpsLanguage) {
+    override fun getName(): String = "OPL Settings File"
+    override fun getDescription(): String = "IBM ILOG CPLEX OPL settings file"
+    override fun getDefaultExtension(): String = "ops"
+    override fun getIcon(): Icon = OplIcons.OPS_FILE
+}

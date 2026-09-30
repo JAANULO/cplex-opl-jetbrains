@@ -11,18 +11,18 @@ Celem projektu jest stworzenie lekkiego, ale funkcjonalnego środowiska do pracy
 
 ## ✅ Już zaimplementowane
 
-- `DONE` **Szablony plików:** Akcja "New -> OPL File" w menu kontekstowym
-- `DONE` Rejestracja języka OPL (pliki `.mod` i `.dat`)
+- `DONE` **Szablony plików:** Akcja "New -> OPL File" w menu kontekstowym (modele `.mod`, dane `.dat`, ustawienia `.ops`)
+- `DONE` Rejestracja języka OPL (pliki `.mod`, `.dat` i `.ops`)
 - `DONE` Syntax Highlighting (kolorowanie składni)
 - `DONE` Gramatyka BNF + Lexer JFlex
 - `DONE` Podstawowy Annotator (walidacja w locie)
 - `DONE` Code Completion (autouzupełnianie słów kluczowych)
 - `DONE` Live Templates (skróty: `model`, `rng`, `dv`, `st`, `fa`, `sm`, `tup`, `exec`)
 - `DONE` Run Configuration (integracja z `oplrun`)
-- `DONE` Ikony SVG dla plików `.mod` i `.dat`
+- `DONE` Ikony SVG dla plików `.mod`, `.dat` i `.ops`
 - `DONE` Obsługa skrótu `Ctrl+/` (komentowanie)
 - `DONE` Podświetlanie par nawiasów `{}`, `()`, `[]`
-- `DONE` **File Type Support:** automatyczne łączenie par plików `.mod` i `.dat` przy uruchamianiu
+- `DONE` **File Type Support:** automatyczne łączenie par plików `.mod`, `.dat` oraz `.ops` przy uruchamianiu
 - `DONE` **Integracja CPLEX (0.2):** Auto-wykrywanie ścieżek, zmienna `CPLEX_STUDIO_DIR`, panel ustawień UI.
 - `DONE` **Contextual Autocomplete:** Semantyczne podpowiadanie zmiennych z drzewa PSI.
 - `DONE` **Zaawansowany Annotator (2.1):** Wykrywanie duplikatów i brakujących średników.
@@ -59,7 +59,7 @@ Bez tego plugin nie spełnia swojego głównego celu.
 
 ### 1.1 Ikony i Branding
 - `DONE` Ikona pluginu gotowa na JetBrains Marketplace
-- `DONE` Weryfikacja i użycie ikon SVG dla plików `.mod` i `.dat`
+- `DONE` Weryfikacja i użycie ikon SVG dla plików `.mod`, `.dat` i `.ops`
 
 ### 1.2 Formatowanie (Code Style)
 - `DONE` Inteligentne wcięcia (Indentation) w formaterze, aby wyeliminować błędne tabulatory w nowych liniach.

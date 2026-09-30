@@ -27,6 +27,7 @@
         <lang.refactoringSupport language="OPL" implementationClass="com.github.cplexopl.features.OplRefactoringSupportProvider"/>
         <internalFileTemplate name="OplModel"/>
         <internalFileTemplate name="OplData"/>
+        <internalFileTemplate name="OplSettings"/>
 
     <lang.braceMatcher language="OPL" implementationClass="com.github.cplexopl.features.OplPairedBraceMatcher"/>
         <!-- File type -->
@@ -44,6 +45,13 @@
                 language="OPLDat"
                 extensions="dat"
                 icon="/icons/oplDat.svg"/>
+        <fileType
+                name="OPL Settings File"
+                implementationClass="com.github.cplexopl.OplOpsFileType"
+                fieldName="INSTANCE"
+                language="OPLOps"
+                extensions="ops"
+                icon="/icons/oplOps.svg"/>
 
         <!-- Syntax Highlighting -->
         <lang.syntaxHighlighterFactory
