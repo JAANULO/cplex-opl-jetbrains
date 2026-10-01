@@ -56,26 +56,27 @@ Aby zapewnić szybki cykl deweloperski (*Fast Feedback Loop*), testy zostały ro
 
 | Zestaw Testowy | Klasa Suity | Liczba Testów | Średni Czas | Przeznaczenie |
 | :--- | :--- | :--- | :--- | :--- |
-| **Szybkie testy (Unit / Platform)** | `OplTestSuite` | 40 testów (17 klas) | **~19 s** | Domyślny tryb lokalny (`python scripts/test.py test`) |
+| **Szybkie testy (Unit / Platform)** | `OplTestSuite` | 46 testów (21 klas) | **~19 s** | Domyślny tryb lokalny (`python scripts/test.py test`) |
 | **Testy wydajnościowe (Perf)** | `OplPerformanceTestSuite` | 4 testy (3 klasy) | **~21 s** | Benchmarki i stress-testy (`python scripts/test.py perf` / CI tag `[perf]`) |
-| **Pełna agregacja (All)** | `OplAllTestSuite` | 44 testy (20 klas) | **~26 s** | Przed commitem i release (`python scripts/test.py test:all` / `full`) |
+| **Pełna agregacja (All)** | `OplAllTestSuite` | 50 testów (24 klasy) | **~26 s** | Przed commitem i release (`python scripts/test.py test:all` / `full`) |
 
 ---
 
-## 5. Raportowanie i Metryki (Format JSON)
+## 5. Raportowanie i Metryki (Format JSON & Markdown)
 
-Po każdym uruchomieniu testów generowany jest ujednolicony, zwięzły raport w katalogu `src/test/reports/test-summary-<data>.json` z tabelaryczną strukturą wyników:
+Po każdym uruchomieniu testów generowany jest ujednolicony, zwięzły raport w katalogu `reports/plugin-report-<data>.json` oraz `reports/plugin-report-<data>.md` z tabelaryczną strukturą wyników:
 
 ```json
 {
-  "timestamp": "2026-09-30 19:22:28 (Europe/Warsaw)",
+  "timestamp": "2026-10-01 18:16:07 (Europe/Warsaw)",
+  "category": "plugin",
   "pluginVersion": "1.4.9.7",
   "result": "SUCCESS",
-  "totalTests": 44,
-  "successfulTests": 44,
+  "totalTests": 50,
+  "successfulTests": 50,
   "failedTests": 0,
   "skippedTests": 0,
-  "durationMs": 26383,
+  "durationMs": 26405,
   "environment": {
     "os": "Windows 10",
     "arch": "amd64",
@@ -83,13 +84,13 @@ Po każdym uruchomieniu testów generowany jest ujednolicony, zwięzły raport w
   },
   "columns": ["class", "method", "result", "durationMs"],
   "tests": [
-    ["OplParsingTest", "testSimpleModel", "SUCCESS", 1261],
+    ["OplParsingTest", "testSimpleModel", "SUCCESS", 1115],
     ...
   ]
 }
 ```
 
-Skrypt `scripts/test.py` automatycznie parsuje powyższy raport i drukuje czytelne podsumowanie metryk w terminalu.
+Skrypt `scripts/test.py` automatycznie parsuje powyższy raport i drukuje czytelne podsumowanie metryk w terminalu, a `scripts/generate_github_summary.py` tworzy widok dla GitHub Actions Summary.
 
 ---
 

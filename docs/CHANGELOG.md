@@ -15,6 +15,7 @@
 
 ### Testing
 
+- **Unified Test Reporting Architecture:** Migrated test reports from `src/test/reports` to root `reports/` with automatic `.gitignore` exclusion, keeping source trees 100% clean. Implemented dual-format reporting (machine-readable JSON + human-readable Markdown) with timestamps, and added `scripts/generate_github_summary.py` for automated GitHub Actions Step Summaries.
 - **Test Suite Architecture & Optimization:** Reorganized tests into fast unit/platform suite (`OplTestSuite`), dedicated stress/performance suite (`OplPerformanceTestSuite`), and full aggregation suite (`OplAllTestSuite`).
 - **Performance Testing & CLI:** Standardized performance benchmarks using `PlatformTestUtil.startPerformanceTest`, added dedicated `perf` and `test:all` modes to `scripts/test.py`, and optimized JSON test reports to a compact tabular schema with environment metadata.
 - **Test Coverage:** Added `OplFileTypeTest` to verify file type registrations and icons, and added previously unlinked test classes (`OplPathTranslatorTest`, `OplErrorReportSubmitterTest`, `OplRunConfigurationIntegrationTest`) to the active test suite.
