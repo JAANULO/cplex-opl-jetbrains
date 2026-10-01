@@ -26,4 +26,7 @@ gen/
 
 /scratch
 
-# Trigger verification 12 [test]
+# CI Commit Triggers:
+# [test]        - triggers OPL model regression tests in cplex-opl-examples
+# [perf]        - triggers plugin performance and stress tests (OplPerformanceTestSuite)
+# [perf] [test] - triggers both test suites simultaneously
