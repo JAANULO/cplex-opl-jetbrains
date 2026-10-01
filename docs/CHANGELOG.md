@@ -4,6 +4,8 @@
 
 ### Added
 
+- **Language Grammar & Lexer:** Added support for missing CPLEX OPL keywords (`CPLEX`, `constraint`, `constraints`, `setof`, `struct`, `initial`), set operations (`union`, `inter`, `diff`, `symdiff`), modulo/div, logical operators, and indexed constraint labels (`label[i]:`).
+- **Code Completion & Highlighting:** Full syntax highlighting for all 60+ OPL keywords and operators, comprehensive code completion for OPL built-in math and CP scheduling functions, and a deprecation inspection with Quick-Fix for `struct`.
 - **File Types & Icons:** Added dedicated `OplOpsFileType` registration and custom SVG icon (`oplOps.svg`) for CPLEX OPL settings files (`.ops`).
 - **File Templates:** Added `OplSettings` file template and integrated *Settings file (.ops)* creation into the `New -> OPL File` action dialog.
 
