@@ -2,6 +2,7 @@ package com.github.cplexopl.completion
 
 import com.github.cplexopl.OplLanguage
 import com.intellij.codeInsight.completion.*
+import com.intellij.codeInsight.lookup.LookupElement
 import com.intellij.codeInsight.lookup.LookupElementBuilder
 import com.intellij.patterns.PlatformPatterns
 import com.intellij.util.ProcessingContext
@@ -146,23 +147,112 @@ class OplKeywordCompletionProvider : CompletionProvider<CompletionParameters>() 
         "asin" to OplBundle.message("completion.func.asin"),
         "acos" to OplBundle.message("completion.func.acos"),
         "atan" to OplBundle.message("completion.func.atan"),
+        "sgn" to OplBundle.message("completion.func.sgn"),
+        "dist" to OplBundle.message("completion.func.dist"),
+        "powerset" to OplBundle.message("completion.func.powerset"),
+        "standardDeviation" to OplBundle.message("completion.func.standardDeviation"),
         "allDifferent" to OplBundle.message("completion.func.allDifferent"),
         "pack" to OplBundle.message("completion.func.pack"),
         "pulse" to OplBundle.message("completion.func.pulse"),
         "step" to OplBundle.message("completion.func.step"),
+        "stepAt" to OplBundle.message("completion.func.stepAt"),
+        "stepAtStart" to OplBundle.message("completion.func.stepAtStart"),
+        "stepAtEnd" to OplBundle.message("completion.func.stepAtEnd"),
         "startOf" to OplBundle.message("completion.func.startOf"),
         "endOf" to OplBundle.message("completion.func.endOf"),
         "lengthOf" to OplBundle.message("completion.func.lengthOf"),
         "sizeOf" to OplBundle.message("completion.func.sizeOf"),
         "presenceOf" to OplBundle.message("completion.func.presenceOf"),
         "noOverlap" to OplBundle.message("completion.func.noOverlap"),
+        "span" to OplBundle.message("completion.func.span"),
+        "alternative" to OplBundle.message("completion.func.alternative"),
+        "synchronize" to OplBundle.message("completion.func.synchronize"),
+        "forbidStart" to OplBundle.message("completion.func.forbidStart"),
+        "forbidEnd" to OplBundle.message("completion.func.forbidEnd"),
+        "forbidExtent" to OplBundle.message("completion.func.forbidExtent"),
+        "startBeforeStart" to OplBundle.message("completion.func.startBeforeStart"),
         "startBeforeEnd" to OplBundle.message("completion.func.startBeforeEnd"),
         "endBeforeStart" to OplBundle.message("completion.func.endBeforeStart"),
+        "endBeforeEnd" to OplBundle.message("completion.func.endBeforeEnd"),
         "startAtEnd" to OplBundle.message("completion.func.startAtEnd"),
         "endAtStart" to OplBundle.message("completion.func.endAtStart"),
         "startAtStart" to OplBundle.message("completion.func.startAtStart"),
-        "endAtEnd" to OplBundle.message("completion.func.endAtEnd")
+        "endAtEnd" to OplBundle.message("completion.func.endAtEnd"),
+        "startOfNext" to OplBundle.message("completion.func.startOfNext"),
+        "startOfPrev" to OplBundle.message("completion.func.startOfPrev"),
+        "endOfNext" to OplBundle.message("completion.func.endOfNext"),
+        "endOfPrev" to OplBundle.message("completion.func.endOfPrev"),
+        "lengthOfNext" to OplBundle.message("completion.func.lengthOfNext"),
+        "lengthOfPrev" to OplBundle.message("completion.func.lengthOfPrev"),
+        "sizeOfNext" to OplBundle.message("completion.func.sizeOfNext"),
+        "sizeOfPrev" to OplBundle.message("completion.func.sizeOfPrev"),
+        "count" to OplBundle.message("completion.func.count"),
+        "distribute" to OplBundle.message("completion.func.distribute"),
+        "inverse" to OplBundle.message("completion.func.inverse"),
+        "lexicographic" to OplBundle.message("completion.func.lexicographic"),
+        "element" to OplBundle.message("completion.func.element"),
+        "alwaysEqual" to OplBundle.message("completion.func.alwaysEqual"),
+        "alwaysConstant" to OplBundle.message("completion.func.alwaysConstant"),
+        "alwaysIn" to OplBundle.message("completion.func.alwaysIn"),
+        "sameInterval" to OplBundle.message("completion.func.sameInterval"),
+        "sameSequence" to OplBundle.message("completion.func.sameSequence"),
+        "before" to OplBundle.message("completion.func.before"),
+        "prev" to OplBundle.message("completion.func.prev"),
+        "next" to OplBundle.message("completion.func.next"),
+        "overlapLength" to OplBundle.message("completion.func.overlapLength"),
+        "startEval" to OplBundle.message("completion.func.startEval"),
+        "endEval" to OplBundle.message("completion.func.endEval"),
+        "lengthEval" to OplBundle.message("completion.func.lengthEval"),
+        "sizeEval" to OplBundle.message("completion.func.sizeEval"),
+        "heightAtStart" to OplBundle.message("completion.func.heightAtStart"),
+        "heightAtEnd" to OplBundle.message("completion.func.heightAtEnd")
     )
+
+    // IBM ILOG Script global instances
+    private val scriptInstances = listOf(
+        "thisOplModel" to "[Script] " + OplBundle.message("completion.script.thisOplModel"),
+        "cplex" to "[Script] " + OplBundle.message("completion.script.cplex"),
+        "cp" to "[Script] " + OplBundle.message("completion.script.cp"),
+        "Opl" to "[Script] " + OplBundle.message("completion.script.opl")
+    )
+
+    // IBM ILOG Script functions
+    private val scriptFunctions = listOf(
+        "writeln" to "[Script] " + OplBundle.message("completion.script.writeln"),
+        "write" to "[Script] " + OplBundle.message("completion.script.write"),
+        "IloOplCallJava" to "[Script] " + OplBundle.message("completion.script.IloOplCallJava"),
+        "IloOplImportJava" to "[Script] " + OplBundle.message("completion.script.IloOplImportJava")
+    )
+
+    // IBM ILOG Script classes
+    private val scriptClasses = listOf(
+        "IloOplOutputFile" to "[Script] " + OplBundle.message("completion.script.IloOplOutputFile"),
+        "IloOplInputFile" to "[Script] " + OplBundle.message("completion.script.IloOplInputFile"),
+        "IloOplModel" to "[Script] " + OplBundle.message("completion.script.IloOplModel"),
+        "IloOplModelDefinition" to "[Script] " + OplBundle.message("completion.script.IloOplModelDefinition"),
+        "IloOplRunConfiguration" to "[Script] " + OplBundle.message("completion.script.IloOplRunConfiguration"),
+        "IloOplDataElements" to "[Script] " + OplBundle.message("completion.script.IloOplDataElements"),
+        "IloOplDataSource" to "[Script] " + OplBundle.message("completion.script.IloOplDataSource"),
+        "IloOplConflictIterator" to "[Script] " + OplBundle.message("completion.script.IloOplConflictIterator"),
+        "IloOplRelaxationIterator" to "[Script] " + OplBundle.message("completion.script.IloOplRelaxationIterator"),
+        "IloOplProfiler" to "[Script] " + OplBundle.message("completion.script.IloOplProfiler"),
+        "IloOplCplexBasis" to "[Script] " + OplBundle.message("completion.script.IloOplCplexBasis"),
+        "IloOplCplexVectors" to "[Script] " + OplBundle.message("completion.script.IloOplCplexVectors")
+    )
+
+    private val functionInsertHandler = InsertHandler<LookupElement> { context, _ ->
+        val document = context.document
+        val editor = context.editor
+        val offset = context.tailOffset
+        val chars = document.charsSequence
+        val hasParen = offset < chars.length && chars[offset] == '('
+        if (!hasParen) {
+            document.insertString(offset, "()")
+            editor.caretModel.moveToOffset(offset + 1)
+        } else {
+            editor.caretModel.moveToOffset(offset + 1)
+        }
+    }
 
     override fun addCompletions(
         parameters: CompletionParameters,
@@ -178,12 +268,42 @@ class OplKeywordCompletionProvider : CompletionProvider<CompletionParameters>() 
             )
         }
 
-        // Add built-in functions
+        // Add built-in functions with intelligent parentheses insert handler
         builtinFunctions.forEach { (func, description) ->
             result.addElement(
                 LookupElementBuilder.create(func)
                     .withTypeText(description)
-                    .withTailText("()", true)  // Add () as hint
+                    .withTailText("()", true)
+                    .withInsertHandler(functionInsertHandler)
+            )
+        }
+
+        // Add script global variables / instances
+        scriptInstances.forEach { (name, description) ->
+            result.addElement(
+                LookupElementBuilder.create(name)
+                    .withIcon(com.intellij.icons.AllIcons.Nodes.Variable)
+                    .withTypeText(description)
+            )
+        }
+
+        // Add script functions
+        scriptFunctions.forEach { (func, description) ->
+            result.addElement(
+                LookupElementBuilder.create(func)
+                    .withIcon(com.intellij.icons.AllIcons.Nodes.Function)
+                    .withTypeText(description)
+                    .withTailText("()", true)
+                    .withInsertHandler(functionInsertHandler)
+            )
+        }
+
+        // Add script classes
+        scriptClasses.forEach { (className, description) ->
+            result.addElement(
+                LookupElementBuilder.create(className)
+                    .withIcon(com.intellij.icons.AllIcons.Nodes.Class)
+                    .withTypeText(description)
             )
         }
 

@@ -268,8 +268,8 @@ mul_expr         ::= pratt_expr (STAR | SLASH | MOD | DIV | INTER) pratt_expr
 prefix_expr      ::= (PLUS | MINUS | NOT) pratt_expr
 
 // Extended factor: supports sums, all loops, CP functions, arrays, numbers and variables
-factor ::= (SUM | ALL | MINIMIZE | MAXIMIZE | SETOF | ID) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
-         | (ID | ALLDIFFERENT | PACK | PULSE | STEP) ( LPAREN (expression (COMMA expression)*)? RPAREN )? ( (DOT ID) | (LBRACKET expression RBRACKET) )*
+factor ::= (SUM | PROD | ALL | MINIMIZE | MAXIMIZE | SETOF | ID) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
+         | (ID | ALLDIFFERENT | PACK | PULSE | STEP | STEPFUNCTION | STATEFUNCTION | CUMULFUNCTION | PWLFUNCTION) ( LPAREN (expression (COMMA expression)*)? RPAREN )? ( (DOT ID) | (LBRACKET expression RBRACKET) )*
          | INTEGER_LITERAL
          | FLOAT_LITERAL
          | STRING_LITERAL

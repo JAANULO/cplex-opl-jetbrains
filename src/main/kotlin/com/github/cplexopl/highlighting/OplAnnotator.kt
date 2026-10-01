@@ -10,6 +10,7 @@ import com.intellij.psi.util.PsiModificationTracker
 import com.intellij.lang.annotation.HighlightSeverity
 import com.github.cplexopl.psi.*
 import com.intellij.openapi.diagnostic.Logger
+import com.github.cplexopl.OplBundle
 
 class OplAnnotator : Annotator {
     companion object {
@@ -165,22 +166,76 @@ class OplAnnotator : Annotator {
                 val name = element.text
                 val parent = element.parent ?: return
 
-                // Ignore CPLEX built-in words and global CP (Constraint Programming) functions
+                // Ignore CPLEX built-in words, global CP functions, and ILOG script globals
                 val builtins = setOf(
                     "abs", "ceil", "floor", "max", "min", "sum", "prod", "forall", "exists",
-                    "pulse", "step", "allDifferent", "pack", "all", "setof",
+                    "pulse", "step", "stepAt", "stepAtStart", "stepAtEnd", "allDifferent", "pack", "all", "setof",
                     "endOf", "startOf", "lengthOf", "sizeOf", "presenceOf",
-                    "endBeforeStart", "startBeforeEnd", "startAtEnd", "endAtStart", "startAtStart", "endAtEnd",
+                    "span", "alternative", "synchronize", "forbidStart", "forbidEnd", "forbidExtent",
+                    "startBeforeStart", "startBeforeEnd", "startAtEnd", "endAtStart", "startAtStart", "endAtEnd",
+                    "endBeforeStart", "endBeforeEnd",
+                    "startOfNext", "startOfPrev", "endOfNext", "endOfPrev", "lengthOfNext", "lengthOfPrev", "sizeOfNext", "sizeOfPrev",
                     "noOverlap", "size", "card", "ord", "first", "last",
                     "item", "in", "length", "typeOf", "val", "powerset",
+                    "count", "distribute", "inverse", "lexicographic", "element",
                     "alwaysEqual", "alwaysIn", "alwaysConstant", "stateFunction", "cumulFunction", "piecewise",
                     "ftoi", "itof", "rand", "srand", "trunc", "ln", "log", "log10", "exp", "sqrt", "round",
                     "sin", "cos", "tan", "asin", "acos", "atan", "sgn", "dist", "standardDeviation",
                     "sameInterval", "sameSequence", "before", "prev", "next", "overlapLength",
-                    "startEval", "endEval", "lengthEval", "sizeEval", "heightAtStart", "heightAtEnd"
+                    "startEval", "endEval", "lengthEval", "sizeEval", "heightAtStart", "heightAtEnd",
+                    "thisOplModel", "cplex", "cp", "Opl", "writeln", "write",
+                    "IloOplOutputFile", "IloOplInputFile", "IloOplModel", "IloOplModelDefinition", "IloOplRunConfiguration",
+                    "IloOplDataElements", "IloOplDataSource", "IloOplConflictIterator", "IloOplRelaxationIterator",
+                    "IloOplProfiler", "IloOplCplexBasis", "IloOplCplexVectors", "IloOplCallJava", "IloOplImportJava"
                 )
 
-                if (builtins.contains(name)) return
+                val cpSpecificFunctions = setOf(
+                    "span", "alternative", "synchronize", "forbidStart", "forbidEnd", "forbidExtent",
+                    "startBeforeStart", "startBeforeEnd", "endBeforeStart", "endBeforeEnd",
+                    "startAtEnd", "endAtStart", "startAtStart", "endAtEnd",
+                    "startOfNext", "startOfPrev", "endOfNext", "endOfPrev", "lengthOfNext", "lengthOfPrev",
+                    "sizeOfNext", "sizeOfPrev", "sameInterval", "sameSequence",
+                    "stepAt", "stepAtStart", "stepAtEnd", "pulse", "step", "allDifferent", "pack",
+                    "noOverlap", "alwaysEqual", "alwaysConstant", "alwaysIn",
+                    "count", "distribute", "inverse", "lexicographic", "element",
+                    "startOf", "endOf", "lengthOf", "sizeOf", "presenceOf",
+                    "startEval", "endEval", "lengthEval", "sizeEval", "heightAtStart", "heightAtEnd", "overlapLength"
+                )
+
+                if (builtins.contains(name)) {
+                    if (cpSpecificFunctions.contains(name)) {
+                        val file = element.containingFile
+                        val hasUsingCp = if (file != null) {
+                            CachedValuesManager.getCachedValue(file) {
+                                val found = PsiTreeUtil.findChildrenOfType(file, OplUsingDeclaration::class.java).any {
+                                    it.node.findChildByType(OplTypes.CP) != null
+                                }
+                                CachedValueProvider.Result.create(found, PsiModificationTracker.MODIFICATION_COUNT)
+                            }
+                        } else false
+
+                        if (!hasUsingCp) {
+                            holder.newAnnotation(HighlightSeverity.WARNING, OplBundle.message("inspection.cp.missing.using.cp", name))
+                                .range(element.textRange)
+                                .withFix(object : com.intellij.codeInsight.intention.impl.BaseIntentionAction() {
+                                    override fun getText() = OplBundle.message("fix.cp.insert.using.cp")
+                                    override fun getFamilyName() = "OPL Fixes"
+                                    override fun isAvailable(project: com.intellij.openapi.project.Project, editor: com.intellij.openapi.editor.Editor?, file: com.intellij.psi.PsiFile?) = true
+                                    override fun invoke(project: com.intellij.openapi.project.Project, editor: com.intellij.openapi.editor.Editor?, file: com.intellij.psi.PsiFile?) {
+                                        val doc = file?.viewProvider?.document ?: return
+                                        doc.insertString(0, "using CP;\n")
+                                    }
+                                })
+                                .create()
+                        }
+                    }
+                    return
+                }
+
+                // Check if this ID is an iterator variable definition (e.g. 'i' in 'i in 1..5')
+                val inNode = if (parent is OplOplIterator) parent.node.findChildByType(OplTypes.IN) else null
+                val isIteratorDecl = parent is OplOplIterator && (inNode == null || element.node.startOffset < inNode.startOffset)
+                if (isIteratorDecl) return
 
                 // Is this ID a variable declaration location?
                 val isDeclaration = parent is OplDvarDeclaration ||
