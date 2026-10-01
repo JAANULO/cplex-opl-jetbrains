@@ -81,6 +81,25 @@ class OplAnnotator : Annotator {
                 }
             }
 
+            if (element is OplTupleDeclaration) {
+                val structNode = element.node.findChildByType(OplTypes.STRUCT)
+                if (structNode != null) {
+                    holder.newAnnotation(HighlightSeverity.WARNING, "Keyword 'struct' is deprecated in OPL; use 'tuple' instead")
+                        .range(structNode.textRange)
+                        .withFix(object : com.intellij.codeInsight.intention.impl.BaseIntentionAction() {
+                            override fun getText() = "Replace 'struct' with 'tuple'"
+                            override fun getFamilyName() = "OPL Fixes"
+                            override fun isAvailable(project: com.intellij.openapi.project.Project, editor: com.intellij.openapi.editor.Editor?, file: com.intellij.psi.PsiFile?) = true
+                            override fun invoke(project: com.intellij.openapi.project.Project, editor: com.intellij.openapi.editor.Editor?, file: com.intellij.psi.PsiFile?) {
+                                val doc = file?.viewProvider?.document ?: return
+                                val range = structNode.textRange
+                                doc.replaceString(range.startOffset, range.endOffset, "tuple")
+                            }
+                        })
+                        .create()
+                }
+            }
+
             if (element is OplDvarDeclaration) {
                 val isBoolean = element.node.findChildByType(OplTypes.BOOLEAN) != null
                 val hasRange = element.node.findChildByType(OplTypes.IN) != null
@@ -148,13 +167,17 @@ class OplAnnotator : Annotator {
 
                 // Ignore CPLEX built-in words and global CP (Constraint Programming) functions
                 val builtins = setOf(
-                    "abs", "ceil", "floor", "max", "min", "sum", "forall",
-                    "pulse", "step", "allDifferent", "pack", "all",
-                    "endOf", "startOf", "lengthOf", "endBeforeStart", "startBeforeEnd",
-                    "startAtEnd", "endAtStart", "startAtStart", "endAtEnd",
+                    "abs", "ceil", "floor", "max", "min", "sum", "prod", "forall", "exists",
+                    "pulse", "step", "allDifferent", "pack", "all", "setof",
+                    "endOf", "startOf", "lengthOf", "sizeOf", "presenceOf",
+                    "endBeforeStart", "startBeforeEnd", "startAtEnd", "endAtStart", "startAtStart", "endAtEnd",
                     "noOverlap", "size", "card", "ord", "first", "last",
-                    "item", "in", "length", "typeOf", "presenceOf", "val", "powerset",
-                    "alwaysEqual", "alwaysIn", "alwaysConstant", "stateFunction", "cumulFunction", "piecewise"
+                    "item", "in", "length", "typeOf", "val", "powerset",
+                    "alwaysEqual", "alwaysIn", "alwaysConstant", "stateFunction", "cumulFunction", "piecewise",
+                    "ftoi", "itof", "rand", "srand", "trunc", "ln", "log", "log10", "exp", "sqrt", "round",
+                    "sin", "cos", "tan", "asin", "acos", "atan", "sgn", "dist", "standardDeviation",
+                    "sameInterval", "sameSequence", "before", "prev", "next", "overlapLength",
+                    "startEval", "endEval", "lengthEval", "sizeEval", "heightAtStart", "heightAtEnd"
                 )
 
                 if (builtins.contains(name)) return
@@ -165,6 +188,7 @@ class OplAnnotator : Annotator {
                         parent is OplDexprDeclaration ||
                         parent is OplTupleDeclaration ||
                         parent is OplTupleField ||
+                        parent is OplConstraintDeclaration ||
                         parent is OplConstraintItem ||
                         parent is OplPiecewiseDeclaration ||
                         (parent is OplFactor && parent.node.findChildByType(OplTypes.SUM) != null)
@@ -177,7 +201,7 @@ class OplAnnotator : Annotator {
 
                         fun registerDeclaration(declarationNode: PsiElement) {
                             val idNodes = declarationNode.node.getChildren(null).filter { it.elementType == OplTypes.ID }
-                            val idNode = if (declarationNode is OplDvarDeclaration || declarationNode is OplTupleDeclaration || declarationNode is OplConstraintItem || declarationNode is OplPiecewiseDeclaration) {
+                            val idNode = if (declarationNode is OplDvarDeclaration || declarationNode is OplTupleDeclaration || declarationNode is OplConstraintDeclaration || declarationNode is OplConstraintItem || declarationNode is OplPiecewiseDeclaration) {
                                 idNodes.firstOrNull()
                             } else {
                                 idNodes.lastOrNull()
@@ -191,6 +215,7 @@ class OplAnnotator : Annotator {
                         PsiTreeUtil.findChildrenOfType(currentFile, OplDvarDeclaration::class.java).forEach { registerDeclaration(it) }
                         PsiTreeUtil.findChildrenOfType(currentFile, OplDexprDeclaration::class.java).forEach { registerDeclaration(it) }
                         PsiTreeUtil.findChildrenOfType(currentFile, OplTupleDeclaration::class.java).forEach { registerDeclaration(it) }
+                        PsiTreeUtil.findChildrenOfType(currentFile, OplConstraintDeclaration::class.java).forEach { registerDeclaration(it) }
                         PsiTreeUtil.findChildrenOfType(currentFile, OplPiecewiseDeclaration::class.java).forEach { registerDeclaration(it) }
 
                         PsiTreeUtil.findChildrenOfType(currentFile, OplConstraintItem::class.java).forEach {
@@ -217,7 +242,10 @@ class OplAnnotator : Annotator {
                 if (isDeclaration) {
                     // Checking for duplicates
                     val declarationsList = declaredVariables[name]
-                    if (declarationsList != null && declarationsList.size > 1 && declarationsList.indexOf(parent) > 0) {
+                    val isConstraintItemLabelWithPriorDeclaration = parent is OplConstraintItem &&
+                            declarationsList != null && declarationsList.any { it is OplConstraintDeclaration }
+
+                    if (!isConstraintItemLabelWithPriorDeclaration && declarationsList != null && declarationsList.size > 1 && declarationsList.indexOf(parent) > 0) {
                         holder.newAnnotation(HighlightSeverity.ERROR, "Variable '$name' is already defined")
                             .range(element.textRange)
                             .create()
@@ -226,7 +254,8 @@ class OplAnnotator : Annotator {
                     // Checking for missing semicolon (only for actual variable/type declarations)
                     val needsSemicolon = parent is OplDvarDeclaration ||
                             parent is OplVarDeclaration ||
-                            parent is OplDexprDeclaration
+                            parent is OplDexprDeclaration ||
+                            parent is OplConstraintDeclaration
 
                     if (needsSemicolon) {
                         var lastChild = parent.node.lastChildNode
@@ -253,6 +282,7 @@ class OplAnnotator : Annotator {
                             OplDvarDeclaration::class.java, 
                             OplDexprDeclaration::class.java, 
                             OplVarDeclaration::class.java,
+                            OplConstraintDeclaration::class.java,
                             OplAssertDeclaration::class.java,
                             OplAssertItem::class.java
                         )

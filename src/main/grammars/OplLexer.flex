@@ -44,6 +44,12 @@ BLOCK_COMMENT   = "/*"([^*]|\*[^/])*"*/"
 
 // Keywords - MUST come before the ID rule
 "CP" | "cp"             { return OplTypes.CP; }
+"CPLEX" | "cplex"       { return OplTypes.CPLEX; }
+"constraint"            { return OplTypes.CONSTRAINT; }
+"constraints"           { return OplTypes.CONSTRAINTS; }
+"setof"                 { return OplTypes.SETOF; }
+"struct"                { return OplTypes.STRUCT; }
+"initial"               { return OplTypes.INITIAL; }
 "interval"              { return OplTypes.INTERVAL; }
 "sequence"              { return OplTypes.SEQUENCE; }
 "using"                 { return OplTypes.USING; }

@@ -18,6 +18,12 @@
     // Keywords - reserved words of the OPL language
     USING       = 'using'
     CP          = 'cp'
+    CPLEX       = 'cplex'
+    CONSTRAINT  = 'constraint'
+    CONSTRAINTS = 'constraints'
+    SETOF       = 'setof'
+    STRUCT      = 'struct'
+    INITIAL     = 'initial'
     INTERVAL    = 'interval'
     SEQUENCE    = 'sequence'
     WITH        = 'with'
@@ -144,6 +150,7 @@ declaration ::= piecewiseDeclaration
               | varDeclaration
               | dvarDeclaration
               | dexprDeclaration
+              | constraintDeclaration
               | objectiveDeclaration
               | constraintSection
               | executeBlock
@@ -176,8 +183,16 @@ varDeclaration ::= typeRef ID (LBRACKET expression RBRACKET)* (EQ (ELLIPSIS | ex
   mixin="com.github.cplexopl.psi.OplNamedElementImpl"
 }
 
-// Using declaration (enables CP engine)
-usingDeclaration ::= USING CP SEMICOLON { pin=1 recoverWhile=statement_recover }
+// Using declaration (enables CP or CPLEX engine)
+usingDeclaration ::= USING (CP | CPLEX) SEMICOLON { pin=1 recoverWhile=statement_recover }
+
+// Constraint declaration (supports single and multidimensional constraint arrays)
+constraintDeclaration ::= CONSTRAINT ID (LBRACKET (oplIterator | expression) RBRACKET)* SEMICOLON {
+  pin=1
+  recoverWhile=statement_recover
+  implements="com.github.cplexopl.psi.OplNamedElement"
+  mixin="com.github.cplexopl.psi.OplNamedElementImpl"
+}
 
 // Decision variable declaration (supports arrays, intervals, sequences, sign restrictions and CP clauses)
 dvarDeclaration ::= DVAR ((INT | FLOAT) PLUS? | INT_PLUS | FLOAT_PLUS | BOOLEAN | INTERVAL | SEQUENCE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION) ID (LBRACKET (oplIterator | expression) RBRACKET)* ( (IN ALL | IN | SIZE | ID) (LPAREN oplIterator (COMMA oplIterator)* RPAREN)? expression )* SEMICOLON { 
@@ -199,13 +214,13 @@ dexprDeclaration ::= DEXPR typeRef ID (LBRACKET (oplIterator | expression) RBRAC
 objectiveDeclaration ::= (MINIMIZE | MAXIMIZE) expression SEMICOLON { pin=1 recoverWhile=statement_recover }
 
 // Constraint section
-constraintSection ::= SUBJECT TO LBRACE constraintItem* RBRACE { pin=1 }
+constraintSection ::= (SUBJECT TO | CONSTRAINTS) LBRACE constraintItem* RBRACE { pin=1 }
 
 // Iterator definition for loops and sums (e.g. i in 1..9 : x != 0)
 oplIterator ::= ID (COMMA ID)* IN expression (COLON expression)?
 
-// Conflict guard: optional label (private to avoid breaking Annotator)
-private label ::= ID COLON
+// Conflict guard: optional label (supports indexed labels like myCt[i]:)
+private label ::= ID (LBRACKET (oplIterator | expression) RBRACKET)* COLON
 
 private constraintBlock ::= LBRACE constraintItem* RBRACE SEMICOLON? | constraintItem
 
@@ -218,10 +233,10 @@ constraintItem ::= label? expression SEMICOLON
 executeBlock ::= (EXECUTE | MAIN) ID? executeBody { pin=1 recoverWhile=statement_recover }
 executeBody ::= LBRACE executeItem* RBRACE
 private executeItem ::= executeBody | executeToken
-private executeToken ::= ID | INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | LPAREN | RPAREN | LBRACKET | RBRACKET | PLUS | MINUS | STAR | SLASH | EQ | EQEQ | NEQ | LT | LE | GT | GE | SEMICOLON | COMMA | DOT | DOTDOT | ELLIPSIS | COLON | QUESTION | INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | DEXPR | TUPLE | KEY | MINIMIZE | MAXIMIZE | SUBJECT | TO | INCLUDE | EXECUTE | MAIN | FORALL | EXISTS | IN | IF | ELSE | THEN | USING | CP | INTERVAL | SEQUENCE | WITH | ASSERT | SUM | ALL | PULSE | STEP | ALLDIFFERENT | PACK | SIZE | ANDAND | OROR | NOT | MOD | IMPLIES | PIECEWISE | PIPE | ARROW | SHEETCONNECTION | SHEETREAD | SHEETWRITE | DBCONNECTION | DBREAD | DBEXECUTE | DBUPDATE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION | INFINITY | MAXINT | TEMPLATE | PREPARE | INVOKE | ORDERED | SORTED | REVERSED | SYMDIFF | OPTIONAL | FROM | INTENSITY | TYPES | STEPWISE | DIV | INTER | UNION | DIFF | PROD | AND | OR | TRUE | FALSE
+private executeToken ::= ID | INTEGER_LITERAL | FLOAT_LITERAL | STRING_LITERAL | LPAREN | RPAREN | LBRACKET | RBRACKET | PLUS | MINUS | STAR | SLASH | EQ | EQEQ | NEQ | LT | LE | GT | GE | SEMICOLON | COMMA | DOT | DOTDOT | ELLIPSIS | COLON | QUESTION | INT | FLOAT | BOOLEAN | STRING | RANGE | DVAR | DEXPR | TUPLE | STRUCT | INITIAL | CONSTRAINT | CONSTRAINTS | SETOF | KEY | MINIMIZE | MAXIMIZE | SUBJECT | TO | INCLUDE | EXECUTE | MAIN | FORALL | EXISTS | IN | IF | ELSE | THEN | USING | CP | CPLEX | INTERVAL | SEQUENCE | WITH | ASSERT | SUM | ALL | PULSE | STEP | ALLDIFFERENT | PACK | SIZE | ANDAND | OROR | NOT | MOD | IMPLIES | PIECEWISE | PIPE | ARROW | SHEETCONNECTION | SHEETREAD | SHEETWRITE | DBCONNECTION | DBREAD | DBEXECUTE | DBUPDATE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION | INFINITY | MAXINT | TEMPLATE | PREPARE | INVOKE | ORDERED | SORTED | REVERSED | SYMDIFF | OPTIONAL | FROM | INTENSITY | TYPES | STEPWISE | DIV | INTER | UNION | DIFF | PROD | AND | OR | TRUE | FALSE
 
 // Tuple declaration (struct-like type)
-tupleDeclaration ::= TUPLE ID LBRACE tupleField* RBRACE SEMICOLON? { 
+tupleDeclaration ::= (TUPLE | STRUCT) ID LBRACE tupleField* RBRACE SEMICOLON? { 
   pin=1 
   recoverWhile=statement_recover 
   implements="com.github.cplexopl.psi.OplNamedElement"
@@ -235,8 +250,8 @@ includeDeclaration ::= INCLUDE STRING_LITERAL SEMICOLON { pin=1 }
 // Expressions (Pratt Parser optimized)
 expression ::= implication_expr
 implication_expr ::= or_expr (IMPLIES or_expr)*
-or_expr ::= and_expr (OROR and_expr)*
-and_expr ::= ternary_expr (ANDAND ternary_expr)*
+or_expr ::= and_expr ((OROR | OR) and_expr)*
+and_expr ::= ternary_expr ((ANDAND | AND) ternary_expr)*
 ternary_expr ::= relational_expr (QUESTION relational_expr COLON relational_expr)*
 relational_expr ::= pratt_expr ((LE | LT | GT | GE | EQ | EQEQ | NEQ | IN) pratt_expr)*
 
@@ -248,12 +263,12 @@ pratt_expr ::=
   | factor
 
 range_expr       ::= pratt_expr DOTDOT pratt_expr
-add_expr         ::= pratt_expr (PLUS | MINUS) pratt_expr
-mul_expr         ::= pratt_expr (STAR | SLASH) pratt_expr
-prefix_expr      ::= (PLUS | MINUS) pratt_expr
+add_expr         ::= pratt_expr (PLUS | MINUS | UNION | DIFF | SYMDIFF) pratt_expr
+mul_expr         ::= pratt_expr (STAR | SLASH | MOD | DIV | INTER) pratt_expr
+prefix_expr      ::= (PLUS | MINUS | NOT) pratt_expr
 
 // Extended factor: supports sums, all loops, CP functions, arrays, numbers and variables
-factor ::= (SUM | ALL | MINIMIZE | MAXIMIZE | ID) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
+factor ::= (SUM | ALL | MINIMIZE | MAXIMIZE | SETOF | ID) LPAREN oplIterator (COMMA oplIterator)* RPAREN expression
          | (ID | ALLDIFFERENT | PACK | PULSE | STEP) ( LPAREN (expression (COMMA expression)*)? RPAREN )? ( (DOT ID) | (LBRACKET expression RBRACKET) )*
          | INTEGER_LITERAL
          | FLOAT_LITERAL
@@ -270,5 +285,5 @@ factor ::= (SUM | ALL | MINIMIZE | MAXIMIZE | ID) LPAREN oplIterator (COMMA oplI
          | PIECEWISE LBRACE (expression (ARROW | IMPLIES) expression SEMICOLON)* expression RBRACE (LPAREN expression (COMMA expression)* RPAREN)?
 
 // Recovery rule: "Skip everything until a new declaration start or semicolon"
-private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION | STRING | RANGE | DVAR | DEXPR | TUPLE | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | MAIN | USING | LBRACE | ID | SEMICOLON | RBRACE | ASSERT | PIECEWISE | PWLFUNCTION)
+private statement_recover ::= !(INT | FLOAT | BOOLEAN | INTERVAL | SEQUENCE | CUMULFUNCTION | STATEFUNCTION | STEPFUNCTION | STRING | RANGE | DVAR | DEXPR | TUPLE | STRUCT | CONSTRAINT | CONSTRAINTS | MINIMIZE | MAXIMIZE | SUBJECT | INCLUDE | EXECUTE | MAIN | USING | LBRACE | ID | SEMICOLON | RBRACE | ASSERT | PIECEWISE | PWLFUNCTION)
 
