@@ -5,15 +5,20 @@ Usage:
     python scripts/test.py [mode]
 
 Modes:
-    generate  - generates lexer and parser from .flex and .bnf files
-    build     - generate + compile Kotlin and Java
-    test      - build + run JUnit tests
-    package   - test + package plugin into .zip
-    verify    - package + verify plugin compatibility with IDEs
-    full      - run all steps sequentially (test FIRST, fail fast)
+    generate    - generates lexer and parser from .flex and .bnf files
+    build       - generate + compile Kotlin and Java
+    test        - build + run JUnit tests
+    perf        - run Performance and stress tests
+    test:all    - run all tests (Unit, Platform and Performance)
+    package     - test + package plugin into .zip
+    verify      - package + verify plugin compatibility with IDEs
+    regression  - build plugin + run regression tests in cplex-opl-examples
+    coverage    - generate HTML coverage report (Kover)
+    full        - run all steps sequentially (test FIRST, fail fast)
 
 Example:
     python scripts/test.py test
+    python scripts/test.py regression
     python scripts/test.py full
 
 NOTE: runIde is intentionally omitted - run manually: gradlew.bat runIde (Windows)
@@ -37,38 +42,45 @@ GRADLEW = "gradlew.bat" if platform.system() == "Windows" else "./gradlew"
 
 PROJECT_ROOT = Path(__file__).parent.parent
 LOG_DIR = PROJECT_ROOT / "build" / "agent-logs"
+EXAMPLES_ROOT = PROJECT_ROOT.parent / "cplex-opl-examples"
+
+EXAMPLES_GRADLEW = "gradlew.bat" if platform.system() == "Windows" else "./gradlew"
 
 STEPS = {
     "generate": [
-        [GRADLEW, "generateLexer", "generateParser"],
+        (PROJECT_ROOT, [GRADLEW, "generateLexer", "generateParser"]),
     ],
     "build": [
-        [GRADLEW, "classes", "testClasses"],
+        (PROJECT_ROOT, [GRADLEW, "classes", "testClasses"]),
     ],
     "test": [
-        [GRADLEW, "test", "--info"],
+        (PROJECT_ROOT, [GRADLEW, "test", "--info"]),
     ],
     "perf": [
-        [GRADLEW, "test", "-Psuite=perf", "--info"],
+        (PROJECT_ROOT, [GRADLEW, "test", "-Psuite=perf", "--info"]),
     ],
     "test:all": [
-        [GRADLEW, "test", "-Psuite=all", "--info"],
+        (PROJECT_ROOT, [GRADLEW, "test", "-Psuite=all", "--info"]),
     ],
     "package": [
-        [GRADLEW, "buildPlugin"],
+        (PROJECT_ROOT, [GRADLEW, "buildPlugin"]),
     ],
     "verify": [
-        [GRADLEW, "verifyPlugin"],
+        (PROJECT_ROOT, [GRADLEW, "verifyPlugin"]),
     ],
     "coverage": [
-        [GRADLEW, "koverHtmlReport"],
+        (PROJECT_ROOT, [GRADLEW, "koverHtmlReport"]),
+    ],
+    "regression": [
+        (PROJECT_ROOT, [GRADLEW, "buildPlugin"]),
+        (EXAMPLES_ROOT, [EXAMPLES_GRADLEW, ":test-harness:test", "--info"]),
     ],
     # test runs FIRST so a failing test suite is reported before spending time
     # packaging/verifying the plugin (fail fast, cheaper feedback loop).
     "full": [
-        [GRADLEW, "test", "-Psuite=all", "--info"],
-        [GRADLEW, "buildPlugin"],
-        [GRADLEW, "verifyPlugin"],
+        (PROJECT_ROOT, [GRADLEW, "test", "-Psuite=all", "--info"]),
+        (PROJECT_ROOT, [GRADLEW, "buildPlugin"]),
+        (PROJECT_ROOT, [GRADLEW, "verifyPlugin"]),
     ],
 }
 
@@ -148,12 +160,40 @@ def print_test_summary_report():
         pass
 
 
-def run_step(command: list) -> bool:
-    """Runs a single Gradle step. Returns True if successful."""
+def print_regression_summary_report():
+    """Finds or generates the regression report from cplex-opl-examples and prints it."""
+    if not EXAMPLES_ROOT.exists():
+        print(f"\n⚠️  Folder {EXAMPLES_ROOT} not found.")
+        return
+
+    gen_script = EXAMPLES_ROOT / "scripts" / "generate_github_summary.py"
+    if gen_script.exists():
+        try:
+            subprocess.run([sys.executable, str(gen_script)], cwd=EXAMPLES_ROOT, capture_output=True, text=True)
+        except Exception:
+            pass
+
+    summary_file = EXAMPLES_ROOT / "reports" / "local_summary.md"
+    if summary_file.exists():
+        print(f"\n{'='*55}")
+        print("  📊 REGRESSION SUMMARY (cplex-opl-examples)")
+        print(f"{'='*55}\n")
+        try:
+            print(summary_file.read_text(encoding="utf-8"))
+        except Exception as e:
+            print(f"Could not read summary: {e}")
+
+
+def run_step(cwd: Path, command: list) -> bool:
+    """Runs a single Gradle step in the specified directory. Returns True if successful."""
     name = " ".join(command)
     print(f"\n{'='*55}")
-    print(f"  STEP: {name}")
+    print(f"  STEP: {name} (in {cwd.name})")
     print(f"{'='*55}")
+
+    if not cwd.exists():
+        print(f"\n  ❌ ERROR: Directory does not exist: {cwd}")
+        return False
 
     result = subprocess.run(
         command,
@@ -161,7 +201,7 @@ def run_step(command: list) -> bool:
         text=True,
         encoding="utf-8",
         errors="replace",  # never crash on unexpected bytes (e.g. Windows locale mismatch)
-        cwd=PROJECT_ROOT,
+        cwd=cwd,
     )
 
     output = result.stdout + result.stderr
@@ -193,15 +233,16 @@ def main():
     if len(sys.argv) < 2:
         print(f"Usage: python scripts/test.py [{' | '.join(available)}]")
         print("\nMode descriptions:")
-        print("  generate  - generates lexer and parser from .flex and .bnf")
-        print("  build     - generate + compile")
-        print("  test      - build + run fast Unit & Platform tests")
-        print("  perf      - run Performance and stress tests")
-        print("  test:all  - run all tests (Unit, Platform and Performance)")
-        print("  coverage  - generate HTML coverage report (Kover)")
-        print("  package   - test + build plugin .zip package")
-        print("  verify    - package + verify compatibility with IDEs")
-        print("  full      - all tests first, then package + verify (fail fast)")
+        print("  generate    - generates lexer and parser from .flex and .bnf")
+        print("  build       - generate + compile")
+        print("  test        - build + run fast Unit & Platform tests")
+        print("  perf        - run Performance and stress tests")
+        print("  test:all    - run all tests (Unit, Platform and Performance)")
+        print("  package     - test + build plugin .zip package")
+        print("  verify      - package + verify compatibility with IDEs")
+        print("  regression  - build plugin + run regression tests on OPL models (cplex-opl-examples)")
+        print("  coverage    - generate HTML coverage report (Kover)")
+        print("  full        - all tests first, then package + verify (fail fast)")
         sys.exit(0)
 
     mode = sys.argv[1].lower()
@@ -214,12 +255,14 @@ def main():
     steps = STEPS[mode]
     print(f"\n🚀 Mode: {mode.upper()} ({len(steps)} steps) | OS: {platform.system()}")
 
-    for command in steps:
-        if not run_step(command):
+    for cwd, command in steps:
+        if not run_step(cwd, command):
             sys.exit(1)
 
     if mode in ("test", "perf", "test:all", "full"):
         print_test_summary_report()
+    elif mode == "regression":
+        print_regression_summary_report()
 
     print(f"\n{'='*55}")
     print(f"  ✅ ALL STEPS COMPLETED SUCCESSFULLY [{mode.upper()}]")
