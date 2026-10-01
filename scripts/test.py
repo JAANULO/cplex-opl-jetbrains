@@ -134,14 +134,27 @@ def save_full_log(name: str, output: str) -> Path:
 
 
 def print_test_summary_report():
-    """Finds the most recent test summary JSON in src/test/reports and displays a concise execution summary."""
-    reports_dir = PROJECT_ROOT / "src" / "test" / "reports"
+    """Finds the most recent test summary JSON in reports/ and displays a concise execution summary."""
+    reports_dir = PROJECT_ROOT / "reports"
     if not reports_dir.exists():
         return
-    json_files = sorted(reports_dir.glob("test-summary-*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
+    json_files = sorted(
+        list(reports_dir.glob("plugin-report-*.json")) + list(reports_dir.glob("test-summary-*.json")),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True
+    )
     if not json_files:
         return
     latest_report = json_files[0]
+
+    # Generate or refresh the matching markdown summary
+    gen_script = PROJECT_ROOT / "scripts" / "generate_github_summary.py"
+    if gen_script.exists():
+        try:
+            subprocess.run([sys.executable, str(gen_script)], cwd=PROJECT_ROOT, capture_output=True, text=True)
+        except Exception:
+            pass
+
     try:
         data = json.loads(latest_report.read_text(encoding="utf-8"))
         total = data.get("totalTests", 0)
@@ -173,13 +186,23 @@ def print_regression_summary_report():
         except Exception:
             pass
 
-    summary_file = EXAMPLES_ROOT / "reports" / "local_summary.md"
-    if summary_file.exists():
+    reports_dir = EXAMPLES_ROOT / "reports"
+    if not reports_dir.exists():
+        return
+
+    md_files = sorted(
+        list(reports_dir.glob("models-report-*.md")) + list(reports_dir.glob("regression-summary-*.md")) + list(reports_dir.glob("local_summary.md")),
+        key=lambda p: p.stat().st_mtime,
+        reverse=True
+    )
+
+    if md_files:
+        latest_summary = md_files[0]
         print(f"\n{'='*55}")
         print("  📊 REGRESSION SUMMARY (cplex-opl-examples)")
         print(f"{'='*55}\n")
         try:
-            print(summary_file.read_text(encoding="utf-8"))
+            print(latest_summary.read_text(encoding="utf-8"))
         except Exception as e:
             print(f"Could not read summary: {e}")
 

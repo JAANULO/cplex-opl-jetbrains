@@ -183,7 +183,7 @@ tasks.withType<Test> {
 
     val testDetails = Collections.synchronizedList(mutableListOf<Map<String, Any>>())
     val pluginVer = providers.gradleProperty("pluginVersion").get()
-    val reportsDir = layout.projectDirectory.dir("src/test/reports").asFile
+    val reportsDir = layout.projectDirectory.dir("reports").asFile
 
     addTestListener(object : TestListener {
         override fun beforeSuite(suite: TestDescriptor) {}
@@ -203,7 +203,7 @@ tasks.withType<Test> {
                 val nowWarsaw = LocalDateTime.now(ZoneId.of("Europe/Warsaw"))
                 val fileFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
                 val displayFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")
-                val filename = "test-summary-${nowWarsaw.format(fileFormatter)}.json"
+                val filename = "plugin-report-${nowWarsaw.format(fileFormatter)}.json"
                 val summaryFile = File(reportsDir, filename)
 
                 val totalDuration = result.endTime - result.startTime
@@ -219,6 +219,7 @@ tasks.withType<Test> {
                 val summaryJson = """
                 {
                   "timestamp": "${nowWarsaw.format(displayFormatter)} (Europe/Warsaw)",
+                  "category": "plugin",
                   "pluginVersion": "$pluginVer",
                   "result": "${result.resultType}",
                   "totalTests": ${result.testCount},

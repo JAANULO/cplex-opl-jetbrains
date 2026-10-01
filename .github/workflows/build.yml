@@ -117,6 +117,11 @@ jobs:
           files: ${{ github.workspace }}/build/reports/kover/report.xml
           token: ${{ secrets.CODECOV_TOKEN }}
 
+      # Generate GitHub Actions Test Summary
+      - name: Generate Test Summary
+        if: ${{ always() }}
+        run: python scripts/generate_github_summary.py
+
   # Run Qodana inspections and provide a report
   inspectCode:
     name: Inspect code

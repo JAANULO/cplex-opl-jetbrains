@@ -22,8 +22,7 @@ gen/
 *.log
 
 # Test Reports
-src/test/reports/
-.env
+/reports/
 
 /scratch
 
