@@ -11,7 +11,12 @@ Plugin dodaje pełnoprawną obsługę plików z rozszerzeniami `.mod`, `.dat` or
 
 * **Typy plików i ikony**: Każdy z formatów (`.mod` – model, `.dat` – dane, `.ops` – ustawienia) posiada własny zarejestrowany `FileType`, dedykowaną ikonę SVG oraz szablon w menu *New -> OPL File*.
 * **Podświetlanie Składni (Syntax Highlighting)**: Słowa kluczowe OPL, typy danych (`int`, `float`, `dvar`), komentarze i ciągi znaków posiadają własne kolory spójne z używanym motywem IDE. Zaimplementowano specjalny Lexer (plik `opl.flex`).
-* **Autouzupełnianie (Code Completion)**: Edytor podpowiada kluczowe słowa strukturalne języka podczas pisania (np. `maximize`, `minimize`, `subject to`, typy zmiennych).
+* **Autouzupełnianie (Code Completion)**: Edytor podpowiada słowa kluczowe OPL, pełen zestaw funkcji i ograniczeń Constraint Programming / Scheduling (np. `span`, `alternative`, `synchronize`, `forbidStart`, `stepAt`, `count`, `distribute`, `inverse`), funkcje matematyczne oraz obiekty skryptowe IBM ILOG Script (`thisOplModel`, `cplex`, `cp`, `writeln`, `IloOpl*`) wraz z inteligentnym wstawianiem nawiasów `()`.
+* **Inspekcje i Quick-Fixy**:
+  * Ostrzeżenie przed użyciem funkcji CP Optimizer (np. `span`, `alternative`) w plikach bez zadeklarowanego silnika `using CP;` z akcją naprawczą `Alt+Enter` (wstawia `using CP;` na początku pliku).
+  * Ostrzeżenie przed przestarzałym słowem kluczowym `struct` z Quick-Fixem zamieniającym na `tuple`.
+  * Walidacja funkcji celu w modelach szeregowania zadań (brak funkcji czasowych typu `endOf`).
+  * Ostrzeżenie przed funkcjami nieliniowymi (`min`, `max`, `abs`) w problemach MIP.
 * **Formatowanie Kodu (Code Formatter)**: Zaimplementowano automatyczne wcięcia (indentację) kodu zgodnie z regułami języka (np. zawartość w klamrach `{ ... }` jest automatycznie wyrównywana).
 * **Nawigacja (References & Go To Definition)**: Możliwość kliknięcia na zmienną z wciśniętym `Ctrl` (lub `Cmd`), aby przeskoczyć do miejsca jej definicji w obrębie pliku.
 * **Widok Struktury (Structure View)**: Po lewej stronie w zakładce *Structure* IDE generuje "drzewo" pliku – pokazuje listę zadeklarowanych zmiennych decyzyjnych (`dvar`), celów (np. `maximize`) i sekcji ograniczeń. Ułatwia to nawigację po ogromnych modelach matematycznych.

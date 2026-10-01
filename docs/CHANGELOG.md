@@ -4,6 +4,10 @@
 
 ### Added
 
+- **CP Optimizer & Scheduling Vocabulary:** Added comprehensive syntax recognition and code completion for over 30 Constraint Programming (CP) functions and scheduling constraints (`span`, `alternative`, `synchronize`, `forbidStart`, `forbidEnd`, `forbidExtent`, `startBeforeStart`, `endBeforeEnd`, `startOfNext`, `startOfPrev`, `endOfNext`, `endOfPrev`, `stepAt`, `stepAtStart`, `stepAtEnd`, `count`, `distribute`, `inverse`, `lexicographic`, `element`, `powerset`, `standardDeviation`, `sgn`, `dist`, etc.).
+- **IBM ILOG Script Autocompletion:** Added code completion and icon categorization for scripting global instances (`thisOplModel`, `cplex`, `cp`, `Opl`), scripting functions (`writeln`, `write`, `IloOplCallJava`, `IloOplImportJava`), and scripting classes (`IloOplOutputFile`, `IloOplInputFile`, `IloOplModel`, `IloOplDataElements`, `IloOplConflictIterator`, `IloOplProfiler`, etc.).
+- **Code Completion UX:** Added intelligent parentheses insertion handler for function completions that automatically inserts `()` and places the caret inside without duplicating existing parentheses.
+- **CP Engine Inspection & Quick-Fix:** Added an inspection warning in `OplAnnotator` when Constraint Programming functions are used without a `using CP;` declaration, accompanied by a quick-fix (`Alt+Enter`) that automatically inserts `using CP;` at the top of the file.
 - **Language Grammar & Lexer:** Added support for missing CPLEX OPL keywords (`CPLEX`, `constraint`, `constraints`, `setof`, `struct`, `initial`), set operations (`union`, `inter`, `diff`, `symdiff`), modulo/div, logical operators, and indexed constraint labels (`label[i]:`).
 - **Code Completion & Highlighting:** Full syntax highlighting for all 60+ OPL keywords and operators, comprehensive code completion for OPL built-in math and CP scheduling functions, and a deprecation inspection with Quick-Fix for `struct`.
 - **File Types & Icons:** Added dedicated `OplOpsFileType` registration and custom SVG icon (`oplOps.svg`) for CPLEX OPL settings files (`.ops`).
