@@ -2,6 +2,8 @@
 
 # CPLEX-Plugin Changelog
 
+## [Unreleased]
+
 ### Added
 
 - **CP Optimizer & Scheduling Vocabulary:** Added comprehensive syntax recognition and code completion for over 30 Constraint Programming (CP) functions and scheduling constraints (`span`, `alternative`, `synchronize`, `forbidStart`, `forbidEnd`, `forbidExtent`, `startBeforeStart`, `endBeforeEnd`, `startOfNext`, `startOfPrev`, `endOfNext`, `endOfPrev`, `stepAt`, `stepAtStart`, `stepAtEnd`, `count`, `distribute`, `inverse`, `lexicographic`, `element`, `powerset`, `standardDeviation`, `sgn`, `dist`, etc.).
