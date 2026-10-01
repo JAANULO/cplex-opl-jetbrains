@@ -89,7 +89,7 @@ class OplAnnotator : Annotator {
                         .range(structNode.textRange)
                         .withFix(object : com.intellij.codeInsight.intention.impl.BaseIntentionAction() {
                             override fun getText() = "Replace 'struct' with 'tuple'"
-                            override fun getFamilyName() = "OPL Fixes"
+                            override fun getFamilyName() = "OPL fixes"
                             override fun isAvailable(project: com.intellij.openapi.project.Project, editor: com.intellij.openapi.editor.Editor?, file: com.intellij.psi.PsiFile?) = true
                             override fun invoke(project: com.intellij.openapi.project.Project, editor: com.intellij.openapi.editor.Editor?, file: com.intellij.psi.PsiFile?) {
                                 val doc = file?.viewProvider?.document ?: return
@@ -219,7 +219,7 @@ class OplAnnotator : Annotator {
                                 .range(element.textRange)
                                 .withFix(object : com.intellij.codeInsight.intention.impl.BaseIntentionAction() {
                                     override fun getText() = OplBundle.message("fix.cp.insert.using.cp")
-                                    override fun getFamilyName() = "OPL Fixes"
+                                    override fun getFamilyName() = "OPL fixes"
                                     override fun isAvailable(project: com.intellij.openapi.project.Project, editor: com.intellij.openapi.editor.Editor?, file: com.intellij.psi.PsiFile?) = true
                                     override fun invoke(project: com.intellij.openapi.project.Project, editor: com.intellij.openapi.editor.Editor?, file: com.intellij.psi.PsiFile?) {
                                         val doc = file?.viewProvider?.document ?: return
@@ -233,8 +233,7 @@ class OplAnnotator : Annotator {
                 }
 
                 // Check if this ID is an iterator variable definition (e.g. 'i' in 'i in 1..5')
-                val inNode = if (parent is OplOplIterator) parent.node.findChildByType(OplTypes.IN) else null
-                val isIteratorDecl = parent is OplOplIterator && (inNode == null || element.node.startOffset < inNode.startOffset)
+                val isIteratorDecl = parent is OplOplIterator
                 if (isIteratorDecl) return
 
                 // Is this ID a variable declaration location?

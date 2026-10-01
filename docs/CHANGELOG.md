@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.5.0] - 2026-10-01
+
 ### Added
 
 - **CP Optimizer & Scheduling Vocabulary:** Added comprehensive syntax recognition and code completion for over 30 Constraint Programming (CP) functions and scheduling constraints (`span`, `alternative`, `synchronize`, `forbidStart`, `forbidEnd`, `forbidExtent`, `startBeforeStart`, `endBeforeEnd`, `startOfNext`, `startOfPrev`, `endOfNext`, `endOfPrev`, `stepAt`, `stepAtStart`, `stepAtEnd`, `count`, `distribute`, `inverse`, `lexicographic`, `element`, `powerset`, `standardDeviation`, `sgn`, `dist`, etc.).
@@ -309,7 +311,9 @@
 - Updated `README.md` feature lists (EN/PL) to match current implementation.
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
 
-[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.9.7...HEAD
+[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.5.0...HEAD
+[1.5.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.9.7...1.5.0
+[1.4.9.7]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.9.6...1.4.9.7
 [1.4.9]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.8...1.4.9
 [1.4.8]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.7...1.4.8
 [1.4.7]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.6...1.4.7
