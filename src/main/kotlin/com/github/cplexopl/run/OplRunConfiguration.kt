@@ -257,7 +257,7 @@ class OplRunState(
                     if (event.exitCode == 0) {
                         val settings = OplSettingsState.instance
                         settings.successfulRunCount++
-                        if (settings.successfulRunCount == 5 && !settings.neverShowRatePrompt) {
+                        if (settings.successfulRunCount >= settings.nextRatePromptRunCount && !settings.neverShowRatePrompt) {
                             com.github.cplexopl.actions.OplRatePrompt.showNotification(config.project)
                         }
                     }

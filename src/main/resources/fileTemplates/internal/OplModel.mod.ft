@@ -1,2 +1,23 @@
-// OPL Model
+// OPL Model: ${NAME}
 // Created: ${DATE}
+
+// 1. Data Declarations
+int nbItems = ...;
+range Items = 1..nbItems;
+
+int values[Items] = ...;
+int weights[Items] = ...;
+int capacity = ...;
+
+// 2. Decision Variables
+dvar boolean x[Items];
+
+// 3. Objective Function
+maximize
+  sum(i in Items) values[i] * x[i];
+
+// 4. Constraints
+subject to {
+  ctCapacity:
+    sum(i in Items) weights[i] * x[i] <= capacity;
+}

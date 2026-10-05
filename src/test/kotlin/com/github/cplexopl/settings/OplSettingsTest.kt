@@ -41,4 +41,24 @@ class OplSettingsTest : BasePlatformTestCase() {
             configurable.disposeUIResources()
         }
     }
+
+    fun testRatePromptStateLifecycle() {
+        val state = OplSettingsState()
+        assertEquals(5, state.nextRatePromptRunCount)
+        assertFalse(state.neverShowRatePrompt)
+        assertFalse(state.hasShownWelcomeNotification)
+
+        state.successfulRunCount = 5
+        state.nextRatePromptRunCount = 15
+        state.neverShowRatePrompt = true
+        state.hasShownWelcomeNotification = true
+
+        val copy = OplSettingsState()
+        copy.loadState(state)
+
+        assertEquals(5, copy.successfulRunCount)
+        assertEquals(15, copy.nextRatePromptRunCount)
+        assertTrue(copy.neverShowRatePrompt)
+        assertTrue(copy.hasShownWelcomeNotification)
+    }
 }

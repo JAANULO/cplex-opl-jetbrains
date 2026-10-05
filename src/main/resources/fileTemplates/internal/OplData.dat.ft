@@ -1,2 +1,7 @@
 // OPL Data
 // Created: ${DATE}
+
+nbItems = 3;
+values = [10, 20, 30];
+weights = [2, 5, 7];
+capacity = 10;

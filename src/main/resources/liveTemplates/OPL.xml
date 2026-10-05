@@ -16,6 +16,21 @@
         <context><option name="OPL" value="true"/></context>
     </template>
 
+    <!-- Runnable Knapsack model -->
+    <!-- Usage: type "knap" + Tab -->
+    <template name="knap"
+              value="// Knapsack Optimization Model&#10;int nbItems = $N$;&#10;range Items = 1..nbItems;&#10;&#10;int values[Items] = $VALUES$;&#10;int weights[Items] = $WEIGHTS$;&#10;int capacity = $CAPACITY$;&#10;&#10;dvar boolean x[Items];&#10;&#10;maximize sum(i in Items) values[i] * x[i];&#10;&#10;subject to {&#10;  ctCapacity:&#10;    sum(i in Items) weights[i] * x[i] &lt;= capacity;&#10;}&#10;$END$"
+              description="Runnable Knapsack optimization model"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="N" expression="" defaultValue="&quot;3&quot;" alwaysStopAt="true"/>
+        <variable name="VALUES" expression="" defaultValue="&quot;[10, 20, 30]&quot;" alwaysStopAt="true"/>
+        <variable name="WEIGHTS" expression="" defaultValue="&quot;[2, 5, 7]&quot;" alwaysStopAt="true"/>
+        <variable name="CAPACITY" expression="" defaultValue="&quot;10&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
     <!-- Range declaration -->
     <!-- Usage: type "rng" + Tab -->
     <template name="rng"
@@ -41,6 +56,35 @@
         <variable name="TYPE" expression="" defaultValue="&quot;float+&quot;" alwaysStopAt="true"/>
         <variable name="NAME" expression="" defaultValue="&quot;x&quot;" alwaysStopAt="true"/>
         <variable name="RANGE" expression="" defaultValue="&quot;R&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Constraint Programming Interval Variable -->
+    <!-- Usage: type "interval" + Tab -->
+    <template name="interval"
+              value="dvar interval $NAME$ in $START$..$END$ size $SIZE$;"
+              description="CP Optimizer interval decision variable"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="NAME" expression="" defaultValue="&quot;itv&quot;" alwaysStopAt="true"/>
+        <variable name="START" expression="" defaultValue="&quot;0&quot;" alwaysStopAt="true"/>
+        <variable name="END" expression="" defaultValue="&quot;100&quot;" alwaysStopAt="true"/>
+        <variable name="SIZE" expression="" defaultValue="&quot;10&quot;" alwaysStopAt="true"/>
+        <context><option name="OPL" value="true"/></context>
+    </template>
+
+    <!-- Constraint Programming Span Constraint -->
+    <!-- Usage: type "span" + Tab -->
+    <template name="span"
+              value="span($ITV$, all(i in $RANGE$) $SUBITV$[i]);"
+              description="CP Optimizer span constraint"
+              shortcut="TAB"
+              toReformat="true"
+              toShortenFQNames="true">
+        <variable name="ITV" expression="" defaultValue="&quot;parentItv&quot;" alwaysStopAt="true"/>
+        <variable name="RANGE" expression="" defaultValue="&quot;Tasks&quot;" alwaysStopAt="true"/>
+        <variable name="SUBITV" expression="" defaultValue="&quot;taskItv&quot;" alwaysStopAt="true"/>
         <context><option name="OPL" value="true"/></context>
     </template>
 
