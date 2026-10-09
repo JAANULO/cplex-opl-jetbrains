@@ -81,6 +81,11 @@ Auto-detect scans standard installation paths (e.g., <code>C:\Program Files\IBM\
 In your Run Configuration (<code>Run</code> &rarr; <code>Edit Configurations...</code>), change <b>Execution Mode</b> to <i>WSL</i> or <i>Docker</i>. The plugin automatically converts Windows paths to Unix paths (e.g., <code>/mnt/c/...</code>) before launching <code>oplrun</code>.
 </details>
 
+<details>
+<summary><b>Privacy & Anonymous Telemetry</b></summary>
+This plugin utilizes the standard JetBrains Feature Usage Statistics (FUS) framework to collect strictly anonymous usage metrics (e.g. solver runs, file creation). No personal data, project names, file paths, or model source code are ever collected (zero PII). Telemetry strictly respects your global IDE Data Sharing settings (<code>Settings</code> &rarr; <code>Appearance & Behavior</code> &rarr; <code>System Settings</code> &rarr; <code>Data Sharing</code>).
+</details>
+
 ---
 
 <h2 id="polski">🇵🇱 Polski</h2>
@@ -127,9 +132,13 @@ Nowoczesna, szybka i lekka alternatywa dla przestarzałego środowiska IBM CPLEX
 3. **Uruchomienie modelu:**
    Kliknij prawym przyciskiem myszy na plik `.mod` i wciśnij <kbd>Shift+F10</kbd>.
 
+### 🔒 Prywatność i Anonimowa Telemetria
+
+Wtyczka korzysta z oficjalnego mechanizmu JetBrains Feature Usage Statistics (FUS) do zbierania w pełni anonimowych statystyk użycia (np. uruchomienia solvera, tworzenie szablonów). Żadne dane osobowe, ścieżki do plików, nazwy projektów ani kod modeli **nie są zbierane** (zero PII, pełna zgodność z RODO). Telemetria respektuje globalne ustawienie dzielenia się danymi w IntelliJ (`Settings` &rarr; `Appearance & Behavior` &rarr; `System Settings` &rarr; `Data Sharing`).
+
 ---
 
-### 🤝 Społeczność i Zgłaszanie Uwagg
+### 🤝 Społeczność i Zgłaszanie Uwag
 
 Znalazłeś błąd lub masz pomysł na nową funkcję?
 - [Zgłoś problem na GitHub Issues](https://github.com/JAANULO/CPLEX-Plugin/issues)

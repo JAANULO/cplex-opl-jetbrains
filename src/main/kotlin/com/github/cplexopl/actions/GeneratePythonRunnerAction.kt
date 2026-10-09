@@ -61,7 +61,10 @@ class GeneratePythonRunnerAction : AnAction() {
                         NotificationType.INFORMATION
                     )
                     .notify(project)
+
+                com.github.cplexopl.statistics.OplUsageCollector.logPythonRunnerGenerated(true)
             } catch (ex: Exception) {
+                com.github.cplexopl.statistics.OplUsageCollector.logPythonRunnerGenerated(false)
                 Messages.showErrorDialog(project, "Error creating file: ${ex.message}", "Error")
             }
         }

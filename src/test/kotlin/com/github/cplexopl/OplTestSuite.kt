@@ -41,6 +41,7 @@ import org.junit.runners.Suite
     OplErrorReportSubmitterTest::class,
     OplPathTranslatorTest::class,
     OplRunConfigurationIntegrationTest::class,
-    OplFileTypeTest::class
+    OplFileTypeTest::class,
+    com.github.cplexopl.statistics.OplUsageCollectorTest::class
 )
 class OplTestSuite

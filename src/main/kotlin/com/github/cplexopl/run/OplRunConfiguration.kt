@@ -254,6 +254,21 @@ class OplRunState(
                         }
                     }
 
+                    val exitCode = event.exitCode
+                    val status = if (exitCode == 0) {
+                        com.github.cplexopl.statistics.OplUsageCollector.ExitStatus.SUCCESS
+                    } else {
+                        com.github.cplexopl.statistics.OplUsageCollector.ExitStatus.SOLVER_ERROR
+                    }
+
+                    com.github.cplexopl.statistics.OplUsageCollector.logModelExecuted(
+                        hasDat = config.dataFile.isNotEmpty(),
+                        hasOps = config.settingsFile.isNotEmpty(),
+                        source = com.github.cplexopl.statistics.OplUsageCollector.ExecutionSource.RUN_CONFIG,
+                        status = status,
+                        exitCode = exitCode
+                    )
+
                     if (event.exitCode == 0) {
                         val settings = OplSettingsState.instance
                         settings.successfulRunCount++
@@ -267,6 +282,13 @@ class OplRunState(
             ProcessTerminatedListener.attach(handler)
             return handler
         } catch (e: Exception) {
+            com.github.cplexopl.statistics.OplUsageCollector.logModelExecuted(
+                hasDat = config.dataFile.isNotEmpty(),
+                hasOps = config.settingsFile.isNotEmpty(),
+                source = com.github.cplexopl.statistics.OplUsageCollector.ExecutionSource.RUN_CONFIG,
+                status = com.github.cplexopl.statistics.OplUsageCollector.ExitStatus.INTERNAL_EXCEPTION,
+                exitCode = -1
+            )
             throw RuntimeConfigurationException(com.github.cplexopl.OplBundle.message("error.run.startFailed", e.message ?: ""))
         }
     }

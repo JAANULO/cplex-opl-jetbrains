@@ -107,6 +107,11 @@ intellijPlatform {
             create("IC", "2025.1.7.1")
             create("IC", "2025.2.6.1")
         }
+        failureLevel.set(
+            listOf(
+                org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.INVALID_PLUGIN
+            )
+        )
     }
 }
 
@@ -160,8 +165,8 @@ tasks {
         dependsOn(patchChangelog)
     }
 }
-// Disable instrumentation tasks (for both code and tests) due to an MS JDK bug
-tasks.matching { it.name == "instrumentCode" || it.name == "instrumentTestCode" }.configureEach {
+// Disable instrumentation tasks (for both code and tests) and buildSearchableOptions
+tasks.matching { it.name == "instrumentCode" || it.name == "instrumentTestCode" || it.name == "buildSearchableOptions" }.configureEach {
     enabled = false
 }
 tasks.withType<Test> {

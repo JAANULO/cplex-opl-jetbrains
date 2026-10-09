@@ -23,7 +23,15 @@ class OplSettingsConfigurable : Configurable {
     // Executed after clicking "Apply" or "OK"
     override fun apply() {
         val state = OplSettingsState.instance
-        state.savedCplexPath = component?.cplexPath ?: ""
+        val newPath = component?.cplexPath ?: ""
+        if (newPath != state.savedCplexPath) {
+            state.savedCplexPath = newPath
+            if (newPath.isNotBlank()) {
+                com.github.cplexopl.statistics.OplUsageCollector.logCplexDetection(
+                    com.github.cplexopl.statistics.OplUsageCollector.DetectionSource.CUSTOM_SETTINGS
+                )
+            }
+        }
     }
 
     // Loads data from XML when opening Settings window

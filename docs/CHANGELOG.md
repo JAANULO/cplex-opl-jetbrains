@@ -11,6 +11,7 @@
 - **User Engagement & Feedback:** Redesigned rating prompt (`OplRatePrompt`) into a 3-action dialog (*Rate on Marketplace*, *Report Issue / Feedback* on GitHub, *Remind me later* after 10 runs).
 - **Onboarding:** Added welcome notification (`OplWelcomeNotification`) guiding new users on solver auto-detection, keyboard shortcuts (`Shift+F10`), and reference examples.
 - **Community Templates:** Added GitHub issue templates (`.github/ISSUE_TEMPLATE/bug_report.md` and `feature_request.md`).
+- **Anonymous Telemetry (JetBrains FUS):** Added privacy-friendly, GDPR-compliant usage statistics collector (`OplUsageCollector`) based on JetBrains Feature Usage Statistics framework to track solver execution status, file template creation, Python runner generation, and CPLEX path resolution without collecting any PII.
 - **Storefront & Documentation:** Overhauled `docs/DESCRIPTION.md` and `README.md` with comparison matrix, quickstart guide, SEO tags, keyboard shortcut tables, and status badges.
 
 ## [1.5.0] - 2026-10-01

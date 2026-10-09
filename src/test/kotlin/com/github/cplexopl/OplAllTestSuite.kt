@@ -43,6 +43,7 @@ import org.junit.runners.Suite
     OplPathTranslatorTest::class,
     OplRunConfigurationIntegrationTest::class,
     OplFileTypeTest::class,
+    com.github.cplexopl.statistics.OplUsageCollectorTest::class,
     OplParserPerformanceTest::class,
     OplConsoleFilterPerformanceTest::class,
     OplAnnotatorPerformanceTest::class

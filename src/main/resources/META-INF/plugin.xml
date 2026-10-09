@@ -96,6 +96,7 @@
                 id="com.github.cplexopl.settings.OplSettingsConfigurable"
                 displayName="CPLEX OPL"/>
 
+        <statistics.counterUsagesCollector implementationClass="com.github.cplexopl.statistics.OplUsageCollector"/>
     </extensions>
 
     <actions>
