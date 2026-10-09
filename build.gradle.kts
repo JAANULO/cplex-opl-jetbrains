@@ -164,6 +164,10 @@ tasks {
     publishPlugin {
         dependsOn(patchChangelog)
     }
+
+    named<org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask>("runIde") {
+        systemProperty("idea.is.internal", "true")
+    }
 }
 // Disable instrumentation tasks (for both code and tests) and buildSearchableOptions
 tasks.matching { it.name == "instrumentCode" || it.name == "instrumentTestCode" || it.name == "buildSearchableOptions" }.configureEach {

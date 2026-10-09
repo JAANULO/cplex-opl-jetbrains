@@ -60,6 +60,7 @@ object OplUsageCollector : CounterUsagesCollector() {
         status: ExitStatus,
         exitCode: Int = 0
     ) {
+        LOG.info("FUS Event [model.executed]: hasDat=$hasDat, hasOps=$hasOps, source=$source, status=$status, exitCode=$exitCode")
         runCatching {
             MODEL_EXECUTED_EVENT.log(
                 HAS_DAT_FIELD.with(hasDat),
@@ -77,6 +78,7 @@ object OplUsageCollector : CounterUsagesCollector() {
      * Rejestruje utworzenie pliku OPL (.mod / .dat / .ops).
      */
     fun logFileCreated(fileType: FileTypeEnum) {
+        LOG.info("FUS Event [file.created]: fileType=$fileType")
         runCatching {
             FILE_CREATED_EVENT.log(fileType)
         }.onFailure { e ->
@@ -88,6 +90,7 @@ object OplUsageCollector : CounterUsagesCollector() {
      * Rejestruje wygenerowanie skryptu uruchomieniowego Pythona.
      */
     fun logPythonRunnerGenerated(success: Boolean) {
+        LOG.info("FUS Event [python.runner.generated]: success=$success")
         runCatching {
             PYTHON_RUNNER_EVENT.log(success)
         }.onFailure { e ->
@@ -99,6 +102,7 @@ object OplUsageCollector : CounterUsagesCollector() {
      * Rejestruje źródło wykrytej lub ustawionej ścieżki CPLEX.
      */
     fun logCplexDetection(source: DetectionSource) {
+        LOG.info("FUS Event [cplex.detection]: source=$source")
         runCatching {
             CPLEX_DETECTION_EVENT.log(source)
         }.onFailure { e ->

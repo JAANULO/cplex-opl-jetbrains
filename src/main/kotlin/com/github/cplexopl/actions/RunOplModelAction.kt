@@ -37,8 +37,16 @@ class RunOplModelAction : AnAction() {
             val oplConfig = newConfig.configuration as OplRunConfiguration
             oplConfig.modelFile = file.path
 
-            val datFile = file.parent?.findChild("${file.nameWithoutExtension}.dat")
+            val parent = file.parent
+            val datFile = parent?.findChild("${file.nameWithoutExtension}.dat")
+                ?: parent?.findChild("data.dat")
+                ?: parent?.children?.filter { it.extension == "dat" }?.singleOrNull()
             if (datFile != null) oplConfig.dataFile = datFile.path
+
+            val opsFile = parent?.findChild("${file.nameWithoutExtension}.ops")
+                ?: parent?.findChild("settings.ops")
+                ?: parent?.children?.filter { it.extension == "ops" }?.singleOrNull()
+            if (opsFile != null) oplConfig.settingsFile = opsFile.path
 
             val cplexPath = com.github.cplexopl.utils.CplexPathFinder.find() ?: ""
             if (cplexPath.isNotEmpty()) oplConfig.cplexPath = cplexPath
