@@ -14,7 +14,8 @@ Klasy testowe zorganizowane są w strukturze *Package Mirroring*, odpowiadające
 * **Widok struktury i Szablony** (`structure/OplStructureViewTest.kt`, `templates/OplLiveTemplatesTest.kt`) – gwarantuje, że podgląd plików (Structure View) i szybkie skróty tekstowe (Live Templates) ładują się prawidłowo.
 * **Nawigacja i Dołączanie plików** (`reference/OplReferenceTest.kt`, `reference/OplIncludeTest.kt`) – testuje przechodzenie do definicji metod i zmiennych oraz dyrektywy `include`.
 * **Podświetlanie i Analiza Semantyczna** (`highlighting/OplHighlightingTest.kt`) – weryfikuje poprawność lekserów i annotatorów podświetlania składni.
-* **Autouzupełnianie kodu** (`completion/OplCompletionTest.kt`) – testuje autouzupełnianie słów kluczowych oraz zmiennych kontekstowych z drzewa PSI.
+* **Autouzupełnianie kodu** (`completion/OplCompletionTest.kt`, `completion/OplBuiltinsCompletionTest.kt`) – testuje autouzupełnianie słów kluczowych, funkcji wbudowanych CP/Scheduling, obiektów IBM ILOG Script oraz zmiennych kontekstowych z drzewa PSI.
+* **Rejestracja typów plików i ikon** (`OplFileTypeTest.kt`) – weryfikuje poprawność powiązania rozszerzeń `.mod`, `.dat`, `.ops` z odpowiednimi klasami `FileType` i ikonami.
 
 ---
 
@@ -36,13 +37,15 @@ Klasy testowe zorganizowane są w strukturze *Package Mirroring*, odpowiadające
 
 ---
 
-## 3. Konsola, Logi, Błędy i Wydajność
+## 3. Konsola, Logi, Błędy, Telemetria i Wydajność
 **Pokrycie zautomatyzowane: 98%, Weryfikacja manualna: 2%**
 
 * **Filtry Konsoli i Rozwiązywanie Ścieżek** (`console/OplConsoleFilterTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu** 
   Sprawdzają mapowanie ścieżek plików tymczasowych do workspace, podświetlanie ograniczeń sprzecznych (*infeasibility*) oraz linkowanie błędów w `.mod` i `.dat`.
 * **Automatyczne Raportowanie Błędów** (`error/OplErrorReportSubmitterTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
   Weryfikuje integrację wyjątków pluginu z formularzem zgłoszeń issue na GitHubie.
+* **Anonimowa Telemetria FUS** (`statistics/OplUsageCollectorTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
+  Weryfikuje rejestrowanie zdarzeń zbieracza statystyk użycia (wykonanie modeli, tworzenie plików, generowanie runnera Pythona, detekcja solvera) w zgodzie z mechanizmem JetBrains FUS.
 * **Dedykowany Zestaw Testów Wydajnościowych** (`performance/`) | **Lokalizacja testów: `OplPerformanceTestSuite`**
   - `performance/OplParserPerformanceTest.kt` – benchmark parsowania skomplikowanych wyrażeń matematycznych (Pratt Parser) oparty na `PlatformTestUtil.startPerformanceTest`.
   - `performance/OplConsoleFilterPerformanceTest.kt` – filtrowanie 100 000 linii logów konsolowych oraz ochrona przed *Catastrophic Backtracking* na gigantycznych liniach.
@@ -56,9 +59,9 @@ Aby zapewnić szybki cykl deweloperski (*Fast Feedback Loop*), testy zostały ro
 
 | Zestaw Testowy | Klasa Suity | Liczba Testów | Średni Czas | Przeznaczenie |
 | :--- | :--- | :--- | :--- | :--- |
-| **Szybkie testy (Unit / Platform)** | `OplTestSuite` | 46 testów (21 klas) | **~19 s** | Domyślny tryb lokalny (`python scripts/test.py test`) |
+| **Szybkie testy (Unit / Platform)** | `OplTestSuite` | 52 testy (20 klas) | **~20 s** | Domyślny tryb lokalny (`python scripts/test.py test`) |
 | **Testy wydajnościowe (Perf)** | `OplPerformanceTestSuite` | 4 testy (3 klasy) | **~21 s** | Benchmarki i stress-testy (`python scripts/test.py perf` / CI tag `[perf]`) |
-| **Pełna agregacja (All)** | `OplAllTestSuite` | 50 testów (24 klasy) | **~26 s** | Przed commitem i release (`python scripts/test.py test:all` / `full`) |
+| **Pełna agregacja (All)** | `OplAllTestSuite` | 56 testów (23 klasy) | **~27 s** | Przed commitem i release (`python scripts/test.py test:all` / `full`) |
 
 ---
 
@@ -68,17 +71,17 @@ Po każdym uruchomieniu testów generowany jest ujednolicony, zwięzły raport w
 
 ```json
 {
-  "timestamp": "2026-10-01 18:16:07 (Europe/Warsaw)",
+  "timestamp": "2026-10-09 17:39:51 (Europe/Warsaw)",
   "category": "plugin",
-  "pluginVersion": "1.4.9.7",
+  "pluginVersion": "1.5.1",
   "result": "SUCCESS",
-  "totalTests": 50,
-  "successfulTests": 50,
+  "totalTests": 56,
+  "successfulTests": 56,
   "failedTests": 0,
   "skippedTests": 0,
-  "durationMs": 26405,
+  "durationMs": 26916,
   "environment": {
-    "os": "Windows 10",
+    "os": "Windows 11",
     "arch": "amd64",
     "availableProcessors": 16
   },

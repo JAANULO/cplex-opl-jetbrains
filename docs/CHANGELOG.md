@@ -4,6 +4,8 @@
 
 ## [Unreleased]
 
+## [1.5.1] - 2026-10-09
+
 ### Added
 
 - **File Starter Templates:** Enhanced `OplModel.mod.ft` and `OplData.dat.ft` with runnable starter optimization models (data declarations, `dvar`, objective function, and constraints).
@@ -13,6 +15,10 @@
 - **Community Templates:** Added GitHub issue templates (`.github/ISSUE_TEMPLATE/bug_report.md` and `feature_request.md`).
 - **Anonymous Telemetry (JetBrains FUS):** Added privacy-friendly, GDPR-compliant usage statistics collector (`OplUsageCollector`) based on JetBrains Feature Usage Statistics framework to track solver execution status, file template creation, Python runner generation, and CPLEX path resolution without collecting any PII.
 - **Storefront & Documentation:** Overhauled `docs/DESCRIPTION.md` and `README.md` with comparison matrix, quickstart guide, SEO tags, keyboard shortcut tables, and status badges.
+
+### Fixed
+
+- **Run Configuration Auto-Pairing:** Improved fallback detection for `.dat` and `.ops` files in `RunOplModelAction` when running models directly from the context menu.
 
 ## [1.5.0] - 2026-10-01
 
@@ -321,7 +327,8 @@
 - Updated `README.md` feature lists (EN/PL) to match current implementation.
 - Updated `do_zrobienia.md` with explicit `DONE` / `PARTIAL` / `TODO` status markers.
 
-[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.5.0...HEAD
+[Unreleased]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.5.1...HEAD
+[1.5.1]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.9.7...1.5.0
 [1.4.9.7]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.9.6...1.4.9.7
 [1.4.9]: https://github.com/JAANULO/CPLEX-Plugin/compare/1.4.8...1.4.9

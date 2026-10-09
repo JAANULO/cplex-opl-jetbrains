@@ -1,5 +1,6 @@
 package com.github.cplexopl
 
+import com.github.cplexopl.completion.OplBuiltinsCompletionTest
 import com.github.cplexopl.completion.OplCompletionTest
 import com.github.cplexopl.console.OplConsoleFilterTest
 import com.github.cplexopl.error.OplErrorReportSubmitterTest
@@ -36,6 +37,7 @@ import org.junit.runners.Suite
     OplRunConfigurationTest::class,
     OplSettingsTest::class,
     OplCompletionTest::class,
+    OplBuiltinsCompletionTest::class,
     CplexPathFinderTest::class,
     OplPiecewiseParsingTest::class,
     OplIncludeTest::class,

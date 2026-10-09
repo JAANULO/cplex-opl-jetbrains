@@ -11,23 +11,25 @@ Celem projektu jest stworzenie lekkiego, ale funkcjonalnego środowiska do pracy
 
 ## ✅ Już zaimplementowane
 
-- `DONE` **Szablony plików:** Akcja "New -> OPL File" w menu kontekstowym (modele `.mod`, dane `.dat`, ustawienia `.ops`)
+- `DONE` **Szablony plików i startowe modele:** Akcja "New -> OPL File" w menu kontekstowym (modele `.mod`, dane `.dat`, ustawienia `.ops`) z gotowymi, uruchamialnymi modelami optymalizacyjnymi
 - `DONE` Rejestracja języka OPL (pliki `.mod`, `.dat` i `.ops`)
 - `DONE` Syntax Highlighting (kolorowanie składni)
 - `DONE` Gramatyka BNF + Lexer JFlex
 - `DONE` Podstawowy Annotator (walidacja w locie)
-- `DONE` Code Completion (autouzupełnianie słów kluczowych)
-- `DONE` Live Templates (skróty: `model`, `rng`, `dv`, `st`, `fa`, `sm`, `tup`, `exec`)
-- `DONE` Run Configuration (integracja z `oplrun`)
+- `DONE` Code Completion (autouzupełnianie słów kluczowych i 30+ funkcji CP Optimizer)
+- `DONE` Live Templates (skróty: `model`, `rng`, `dv`, `st`, `fa`, `sm`, `tup`, `exec`, `interval`, `span`, `knap`)
+- `DONE` Run Configuration (integracja z `oplrun`, WSL, Docker)
 - `DONE` Ikony SVG dla plików `.mod`, `.dat` i `.ops`
 - `DONE` Obsługa skrótu `Ctrl+/` (komentowanie)
 - `DONE` Podświetlanie par nawiasów `{}`, `()`, `[]`
 - `DONE` **File Type Support:** automatyczne łączenie par plików `.mod`, `.dat` oraz `.ops` przy uruchamianiu
 - `DONE` **Integracja CPLEX (0.2):** Auto-wykrywanie ścieżek, zmienna `CPLEX_STUDIO_DIR`, panel ustawień UI.
 - `DONE` **Contextual Autocomplete:** Semantyczne podpowiadanie zmiennych z drzewa PSI.
-- `DONE` **Zaawansowany Annotator (2.1):** Wykrywanie duplikatów i brakujących średników.
+- `DONE` **Zaawansowany Annotator (2.1):** Wykrywanie duplikatów, brakujących średników, brakującego `using CP;`.
 - `DONE` **Structure View (3.1):** Interaktywne drzewo nawigacji (zmienne, cele, sekcje).
 - `DONE` **Formatter:** podstawowe formatowanie kodu OPL
+- `DONE` **Onboarding i Powiadomienia:** Welcome balloon (`OplWelcomeNotification`), 3-akcjowy dialog oceniania (`OplRatePrompt`).
+- `DONE` **Anonimowa Telemetria (JetBrains FUS):** Zbieranie metryk użycia (`OplUsageCollector`) bez PII z respektowaniem ustawień Data Sharing.
 
 ---
 
@@ -143,7 +145,7 @@ Bez tego plugin nie spełnia swojego głównego celu.
 - `DONE` Automatyczne testy wydajnościowe (Performance Tests) oparte o `PlatformTestUtil.startPerformanceTest` chroniące przed regresją czasową.
 - `DONE` **Architektura Testów i Package Mirroring:** Podział testów na wyspecjalizowane suity (`OplTestSuite`, `OplPerformanceTestSuite`, `OplAllTestSuite`), pełne odzwierciedlenie struktury pakietów `src/main/`, obsługa trybów `test`, `perf`, `test:all` w `scripts/test.py` oraz ujednolicone, tabelaryczne raporty JSON.
 - `DONE` **Optymalizacja Parsera (Pratt Parser):** Przebudowa rekurencyjnych wyrażeń matematycznych w `OplGrammar.bnf`, eliminująca ryzyko `StackOverflowError` i zmniejszająca czas parsowania obciążeń do ułamków sekund.
-- `PARTIAL` Obsługa błędów runtime (integracja `OplErrorReportSubmitter`, ochrona XXE, filtry Infeasibility w konsoli)
+- `DONE` Obsługa błędów runtime (integracja `OplErrorReportSubmitter`, ochrona XXE, filtry Infeasibility w konsoli)
 
 ### 6.3 Ekspansja poza środowiska JetBrains (Wizja długoterminowa)
 - `TODO` **Language Server Protocol (LSP):** Stworzenie niezależnego serwera językowego opartego na obecnej logice lexera i parsera. Umożliwi to udostępnienie funkcji OPL (autouzupełnianie, błędy) w VS Code, Neovim, Sublime Text i innych edytorach wspierających LSP.
