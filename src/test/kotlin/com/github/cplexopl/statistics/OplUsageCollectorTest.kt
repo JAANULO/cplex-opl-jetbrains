@@ -4,10 +4,11 @@ import com.intellij.testFramework.fixtures.BasePlatformTestCase
 
 class OplUsageCollectorTest : BasePlatformTestCase() {
 
-    fun testGroupInitialization() {
-        val group = OplUsageCollector.group
-        assertEquals("cplex.opl", group.id)
-        assertEquals(1, group.version)
+    fun testEnumsAndConstants() {
+        assertEquals(3, OplUsageCollector.ExecutionSource.values().size)
+        assertEquals(5, OplUsageCollector.ExitStatus.values().size)
+        assertEquals(3, OplUsageCollector.FileTypeEnum.values().size)
+        assertEquals(4, OplUsageCollector.DetectionSource.values().size)
     }
 
     fun testFailSafeLoggingDoesNotThrow() {

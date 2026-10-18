@@ -109,6 +109,10 @@ intellijPlatform {
         }
         failureLevel.set(
             listOf(
+                org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.COMPATIBILITY_PROBLEMS,
+                org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.INTERNAL_API_USAGES,
+                org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.NON_EXTENDABLE_API_USAGES,
+                org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.OVERRIDE_ONLY_API_USAGES,
                 org.jetbrains.intellij.platform.gradle.tasks.VerifyPluginTask.FailureLevel.INVALID_PLUGIN
             )
         )
@@ -166,7 +170,6 @@ tasks {
     }
 
     named<org.jetbrains.intellij.platform.gradle.tasks.RunIdeTask>("runIde") {
-        systemProperty("idea.is.internal", "true")
     }
 }
 // Disable instrumentation tasks (for both code and tests) and buildSearchableOptions

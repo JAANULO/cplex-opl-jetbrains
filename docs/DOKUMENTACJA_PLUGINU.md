@@ -56,11 +56,10 @@ Ogromny nacisk położyliśmy na polepszenie tzw. "Developer Experience" przy sz
   * Dedykowana opcja w menu: `Help -> Rate CPLEX OPL Plugin...`.
   * Inteligentne powiadomienie (Balloon): Po 10. pomyślnym uruchomieniu modelu wtyczka wyświetla powiadomienie z trzema opcjami: *Rate on Marketplace*, *Report Issue / Feedback* (GitHub) oraz *Remind me later*.
 
-## 6. Anonimowa Telemetria (JetBrains FUS)
-* **Moduł `OplUsageCollector`**: Zbudowany w oparciu o framework JetBrains *Feature Usage Statistics* (FUS) do zbierania w pełni anonimowych metryk użycia.
-* **Prywatność i Zero PII**: Plugin nie zbiera danych osobowych, nazw projektów, ścieżek do plików ani kodu źródłowego modeli matematycznych.
-* **Rejestrowane metryki**: Wykonanie modelu (`model.executed` – obecność plików .dat/.ops, źródło uruchomienia, kod wyjścia), tworzenie plików (`file.created`), generowanie skryptu Pythona (`python.runner.generated`) oraz metoda detekcji solvera (`cplex.detection`).
-* **Respektowanie preferencji użytkownika**: Zbieranie danych działa wyłącznie, jeśli włączona jest opcja w `Settings -> Appearance & Behavior -> System Settings -> Data Sharing`.
+## 6. Metryki Operacyjne i Diagnostyka (OplUsageCollector)
+* **Moduł `OplUsageCollector`**: Rejestruje zdarzenia diagnostyczne i operacyjne bezpośrednio w oficjalnym, publicznym loggerze platformy IntelliJ (`Logger.getInstance()`), w 100% zgodnie z wytycznymi JetBrains Marketplace (brak użycia prywatnego API JetBrains FUS).
+* **Prywatność i Zero PII**: Plugin nie wysyła żadnych danych przez sieć, nie zbiera danych osobowych, nazw projektów, ścieżek do plików ani kodu źródłowego modeli matematycznych.
+* **Rejestrowane metryki w logach**: Wykonanie modelu (`model.executed` – obecność plików .dat/.ops, źródło uruchomienia, kod wyjścia), tworzenie plików (`file.created`), generowanie skryptu Pythona (`python.runner.generated`) oraz metoda detekcji solvera (`cplex.detection`).
 
 ## Podsumowanie stanu technicznego
 Wszystkie systemy – w tym parsowanie konsoli z filtrem `OplInfeasibilityFilter`, silnik watchdoga, wykrywanie plików `.dat`, telemetria FUS, powiadomienia powitalne, raportowanie błędów `OplErrorReportSubmitter`, obsługa środowisk WSL/Docker oraz budowanie dynamicznych komend CLI – posiadają pełne pokrycie testami jednostkowymi, platformowymi i wydajnościowymi. 

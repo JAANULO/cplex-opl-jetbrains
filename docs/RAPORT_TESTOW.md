@@ -44,8 +44,8 @@ Klasy testowe zorganizowane są w strukturze *Package Mirroring*, odpowiadające
   Sprawdzają mapowanie ścieżek plików tymczasowych do workspace, podświetlanie ograniczeń sprzecznych (*infeasibility*) oraz linkowanie błędów w `.mod` i `.dat`.
 * **Automatyczne Raportowanie Błędów** (`error/OplErrorReportSubmitterTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
   Weryfikuje integrację wyjątków pluginu z formularzem zgłoszeń issue na GitHubie.
-* **Anonimowa Telemetria FUS** (`statistics/OplUsageCollectorTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
-  Weryfikuje rejestrowanie zdarzeń zbieracza statystyk użycia (wykonanie modeli, tworzenie plików, generowanie runnera Pythona, detekcja solvera) w zgodzie z mechanizmem JetBrains FUS.
+* **Metryki Operacyjne i Diagnostyka** (`statistics/OplUsageCollectorTest.kt`) | **Lokalizacja testów: Wewnętrzne testy Pluginu**
+  Weryfikuje rejestrowanie zdarzeń diagnostycznych (wykonanie modeli, tworzenie plików, generowanie runnera Pythona, detekcja solvera) w zgodzie z publicznym API platformy IntelliJ.
 * **Dedykowany Zestaw Testów Wydajnościowych** (`performance/`) | **Lokalizacja testów: `OplPerformanceTestSuite`**
   - `performance/OplParserPerformanceTest.kt` – benchmark parsowania skomplikowanych wyrażeń matematycznych (Pratt Parser) oparty na `PlatformTestUtil.startPerformanceTest`.
   - `performance/OplConsoleFilterPerformanceTest.kt` – filtrowanie 100 000 linii logów konsolowych oraz ochrona przed *Catastrophic Backtracking* na gigantycznych liniach.
