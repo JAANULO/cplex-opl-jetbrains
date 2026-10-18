@@ -4,6 +4,14 @@
 
 ## [Unreleased]
 
+## [1.5.2] - 2026-10-18
+
+### Fixed
+
+- **JetBrains Marketplace Compliance:** Removed internal JetBrains Feature Usage Statistics (FUS) API usages from `OplUsageCollector` and unregistered `statistics.counterUsagesCollector` in `plugin.xml`. Operational metrics now use IntelliJ Platform's standard public `Logger` without network calls.
+- **Plugin Verifier Hardening:** Enhanced local `VerifyPluginTask` in `build.gradle.kts` with strict failure levels (`COMPATIBILITY_PROBLEMS`, `INTERNAL_API_USAGES`, `NON_EXTENDABLE_API_USAGES`, `OVERRIDE_ONLY_API_USAGES`, `INVALID_PLUGIN`) to match JetBrains Marketplace verification standards.
+- **Sandbox Environment:** Disabled development `idea.is.internal` property to ensure a clean sandbox experience identical to user installations.
+
 ## [1.5.1] - 2026-10-09
 
 ### Added
